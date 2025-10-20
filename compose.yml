@@ -3,28 +3,29 @@ services:
     image: apache/kafka:latest
     container_name: broker
     ports:
-      - 9092:9092
-      - 9093:9093
+      - "9092:9092"
+      - "9093:9093"
     environment:
+      # ID del nodo
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
 
-      # Escucha en todas las interfaces dentro del contenedor
+      # Escucha interna (dentro del contenedor)
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
 
-      # Lo que anuncia a los clientes (tu IP host o nombre DNS)
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://172.21.243.231:9092
+      # Lo que anuncia a los clientes externos (pon aquí tu IP LAN del host)
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.39:9092
 
-      # Nombres de listeners para el controller
+      # Nombres del listener del controller
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
 
-      # Mapear correctamente los protocolos
+      # Mapear protocolos correctamente
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
 
-      # Votantes del quorum de controller (usa la IP, no localhost)
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@172.21.243.231:9093
+      # Dirección del quorum de controladores — debe usar el nombre del contenedor
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker:9093
 
-      # Configuración básica para entorno single-node
+      # Configuración básica single-node
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -34,4 +35,4 @@ services:
     image: mongo:latest
     container_name: mongo
     ports:
-      - 27017:27017
+      - "27017:27017"
