@@ -1,0 +1,17 @@
+digraph UML_EVCharging_ENV {
+	rankdir=LR size=10
+	node [fontname=Helvetica fontsize=10 shape=record]
+	Central [label="{EV_Central|.env + dotenv\l+ sockets monitores\l+ kafka consumers/producers\l+ admin CLI\l}"]
+	Engine [label="{EV_CP_E (Engine)|consume cp-commands\lproduce cp-telemetry\l}"]
+	Monitor [label="{EV_CP_M (Monitor)|REGISTER/HEALTH/KO via socket\l}"]
+	Driver [label="{EV_Driver|produce driver-requests\lconsume central-events\l}"]
+	Mongo [label="{MongoDB\lpractica1_db\lcharging_points, drivers, sessions\l}"]
+	Kafka [label="{Kafka\ldriver-requests, cp-commands, cp-telemetry, billing, central-events\l}"]
+	Monitor -> Central [label=socket]
+	Driver -> Kafka [label="produce driver-requests"]
+	Central -> Kafka [label="consume driver-requests / produce cp-commands"]
+	Kafka -> Engine [label="consume cp-commands"]
+	Engine -> Kafka [label="produce cp-telemetry"]
+	Kafka -> Central [label="consume cp-telemetry / billing -> central-events"]
+	Central -> Mongo [label=persistencia]
+}
