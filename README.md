@@ -81,27 +81,41 @@ Copia `.env` y **CAMBIA**:
 
 
 
-#Readme Custom
+##Readme Custom
 Docker compose yp
 Crear venv -> instalar requirements
 Crear topics
 Inicializar base de datos
 
-#Inicializar cada cosa
+##Inicializar cada cosa
 Ir al root donde está el .env
-Exportar: export $(grep -v '^#' .env | xargs)
+Exportar: 
+```bash
+export $(grep -v '^#' .env | xargs)
+```
+
 Ir a al src y ejecutar 
+```bash
 python3 -m core.central
 python3 -m charging_point.cp_engine --id CP-001 --kafka $KAFKA_BOOTSTRAP_SERVERS
-python3 -m charging_point.cp_monitor --id CP-001 --engine-host <IP_ENGINE> --engine-port 7100 \
-  --central-host <IP_CENTRAL> --central-port 7000 --kafka $KAFKA_BOOTSTRAP_SERVERS
+python3 -m charging_point.cp_monitor \
+  --id CP-001 \
+  --engine-host 127.0.0.1 \
+  --engine-port 7100 \
+  --central-host 192.168.1.39 \
+  --central-port 7000 \
+  --kafka 192.168.1.39:9092
 python3 -m drivers.driver --driver-id D-001 --cp CP-001 --kafka $KAFKA_BOOTSTRAP_SERVERS
+```
 
 #Listar BBDD
+```bash
 docker exec -it mongo mongosh
-
+```
+```bash
 show dbs
 use evcharging_db
 show collections
 db.charging_points.find().pretty()
+```
 
