@@ -5,25 +5,25 @@ from . import config, topics, kafka_utils, db, utils
 from confluent_kafka import Producer, Consumer
 
 # Tabla en memoria de sesiones activas: key = (driver_id, cp_id)
-active_sessions: Dict[str, Dict[str, Any]] = {}
+active_sessions: Dict[str, Dict[str, Any]] = {} # esto hace falta?
 
-def start_socket_server(host: str, port: int):
-    # Servidor TCP muy simple solo para cumplir requisito de sockets: canal de control futuro si quieres.
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((host, port))
-    s.listen(5)
+def server_loop(soc):
+    while True:
+        conn, addr = soc.accept()
+        data = conn.recv(1024)
+        conn.sendall(b"ACK")
+
+def start_socket_server(host, port):
+    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # creo que no hace falta, yo lo voy a quitar de momento
+    soc.bind((host, port))
+    soc.listen()
     utils.info(f"[CENTRAL] TCP listening on {host}:{port}")
-    def _loop():
-        while True:
-            conn, addr = s.accept()
-            with conn:
-                data = conn.recv(1024)
-                conn.sendall(b"ACK")
-    t = threading.Thread(target=_loop, daemon=True)
-    t.start()
+    t = threading.Thread(target=server_loop, daemon=True) 
+    t.start() 
 
 def main():
+    # esto de pillar args yo lo haría de otra manera, full chatGPT
     parser = argparse.ArgumentParser(prog="EV_Central")
     parser.add_argument("--port", type=int, default=config.CENTRAL_PORT)
     parser.add_argument("--kafka", type=str, default=config.KAFKA_BOOTSTRAP_SERVERS)
@@ -34,8 +34,8 @@ def main():
     start_socket_server(config.CENTRAL_HOST, args.port)
 
     # Kafka
-    prod: Producer = kafka_utils.build_producer(args.kafka)
-    cons: Consumer = kafka_utils.build_consumer(args.kafka, "central-group", [
+    prod = kafka_utils.build_producer(args.kafka)
+    cons = kafka_utils.build_consumer(args.kafka, "central-group", [
         topics.EV_REGISTER,
         topics.EV_HEALTH,
         topics.EV_SUPPLY_REQUEST,
@@ -48,8 +48,8 @@ def main():
     for cp in db.charging_points.find({}):
         print(f" - CP {cp['id']} @ {cp.get('location','N/A')} price={cp.get('price_eur_kwh',0.3)} state={cp.get('state','DISCONNECTED')}")
 
-    def handler(topic: str, data: dict):
-        if topic == topics.EV_REGISTER:
+    def handler(topic, data):
+        if topic == topics.EV_REGISTER: # si se registra un nuevo charging point se muestra y se actualiza
             cp_id = data["id"]
             doc = {
                 "id": cp_id,
@@ -60,7 +60,7 @@ def main():
             }
             db.upsert_cp(doc)
             utils.ok(f"[CENTRAL] CP registrado/activado: {cp_id}")
-        elif topic == topics.EV_HEALTH:
+        elif topic == topics.EV_HEALTH: # esto es para mandar el estado al monitor
             cp_id = data["id"]
             status = data["status"]  # "OK" | "KO" | "RECOVERED"
             if status == "OK":
