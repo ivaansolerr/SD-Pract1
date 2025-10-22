@@ -84,7 +84,7 @@ Copia `.env` y **CAMBIA**:
 ##Readme Custom
 Docker compose yp
 Crear venv -> instalar requirements
-Crear topics
+Crear topics cambiando IPs
 Inicializar base de datos
 
 ##Inicializar cada cosa

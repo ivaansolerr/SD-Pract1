@@ -13,24 +13,32 @@ def tcp_healthcheck(engine_host: str, engine_port: int, timeout=1.0) -> bool:
 
 def main():
     parser = argparse.ArgumentParser(prog="EV_CP_M")
-    parser.add_argument("--id", required=True, help="ID del CP (unívoco en la red)")
-    parser.add_argument("--engine-host", required=True, help="IP/host del Engine")
-    parser.add_argument("--engine-port", type=int, required=True, help="Puerto TCP del Engine")
-    parser.add_argument("--central-host", required=True, help="IP/host de la CENTRAL (solo para referencia)")
-    parser.add_argument("--central-port", type=int, required=True, help="Puerto TCP de la CENTRAL (solo para referencia)")
-    parser.add_argument("--kafka", type=str, default=config.KAFKA_BOOTSTRAP_SERVERS)
+    parser.add_argument("--id", required=True, help="ID del CP (único en la red)")
+    parser.add_argument("--engine-host", required=True)
+    parser.add_argument("--engine-port", type=int, required=True)
+    parser.add_argument("--central-host", required=True)
+    parser.add_argument("--central-port", type=int, required=True)
     parser.add_argument("--location", type=str, default="Unknown")
     parser.add_argument("--price", type=float, default=config.DEFAULT_PRICE_EUR_KWH)
     args = parser.parse_args()
 
-    prod: Producer = kafka_utils.build_producer(args.kafka)
+    prod: Producer = kafka_utils.build_producer(config.KAFKA_BOOTSTRAP_SERVERS)
 
-    # Registro en CENTRAL
-    kafka_utils.send(prod, topics.EV_REGISTER, {"id": args.id, "location": args.location, "price_eur_kwh": args.price})
-    utils.ok(f"[MONITOR {args.id}] Registrado en CENTRAL")
+    # Registro + autenticación
+    kafka_utils.send(prod, topics.EV_REGISTER, {
+        "id": args.id,
+        "location": args.location,
+        "price_eur_kwh": args.price,
+    })
+    kafka_utils.send(prod, topics.EV_AUTH_REQUEST, {
+        "cp_id": args.id,
+        "engine_host": args.engine_host,
+        "engine_port": args.engine_port,
+    })
+    utils.ok(f"[MONITOR {args.id}] Registrado y autenticación solicitada a CENTRAL")
 
-    # Heartbeat 1s
     last_state_ok = None
+
     def loop():
         nonlocal last_state_ok
         while True:
@@ -43,12 +51,15 @@ def main():
                     kafka_utils.send(prod, topics.EV_HEALTH, {"id": args.id, "status": "RECOVERED"})
                 else:
                     utils.err(f"[MONITOR {args.id}] Health KO")
+                    kafka_utils.send(prod, topics.EV_AVERIA, {
+                        "id": args.id,
+                        "reason": "ENGINE_UNRESPONSIVE_OR_KO"
+                    })
                 last_state_ok = ok
             time.sleep(1.0)
 
     threading.Thread(target=loop, daemon=True).start()
 
-    # Mantener proceso vivo
     while True:
         time.sleep(10)
 
