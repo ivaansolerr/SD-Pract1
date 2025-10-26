@@ -14,7 +14,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
 
       # Lo que anuncia a los clientes externos (pon aquí tu IP LAN del host)
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.39:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
 
       # Nombres del listener del controller
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER

@@ -109,7 +109,7 @@ def start_socket_server(host, port):
     soc.bind((host, port))
     soc.listen()
     utils.info(f"[CENTRAL] TCP listening on {host}:{port}")
-    t = threading.Thread(target=server_loop, daemon=True) 
+    t = threading.Thread(target=server_loop, args=(soc,), daemon=True) 
     t.start() 
 
 def main():
