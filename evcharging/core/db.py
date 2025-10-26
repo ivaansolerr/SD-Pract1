@@ -1,6 +1,6 @@
 from pymongo import MongoClient, ASCENDING
 from typing import Optional, Dict, Any
-from . import config
+from .. import config
 
 _client = MongoClient(config.MONGO_URI)  # <--- CAMBIA si tu Mongo requiere auth/SSL
 _db = _client.get_default_database()

@@ -5,20 +5,8 @@ import queue
 import time
 from datetime import datetime
 from typing import Dict, Any
-
-# IMPORTANT: adjust these imports to match how your project is structured.
-# If the GUI lives inside the same package as the central module, use relative imports.
-# For simplicity this file assumes top-level imports:
-try:
-    import config
-    import topics
-    import kafka_utils
-    import db
-    import utils
-except Exception:
-    # fallback: try relative import (when placed inside package)
-    from . import config, topics, kafka_utils, db, utils  # type: ignore
-
+from .. import config, topics, kafka_utils, utils
+from . import db
 from confluent_kafka import Consumer
 
 # GUI constants for state colors
@@ -31,7 +19,6 @@ STATE_BG = {
 }
 
 POLL_INTERVAL_MS = 200  # UI loop polling interval
-
 
 class CPCard(ttk.Frame):
     """Visual card representing a charging point"""

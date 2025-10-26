@@ -1,7 +1,8 @@
-import argparse, threading, socket, time, json
+import argparse, threading, socket, time, json, sys
 from datetime import datetime
 from typing import Dict, Any
-from . import config, topics, kafka_utils, db, utils
+from .. import config, topics, kafka_utils, utils
+from . import db
 from confluent_kafka import Producer, Consumer
 
 # Tabla en memoria de sesiones activas: key = (driver_id, cp_id)
@@ -113,21 +114,22 @@ def start_socket_server(host, port):
     t.start() 
 
 def main():
-    # esto de pillar args yo lo haría de otra manera, full chatGPT
-    parser = argparse.ArgumentParser(prog="EV_Central")
-    parser.add_argument("--port", type=int, default=config.CENTRAL_PORT)
-    parser.add_argument("--kafka", type=str, default=config.KAFKA_BOOTSTRAP_SERVERS)
-    parser.add_argument("--mongo", type=str, default=config.MONGO_URI)
-    args = parser.parse_args()
+    
+    if len(sys.argv) < 3:
+        print("Uso: python EV_Central.py <port> <kafka_bootstrap_servers> <mongo_uri>")
+        sys.exit(1)
 
-    # Socket de escucha (no usado extensivamente en esta release)
-    start_socket_server(config.CENTRAL_HOST, args.port)
+    central_port = int(sys.argv[1])
+    kafka = sys.argv[2]
+
+    # Socket de escucha para la auth con el cp
+    start_socket_server(config.CENTRAL_HOST, central_port)
 
     # Kafka
-    prod = kafka_utils.build_producer(args.kafka)
+    prod = kafka_utils.build_producer(kafka)
     threading.Thread(target=monitor_sessions, args=(prod,), daemon=True).start() # hilo para monitorizar sesiones
     threading.Thread(target=command_loop, args=(prod,), daemon=True).start()
-    cons = kafka_utils.build_consumer(args.kafka, "central-group", [
+    cons = kafka_utils.build_consumer(kafka, "central-group", [
         topics.EV_REGISTER,
         topics.EV_HEALTH,
         topics.EV_SUPPLY_REQUEST,

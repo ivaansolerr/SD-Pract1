@@ -1,5 +1,5 @@
 import argparse, time, sys
-from . import config, topics, kafka_utils, utils
+from .. import config, topics, kafka_utils, utils
 from confluent_kafka import Producer, Consumer
 
 def main():

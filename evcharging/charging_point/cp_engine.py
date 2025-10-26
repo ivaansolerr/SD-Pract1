@@ -1,6 +1,6 @@
 import threading, socket, time, sys, json, random
 from typing import Tuple
-from . import config, topics, kafka_utils, utils
+from .. import config, topics, kafka_utils, utils
 from confluent_kafka import Producer, Consumer
 
 KO_FLAG = False      # 'k' -> KO, 'r' -> RECOVER
@@ -23,7 +23,9 @@ def heartbeat_server():
                     conn.sendall(b"OK")
                 else:
                     conn.sendall(b"KO")
+
     threading.Thread(target=_loop, daemon=True).start()
+
 
 def input_loop():
     global KO_FLAG
@@ -37,16 +39,33 @@ def input_loop():
             KO_FLAG = False
             utils.ok("[ENGINE] Estado -> RECOVERED (simulado)")
 
+
 def main():
+    if len(sys.argv) < 3:
+        print("Uso: python EV_CP_E.py <broker_ip> <broker_port>")
+        sys.exit(1)
+
+    broker_ip = sys.argv[1]
+    broker_port = sys.argv[2]
+    bootstrap_servers = f"{broker_ip}:{broker_port}"
+
+    utils.ok(f"[ENGINE] Broker configurado: {bootstrap_servers}")
+
     heartbeat_server()
     threading.Thread(target=input_loop, daemon=True).start()
 
-    prod = kafka_utils.build_producer(config.KAFKA_BOOTSTRAP_SERVERS)
+    # --- 🔸 Crear productor y consumidor Kafka usando el broker proporcionado ---
+    prod = kafka_utils.build_producer(bootstrap_servers)
     cons = kafka_utils.build_consumer(
-        config.KAFKA_BOOTSTRAP_SERVERS,
-        "engine-group",
-        [topics.EV_AUTH_RESULT, topics.EV_SUPPLY_START, topics.EV_COMMANDS]
-    )
+    bootstrap_servers,
+    "engine-group",
+    [
+        topics.EV_SUPPLY_START,    # inicio de suministro
+        topics.EV_COMMANDS,        # comandos de Central
+        topics.EV_SUPPLY_AUTH      # autorización de suministro (si aplica)
+        # añadir aquí el topic de auth con central
+    ]
+)
 
     utils.ok(f"[ENGINE] Iniciado en {config.CP_ENGINE_HOST}:{config.CP_ENGINE_PORT}, esperando autenticación...")
 
@@ -57,7 +76,7 @@ def main():
         nonlocal current_session, cp_id
         global AUTH_OK, KO_FLAG
 
-        # --- Autenticación ---
+        # Auth con central
         if topic == topics.EV_AUTH_RESULT:
             if data.get("status") == "APPROVED":
                 AUTH_OK = True
@@ -66,6 +85,8 @@ def main():
             else:
                 AUTH_OK = False
                 utils.err("[ENGINE] Autenticación DENEGADA")
+        # auth con monitor
+        #elif topic == topics.EV_HEALTH and AUTH_OK:
 
         # --- Inicio de suministro ---
         elif topic == topics.EV_SUPPLY_START and AUTH_OK:
@@ -137,6 +158,7 @@ def main():
                 utils.ok("[ENGINE] RESUME (RECOVERED)")
 
     kafka_utils.poll_loop(cons, handler)
+
 
 if __name__ == "__main__":
     main()
