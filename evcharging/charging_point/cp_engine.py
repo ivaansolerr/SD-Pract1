@@ -41,8 +41,8 @@ def main():
     heartbeat_server()
     threading.Thread(target=input_loop, daemon=True).start()
 
-    prod: Producer = kafka_utils.build_producer(config.KAFKA_BOOTSTRAP_SERVERS)
-    cons: Consumer = kafka_utils.build_consumer(
+    prod = kafka_utils.build_producer(config.KAFKA_BOOTSTRAP_SERVERS)
+    cons = kafka_utils.build_consumer(
         config.KAFKA_BOOTSTRAP_SERVERS,
         "engine-group",
         [topics.EV_AUTH_RESULT, topics.EV_SUPPLY_START, topics.EV_COMMANDS]
@@ -53,7 +53,7 @@ def main():
     current_session = None
     cp_id = None
 
-    def handler(topic: str, data: dict):
+    def handler(topic, data):
         nonlocal current_session, cp_id
         global AUTH_OK, KO_FLAG
 
