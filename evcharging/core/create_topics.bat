@@ -1,7 +1,7 @@
 @echo off
 echo Creando topics de Kafka para EVCharging...
 
-set TOPICS=evRegister evHealth evCommands evSupplyRequest evSupplyAuth evSupplyStart evSupplyTelemetry evSupplyDone
+set TOPICS=evAuthRequest evAuthResult evRegister evHealth evCommands evSupplyRequest evSupplyAuth evSupplyStart evSupplyTelemetry evSupplyDone
 
 for %%T in (%TOPICS%) do (
     echo Creando topic: %%T

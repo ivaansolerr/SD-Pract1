@@ -1,9 +1,8 @@
 from pymongo import MongoClient, ASCENDING
 from typing import Optional, Dict, Any
-from .. import config
 
-_client = MongoClient(config.MONGO_URI)  # <--- CAMBIA si tu Mongo requiere auth/SSL
-_db = _client.get_default_database()
+_client = MongoClient("mongodb://127.0.0.1:27017/evcharging_db")  # <--- CAMBIA si tu Mongo requiere auth/SSL
+_db = _client.get_database()
 
 charging_points = _db.get_collection("charging_points")
 drivers = _db.get_collection("drivers")

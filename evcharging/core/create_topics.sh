@@ -11,6 +11,8 @@ TOPICS=(
   "evSupplyStart"
   "evSupplyTelemetry"
   "evSupplyDone"
+  "evAuthResult"
+  "evAuthRequest"
 )
 
 for topic in "${TOPICS[@]}"; do

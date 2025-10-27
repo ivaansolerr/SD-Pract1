@@ -1,4 +1,0 @@
-1. Cambiar la forma en la que se sacan los argumentos.
-2. Cambiar y poner topics de forma normal, sin imports
-3. Mirar bien el método de find() de chargin point.
-4. Quitaba lo de los utils y los topics, muy chatGPT, y borramos los 2 archivos en cada carpeta.

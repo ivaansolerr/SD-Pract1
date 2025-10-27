@@ -1,17 +1,20 @@
 import threading, socket, time, sys, json, random
 from typing import Tuple
-from .. import config, topics, kafka_utils, utils
+from .. import topics, kafka_utils, utils
 from confluent_kafka import Producer, Consumer
 
 KO_FLAG = False      # 'k' -> KO, 'r' -> RECOVER
 AUTH_OK = False      # True cuando CENTRAL aprueba la autenticación
 
+ENGINE_LISTEN_IP = "0.0.0.0"
+ENGINE_PORT = 7100
+
 def heartbeat_server():
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    srv.bind((config.CP_ENGINE_HOST, config.CP_ENGINE_PORT))
+    srv.bind((ENGINE_LISTEN_IP, ENGINE_PORT))
     srv.listen(5)
-    utils.info(f"[ENGINE] Heartbeat TCP on {config.CP_ENGINE_HOST}:{config.CP_ENGINE_PORT}")
+    utils.info(f"[ENGINE] Heartbeat TCP on {ENGINE_LISTEN_IP}:{ENGINE_PORT}")
 
     def _loop():
         global KO_FLAG, AUTH_OK
@@ -26,22 +29,8 @@ def heartbeat_server():
 
     threading.Thread(target=_loop, daemon=True).start()
 
-
-def input_loop():
-    global KO_FLAG
-    utils.warn("[ENGINE] Pulsa 'k'+Enter para KO, 'r'+Enter para RECOVER")
-    for line in sys.stdin:
-        line = line.strip().lower()
-        if line == "k":
-            KO_FLAG = True
-            utils.err("[ENGINE] Estado -> KO (simulado)")
-        elif line == "r":
-            KO_FLAG = False
-            utils.ok("[ENGINE] Estado -> RECOVERED (simulado)")
-
-
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) != 3:
         print("Uso: python EV_CP_E.py <broker_ip> <broker_port>")
         sys.exit(1)
 
@@ -52,8 +41,7 @@ def main():
     utils.ok(f"[ENGINE] Broker configurado: {bootstrap_servers}")
 
     heartbeat_server()
-    threading.Thread(target=input_loop, daemon=True).start()
-
+    
     # --- 🔸 Crear productor y consumidor Kafka usando el broker proporcionado ---
     prod = kafka_utils.build_producer(bootstrap_servers)
     cons = kafka_utils.build_consumer(
@@ -66,8 +54,7 @@ def main():
         # añadir aquí el topic de auth con central
     ]
 )
-
-    utils.ok(f"[ENGINE] Iniciado en {config.CP_ENGINE_HOST}:{config.CP_ENGINE_PORT}, esperando autenticación...")
+    utils.ok(f"[ENGINE] Iniciado en {ENGINE_LISTEN_IP}:{ENGINE_PORT}, esperando autenticación...")
 
     current_session = None
     cp_id = None
@@ -99,7 +86,7 @@ def main():
             current_session = {
                 "session_id": data["session_id"],
                 "driver_id": data["driver_id"],
-                "price": float(data.get("price", config.DEFAULT_PRICE_EUR_KWH)),
+                "price": float(data.get("price", config.DEFAULT_PRICE_EUR_KWH)), #cambiar esto
                 "kwh": 0.0,
                 "eur": 0.0,
             }
@@ -158,7 +145,6 @@ def main():
                 utils.ok("[ENGINE] RESUME (RECOVERED)")
 
     kafka_utils.poll_loop(cons, handler)
-
 
 if __name__ == "__main__":
     main()

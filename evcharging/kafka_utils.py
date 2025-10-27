@@ -2,14 +2,14 @@ import json
 from confluent_kafka import Producer, Consumer
 from typing import Callable, Optional
 
-def build_producer(bootstrap_servers: str) -> Producer:
+def build_producer(bootstrap_servers ) -> Producer:
     return Producer({
         "bootstrap.servers": bootstrap_servers,   # <--- CAMBIA en .env si es necesario
         "enable.idempotence": True,
         "linger.ms": 10
     })
 
-def build_consumer(bootstrap_servers: str, group: str, topics: list[str]) -> Consumer:
+def build_consumer(bootstrap_servers, group, topics):
     c = Consumer({
         "bootstrap.servers": bootstrap_servers,   # <--- CAMBIA en .env si es necesario
         "group.id": group,
@@ -18,11 +18,11 @@ def build_consumer(bootstrap_servers: str, group: str, topics: list[str]) -> Con
     c.subscribe(topics)
     return c
 
-def send(producer: Producer, topic: str, payload: dict):
+def send(producer, topic, payload):
     producer.produce(topic, json.dumps(payload).encode("utf-8"))
     producer.flush()
 
-def poll_loop(consumer: Consumer, handler: Callable[[str, dict], None]):
+def poll_loop(consumer, handler):
     import json as _json
     try:
         while True:

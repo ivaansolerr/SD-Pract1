@@ -1,5 +1,5 @@
 import sys, socket, time, threading
-from .. import config, topics, kafka_utils, utils
+from .. import topics, kafka_utils, utils
 from confluent_kafka import Producer
 
 def tcp_healthcheck(engine_host, engine_port, timeout = 1.0):
@@ -12,10 +12,9 @@ def tcp_healthcheck(engine_host, engine_port, timeout = 1.0):
     except Exception:
         return False
 
-
 def main():
     # --- 🔸 Verificar argumentos obligatorios ---
-    if len(sys.argv) < 6:
+    if len(sys.argv) != 6:
         print("Uso: python EV_CP_M.py <engine_ip> <engine_port> <central_ip> <central_port> <cp_id>")
         sys.exit(1)
 
@@ -25,32 +24,24 @@ def main():
     central_port = int(sys.argv[4])
     cp_id = sys.argv[5]
 
-    # Parámetros opcionales (por si quieres añadirlos más tarde)
-    location = "Unknown"
-    price = config.DEFAULT_PRICE_EUR_KWH
-
     utils.ok(f"[MONITOR {cp_id}] Iniciado")
     utils.info(f"[MONITOR {cp_id}] Engine: {engine_host}:{engine_port}")
     utils.info(f"[MONITOR {cp_id}] Central: {central_host}:{central_port}")
 
     # --- 🔸 Crear productor Kafka ---
-    prod = kafka_utils.build_producer(config.KAFKA_BOOTSTRAP_SERVERS)
+    prod = kafka_utils.build_producer(central_host+":"+str(central_port))
 
     # --- 🔸 Registro + autenticación con CENTRAL ---
-    kafka_utils.send(prod, topics.EV_REGISTER, {
-        "id": cp_id,
-        "location": location,
-        "price_eur_kwh": price,
-    })
+    kafka_utils.send(prod, topics.EV_REGISTER, {"id": cp_id,})
 
     # estoy es para auth con central pero este topic no existe
-    kafka_utils.send(prod, topics.EV_AUTH_REQUEST, {
-        "cp_id": cp_id,
-        "engine_host": engine_host,
-        "engine_port": engine_port,
-        "central_host": central_host,
-        "central_port": central_port
-    })
+    # kafka_utils.send(prod, topics.EV_AUTH_REQUEST, {
+    #     "cp_id": cp_id,
+    #     "engine_host": engine_host,
+    #     "engine_port": engine_port,
+    #     "central_host": central_host,
+    #     "central_port": central_port
+    # })
 
     utils.ok(f"[MONITOR {cp_id}] Registrado y autenticación solicitada a CENTRAL")
 

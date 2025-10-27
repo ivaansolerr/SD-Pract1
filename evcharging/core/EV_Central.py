@@ -1,7 +1,7 @@
 import argparse, threading, socket, time, json, sys
 from datetime import datetime
 from typing import Dict, Any
-from .. import config, topics, kafka_utils, utils
+from .. import topics, kafka_utils, utils
 from . import db
 from confluent_kafka import Producer, Consumer
 
@@ -48,62 +48,6 @@ def monitor_sessions(prod):
 
         time.sleep(1)  # comprobar cada segundo
 
-
-def command_loop(prod):
-    """Permite enviar comandos manuales desde consola para controlar CPs."""
-    while True:
-        cmd = input("> ").strip().lower()
-        if not cmd:
-            continue
-
-        parts = cmd.split()
-        if len(parts) < 2:
-            print("Uso: out <cp_id> | recover <cp_id>")
-            continue
-
-        action, cp_id = parts[0], parts[1]
-        cp = db.get_cp(cp_id)
-        if not cp:
-            utils.err(f"[CENTRAL] No existe el CP {cp_id}")
-            continue
-
-        # --- Opción 1: marcar OUT_OF_SERVICE ---
-        if action == "out":
-            if cp.get("state") == "SUPPLYING":
-                # Finalizar sesión activa
-                to_delete = []
-                for sid, s in list(active_sessions.items()):
-                    if s["cp_id"] == cp_id:
-                        kafka_utils.send(prod, topics.EV_SUPPLY_DONE, {
-                            "session_id": sid,
-                            "cp_id": cp_id,
-                            "driver_id": s["driver_id"],
-                            "total_kwh": s["kwh"],
-                            "total_eur": s["eur"]
-                        })
-                        to_delete.append(sid)
-                for sid in to_delete:
-                    del active_sessions[sid]
-
-                # Cambiar estado a OUT_OF_SERVICE
-                db.set_cp_state(cp_id, "OUT_OF_SERVICE")
-                utils.warn(f"[CENTRAL] ⚠️ CP {cp_id} detenido y marcado como OUT_OF_SERVICE")
-            else:
-                db.set_cp_state(cp_id, "OUT_OF_SERVICE")
-                utils.warn(f"[CENTRAL] ⚠️ CP {cp_id} marcado como OUT_OF_SERVICE (no estaba suministrando)")
-
-        # --- Opción 2: recuperar CP ---
-        elif action == "recover":
-            if cp.get("state") == "OUT_OF_SERVICE":
-                db.set_cp_state(cp_id, "ACTIVATED")
-                utils.ok(f"[CENTRAL] ✅ CP {cp_id} recuperado y reactivado")
-            else:
-                utils.warn(f"[CENTRAL] CP {cp_id} no está OUT_OF_SERVICE (estado actual: {cp.get('state')})")
-
-        else:
-            print("Comandos válidos: out <cp_id> | recover <cp_id>")
-
-
 def start_socket_server(host, port):
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # creo que no hace falta, yo lo voy a quitar de momento
@@ -113,42 +57,13 @@ def start_socket_server(host, port):
     t = threading.Thread(target=server_loop, args=(soc,), daemon=True) 
     t.start() 
 
-def main():
-    
-    if len(sys.argv) < 3:
-        print("Uso: python EV_Central.py <port> <kafka_bootstrap_servers> <mongo_uri>")
-        sys.exit(1)
-
-    central_port = int(sys.argv[1])
-    kafka = sys.argv[2]
-
-    # Socket de escucha para la auth con el cp
-    start_socket_server(config.CENTRAL_HOST, central_port)
-
-    # Kafka
-    prod = kafka_utils.build_producer(kafka)
-    threading.Thread(target=monitor_sessions, args=(prod,), daemon=True).start() # hilo para monitorizar sesiones
-    threading.Thread(target=command_loop, args=(prod,), daemon=True).start()
-    cons = kafka_utils.build_consumer(kafka, "central-group", [
-        topics.EV_REGISTER,
-        topics.EV_HEALTH,
-        topics.EV_SUPPLY_REQUEST,
-        topics.EV_SUPPLY_TELEMETRY,
-        topics.EV_SUPPLY_DONE
-    ])
-
-    utils.ok("[CENTRAL] Iniciado")
-    utils.info("[CENTRAL] Mostrando CPs conocidos (estado inicial = DISCONNECTED hasta que conecten)")
-    for cp in db.charging_points.find({}):
-        print(f" - CP {cp['id']} @ {cp.get('location','N/A')} price={cp.get('price_eur_kwh',0.3)}€ state={cp.get('state','DISCONNECTED')}")
-
-    def handler(topic, data):
+def handler(topic, data):
         if topic == topics.EV_REGISTER: # si se registra un nuevo charging point se muestra y se actualiza
             cp_id = data["id"]
             doc = {
                 "id": cp_id,
                 "location": data.get("location","N/A"),
-                "price_eur_kwh": data.get("price_eur_kwh", config.DEFAULT_PRICE_EUR_KWH),
+                "price_eur_kwh": data.get("price_eur_kwh", "0.30"),
                 "state": "ACTIVATED",
                 "updated_at": datetime.utcnow()
             }
@@ -196,6 +111,34 @@ def main():
             db.set_cp_state(data["cp_id"], "ACTIVATED")
         else:
             print(f"[CENTRAL] Mensaje no manejado en topic {topic}: {data}")
+
+def main():
+    
+    if len(sys.argv) != 3:
+        print("Uso: python EV_Central.py <port> <kafka_bootstrap_servers>")
+        sys.exit(1)
+
+    central_port = int(sys.argv[1])
+    kafka = sys.argv[2]
+
+    # Socket de escucha para la auth con el cp
+    start_socket_server("0.0.0.0", central_port)
+
+    # Kafka
+    prod = kafka_utils.build_producer(kafka)
+    threading.Thread(target=monitor_sessions, args=(prod,), daemon=True).start() # hilo para monitorizar sesiones
+    cons = kafka_utils.build_consumer(kafka, "central-group", [
+        topics.EV_REGISTER,
+        topics.EV_HEALTH,
+        topics.EV_SUPPLY_REQUEST,
+        topics.EV_SUPPLY_TELEMETRY,
+        topics.EV_SUPPLY_DONE
+    ])
+
+    utils.ok("[CENTRAL] Iniciado")
+    utils.info("[CENTRAL] Mostrando CPs conocidos (estado inicial = DISCONNECTED hasta que conecten)")
+    for cp in db.charging_points.find({}):
+        print(f" - CP {cp['id']} @ {cp.get('location','N/A')} price={cp.get('price_eur_kwh',0.3)}€ state={cp.get('state','DISCONNECTED')}")
 
     kafka_utils.poll_loop(cons, handler)
 
