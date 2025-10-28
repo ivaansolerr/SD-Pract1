@@ -1,12 +1,12 @@
 import argparse, threading, socket, time, json, sys
 from datetime import datetime
 from typing import Dict, Any
-from .. import topics, kafka_utils, utils
-from . import db
+from evcharging import topics, kafka_utils, utils
+from evcharging.core import db
 from confluent_kafka import Producer, Consumer
 
 # Tabla en memoria de sesiones activas: key = (driver_id, cp_id)
-active_sessions: Dict[str, Dict[str, Any]] = {} # esto hace falta?
+active_sessions: Dict[str, Dict[str, Any]] = {}
 
 def server_loop(soc):
     while True:
@@ -28,6 +28,10 @@ def monitor_sessions(prod):
                 utils.warn(f"[CENTRAL] Tiempo máximo superado en {sid} ({duration:.1f}s). Terminando sesión.")
 
                 # Enviar fin de suministro
+                kafka_utils.send(prod, topics.EV_COMMANDS, {
+                    "cp_id": cp_id,
+                    "cmd": "STOP_SUPPLY"
+                })
                 kafka_utils.send(prod, topics.EV_SUPPLY_DONE, {
                     "session_id": sid,
                     "cp_id": cp_id,
@@ -50,14 +54,14 @@ def monitor_sessions(prod):
 
 def start_socket_server(host, port):
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # creo que no hace falta, yo lo voy a quitar de momento
+    soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # creo que no hace falta, yo lo voy a quitar de momento
     soc.bind((host, port))
     soc.listen()
     utils.info(f"[CENTRAL] TCP listening on {host}:{port}")
     t = threading.Thread(target=server_loop, args=(soc,), daemon=True) 
     t.start() 
 
-def handler(topic, data):
+def handler(topic, data, prod):
         if topic == topics.EV_REGISTER: # si se registra un nuevo charging point se muestra y se actualiza
             cp_id = data["id"]
             doc = {
@@ -109,6 +113,12 @@ def handler(topic, data):
             sid = data["session_id"]
             utils.ok(f"[CENTRAL] FIN suministro: session={sid} kWh={data['total_kwh']:.3f} €={data['total_eur']:.3f}")
             db.set_cp_state(data["cp_id"], "ACTIVATED")
+        elif topic == topics.EV_AUTH_REQUEST:
+            cp_id = data["cp_id"]
+            if db.get_cp(cp_id).get("state") == "ACTIVATED":
+                kafka_utils.send(prod, topics.EV_AUTH_RESULT, {"cp_id": cp_id, "status": "APPROVED"})
+            else:
+                kafka_utils.send(prod, topics.EV_AUTH_RESULT, {"cp_id": cp_id, "status": "DENIED"})
         else:
             print(f"[CENTRAL] Mensaje no manejado en topic {topic}: {data}")
 
@@ -132,7 +142,9 @@ def main():
         topics.EV_HEALTH,
         topics.EV_SUPPLY_REQUEST,
         topics.EV_SUPPLY_TELEMETRY,
-        topics.EV_SUPPLY_DONE
+        topics.EV_SUPPLY_DONE,
+        topics.EV_AUTH_REQUEST,
+        topics.EV_AUTH_RESULT
     ])
 
     utils.ok("[CENTRAL] Iniciado")
@@ -140,7 +152,7 @@ def main():
     for cp in db.charging_points.find({}):
         print(f" - CP {cp['id']} @ {cp.get('location','N/A')} price={cp.get('price_eur_kwh',0.3)}€ state={cp.get('state','DISCONNECTED')}")
 
-    kafka_utils.poll_loop(cons, handler)
+    kafka_utils.poll_loop(cons, lambda topic, data: handler(topic, data, prod))
 
 if __name__ == "__main__":
     main()

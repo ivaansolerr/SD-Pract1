@@ -13,6 +13,7 @@ TOPICS=(
   "evSupplyDone"
   "evAuthResult"
   "evAuthRequest"
+  "evAuthResultEng"
 )
 
 for topic in "${TOPICS[@]}"; do

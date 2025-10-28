@@ -3,7 +3,8 @@
 # --- Registro y autenticación ---
 EV_REGISTER = "evRegister"           # CP_M -> Central (alta/registro inicial)
 EV_AUTH_REQUEST = "evAuthRequest"    # CP_M -> Central (solicitud de autenticación)
-EV_AUTH_RESULT = "evAuthResult"      # Central -> CP_E (resultado autenticación)
+EV_AUTH_RESULT = "evAuthResult"      # Central -> CP_M (resultado autenticación)
+EV_AUTH_RESULT_ENG = "evAuthResultEng"    # CP_M -> CP_E(resultado autenticación)
 
 # --- Health & comandos ---
 EV_HEALTH = "evHealth"               # CP_M -> Central (heartbeat OK/KO)

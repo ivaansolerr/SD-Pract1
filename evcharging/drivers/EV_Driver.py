@@ -1,5 +1,5 @@
 import argparse, time, sys
-from .. import topics, kafka_utils, utils
+from evcharging import topics, kafka_utils, utils
 from confluent_kafka import Producer, Consumer
 
 def main():
@@ -42,7 +42,7 @@ def main():
             lines = [ln.strip() for ln in f if ln.strip()]
         for cp_id in lines:
             request(cp_id)
-            time.sleep("4") # no sé si es string o int
+            time.sleep(4) # no sé si es string o int
     else:
         print("Debes indicar el nombre de un archivo")
 

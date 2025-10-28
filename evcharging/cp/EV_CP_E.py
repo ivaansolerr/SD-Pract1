@@ -1,6 +1,6 @@
 import threading, socket, time, sys, json, random
 from typing import Tuple
-from .. import topics, kafka_utils, utils
+from evcharging import topics, kafka_utils, utils
 from confluent_kafka import Producer, Consumer
 
 KO_FLAG = False      # 'k' -> KO, 'r' -> RECOVER
@@ -50,8 +50,10 @@ def main():
     [
         topics.EV_SUPPLY_START,    # inicio de suministro
         topics.EV_COMMANDS,        # comandos de Central
-        topics.EV_SUPPLY_AUTH      # autorización de suministro (si aplica)
-        # añadir aquí el topic de auth con central
+        topics.EV_SUPPLY_AUTH,     # autorización de suministro (si aplica)
+        topics.EV_AUTH_REQUEST,    # solicitud de autenticación
+        topics.EV_AUTH_RESULT,     # resultado de autenticación
+        topics.EV_AUTH_RESULT_ENG  # resultado de autenticación del engine
     ]
 )
     utils.ok(f"[ENGINE] Iniciado en {ENGINE_LISTEN_IP}:{ENGINE_PORT}, esperando autenticación...")
@@ -63,8 +65,8 @@ def main():
         nonlocal current_session, cp_id
         global AUTH_OK, KO_FLAG
 
-        # Auth con central
-        if topic == topics.EV_AUTH_RESULT:
+        # Auth con monitor
+        if topic == topics.EV_AUTH_RESULT_ENG:
             if data.get("status") == "APPROVED":
                 AUTH_OK = True
                 cp_id = data.get("cp_id")
@@ -72,8 +74,6 @@ def main():
             else:
                 AUTH_OK = False
                 utils.err("[ENGINE] Autenticación DENEGADA")
-        # auth con monitor
-        #elif topic == topics.EV_HEALTH and AUTH_OK:
 
         # --- Inicio de suministro ---
         elif topic == topics.EV_SUPPLY_START and AUTH_OK:
@@ -86,7 +86,7 @@ def main():
             current_session = {
                 "session_id": data["session_id"],
                 "driver_id": data["driver_id"],
-                "price": float(data.get("price", config.DEFAULT_PRICE_EUR_KWH)), #cambiar esto
+                "price": float(data.get("price", 0.30)), #cambiar esto
                 "kwh": 0.0,
                 "eur": 0.0,
             }
@@ -137,9 +137,9 @@ def main():
                     "total_eur": tmp["eur"],
                     "reason": "STOP_BY_CENTRAL",
                 })
-            elif cmd == "OUT_OF_ORDER":
+            elif cmd == "KO":
                 KO_FLAG = True
-                utils.err("[ENGINE] Marcado como OUT_OF_ORDER (KO)")
+                utils.err("[ENGINE] Marcado como KO")
             elif cmd == "RESUME":
                 KO_FLAG = False
                 utils.ok("[ENGINE] RESUME (RECOVERED)")
