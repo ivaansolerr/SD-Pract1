@@ -32,54 +32,9 @@ Copia `.env` y **CAMBIA**:
 
 ## Ejecución típica en **3 máquinas** (mínimo)
 1. **Broker + Mongo** (PC-A): levantar con Docker Compose.
-2. **Central** (PC-B):  
-   ```bash
-   export $(grep -v '^#' .env | xargs)
-   python -m evcharging.central --port 7000 --kafka ${KAFKA_BOOTSTRAP_SERVERS} --mongo ${MONGO_URI}
-   ```
-3. **CP #1 (Monitor + Engine)** (PC-C): en 2 terminales diferentes:  
-   Engine:  
-   ```bash
-   export $(grep -v '^#' .env | xargs)
-   python -m evcharging.cp_engine --id CP-001 --kafka ${KAFKA_BOOTSTRAP_SERVERS} --host 0.0.0.0 --port 7100
-   ```
-   Monitor:  
-   ```bash
-   export $(grep -v '^#' .env | xargs)
-   python -m evcharging.cp_monitor --id CP-001 --engine-host <IP_ENGINE> --engine-port 7100 --central-host <IP_CENTRAL> --central-port 7000 --kafka ${KAFKA_BOOTSTRAP_SERVERS}
-   ```
-
-4. **Driver** (PC-D o PC-B):  
-   - Solicitud única:  
-     ```bash
-     export $(grep -v '^#' .env | xargs)
-     python -m evcharging.driver --driver-id D-001 --cp CP-001 --kafka ${KAFKA_BOOTSTRAP_SERVERS}
-     ```
-   - Desde fichero (IDs de CP uno por línea):  
-     ```bash
-     python -m evcharging.driver --driver-id D-001 --file ./requests.txt --kafka ${KAFKA_BOOTSTRAP_SERVERS}
-     ```
-
-## Simulación
-- En el **Engine**, pulsa **`k`** + Enter para simular KO (avería). Pulsa **`r`** + Enter para recuperar.
-- En el **Monitor**, se envía heartbeat TCP cada 1 s al Engine. Si no responde o responde KO, se notifica a la central (estado ROJO). Al recuperar, la central cambia a VERDE.
-- La **Central** almacena CPs, Drivers y Sesiones en Mongo:
-  - `charging_points`: `{_id, id, location, price, state, updated_at}`
-  - `drivers`: `{_id, id, name}`
-  - `sessions`: con telemetrías acumuladas y ticket final.
-
-## Dónde cambiar IPs/puertos **(marcado en comentarios)**:
-- `.env` (Kafka, Mongo, CENTRAL, CP Engine)
-- Flags `--kafka`, `--mongo`, `--host/--port` al ejecutar
-- Comentarios `# <--- CAMBIA` dentro del código
-
-## Notas
-- Esta es una **base funcional**: puedes extender GUI, más controles, y métricas avanzadas.
-- Para la memoria, captura las salidas de consola de cada actor mostrando el flujo completo.
-
-
-
-
+Central: python -m evcharging.cp.EV_CP_E {ip_kafka} 9092
+Engine: python -m evcharging.cp.EV_CP_E {ip_kafka} 9092
+Monitor: python -m evcharging.cp.EV_CP_M {ip_central} {puerto_central} {ip_engine} {puerto_engine} {id_cp}
 
 ##Readme Custom
 Docker compose yp

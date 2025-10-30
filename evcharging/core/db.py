@@ -13,10 +13,13 @@ charging_points.create_index([("id", ASCENDING)], unique=True)
 drivers.create_index([("id", ASCENDING)], unique=True)
 sessions.create_index([("driver_id", ASCENDING), ("cp_id", ASCENDING), ("start_time", ASCENDING)])
 
-def upsert_cp(cp: Dict[str, Any]):
+def upsert_cp(cp):
     charging_points.update_one({"id": cp["id"]}, {"$set": cp}, upsert=True)
 
-def get_cp(cp_id: str) -> Optional[Dict[str, Any]]:
+def list_charging_points():
+    return list(charging_points.find({}, {"_id": 0}))
+
+def get_cp(cp_id):
     return charging_points.find_one({"id": cp_id})
 
 def set_cp_state(cp_id: str, state: str):

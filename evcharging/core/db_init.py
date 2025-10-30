@@ -31,4 +31,12 @@ db.charging_points.insert_one({
     "updated_at": None
 })
 
+db.charging_points.insert_one({
+    "id": "cp-002",
+    "location": "Luceros",
+    "price_eur_kwh": 0.72,
+    "state": "DISCONNECTED",
+    "updated_at": None
+})
+
 print("Creamos de nuevo e insertamos los CPs")

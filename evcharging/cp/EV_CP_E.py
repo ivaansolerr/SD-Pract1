@@ -1,150 +1,72 @@
-import threading, socket, time, sys, json, random
-from typing import Tuple
+import socket, sys
+import argparse, threading, socket, time, json, sys
+from datetime import datetime
+from typing import Dict, Any
 from .. import topics, kafka_utils, utils
 from confluent_kafka import Producer, Consumer
 
-KO_FLAG = False      # 'k' -> KO, 'r' -> RECOVER
-AUTH_OK = False      # True cuando CENTRAL aprueba la autenticación
+STX = b"\x02"
+ETX = b"\x03"
+ACK = b"<ACK>"
+NACK = b"<NACK>"
 
-ENGINE_LISTEN_IP = "0.0.0.0"
-ENGINE_PORT = 7100
+registered_cp = None
 
-def heartbeat_server():
-    srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    srv.bind((ENGINE_LISTEN_IP, ENGINE_PORT))
-    srv.listen(5)
-    utils.info(f"[ENGINE] Heartbeat TCP on {ENGINE_LISTEN_IP}:{ENGINE_PORT}")
+def xor_checksum(data: bytes) -> bytes:
+    lrc = 0
+    for b in data: lrc ^= b
+    return bytes([lrc])
 
-    def _loop():
-        global KO_FLAG, AUTH_OK
-        while True:
-            conn, _ = srv.accept()
-            with conn:
-                _ = conn.recv(32)  # “PING”
-                if AUTH_OK and not KO_FLAG:
-                    conn.sendall(b"OK")
-                else:
-                    conn.sendall(b"KO")
+def build_frame(msg: str) -> bytes:
+    data = msg.encode()
+    return STX + data + ETX + xor_checksum(data)
 
-    threading.Thread(target=_loop, daemon=True).start()
+def parse_frame(frame: bytes):
+    if len(frame) < 3 or frame[0] != 2 or frame[-2] != 3:
+        return None
+    data = frame[1:-2]
+    return data.decode() if xor_checksum(data) == frame[-1:] else None
+
+def handle(conn):
+    global registered_cp
+    print("[ENGINE] Conectado monitor")
+
+    if conn.recv(1024) != b"<ENC>": conn.close(); return
+    conn.send(ACK)
+
+    cp = parse_frame(conn.recv(1024))
+    if cp is None: conn.send(NACK); conn.close(); return
+
+    registered_cp = cp
+    print(f"[ENGINE] CP registrado: {registered_cp}")
+    conn.send(ACK)
+    conn.send(build_frame("OK"))
+
+    if conn.recv(1024) != ACK: conn.close(); return
+    conn.send(b"<EOT>")
+    print("[ENGINE] Registrado, esperando heartbeats...")
+
+    while True:
+        beat = conn.recv(1024)
+        if not beat: break
+        if beat == b"PING":
+            conn.send(b"PONG")
+
+    print("[ENGINE] Monitor desconectado")
+    conn.close()
 
 def main():
     if len(sys.argv) != 3:
-        print("Uso: python EV_CP_E.py <broker_ip> <broker_port>")
-        sys.exit(1)
+        print("Uso: engine.py <kafka_ip> <kafka_port>")
+        return
 
-    broker_ip = sys.argv[1]
-    broker_port = sys.argv[2]
-    bootstrap_servers = f"{broker_ip}:{broker_port}"
+    s = socket.socket()
+    s.bind(("0.0.0.0", 7100))
+    s.listen(1)
+    print("[ENGINE] Esperando monitor en puerto 7100...")
 
-    utils.ok(f"[ENGINE] Broker configurado: {bootstrap_servers}")
+    while True:
+        conn, _ = s.accept()
+        threading.Thread(target=handle, args=(conn,)).start()
 
-    heartbeat_server()
-    
-    # --- 🔸 Crear productor y consumidor Kafka usando el broker proporcionado ---
-    prod = kafka_utils.build_producer(bootstrap_servers)
-    cons = kafka_utils.build_consumer(
-    bootstrap_servers,
-    "engine-group",
-    [
-        topics.EV_SUPPLY_START,    # inicio de suministro
-        topics.EV_COMMANDS,        # comandos de Central
-        topics.EV_SUPPLY_AUTH      # autorización de suministro (si aplica)
-        # añadir aquí el topic de auth con central
-    ]
-)
-    utils.ok(f"[ENGINE] Iniciado en {ENGINE_LISTEN_IP}:{ENGINE_PORT}, esperando autenticación...")
-
-    current_session = None
-    cp_id = None
-
-    def handler(topic, data):
-        nonlocal current_session, cp_id
-        global AUTH_OK, KO_FLAG
-
-        # Auth con central
-        if topic == topics.EV_AUTH_RESULT:
-            if data.get("status") == "APPROVED":
-                AUTH_OK = True
-                cp_id = data.get("cp_id")
-                utils.ok(f"[ENGINE] Autenticado por CENTRAL (CP={cp_id})")
-            else:
-                AUTH_OK = False
-                utils.err("[ENGINE] Autenticación DENEGADA")
-        # auth con monitor
-        #elif topic == topics.EV_HEALTH and AUTH_OK:
-
-        # --- Inicio de suministro ---
-        elif topic == topics.EV_SUPPLY_START and AUTH_OK:
-            if KO_FLAG:
-                utils.err("[ENGINE] No puedo empezar (KO)")
-                return
-            if cp_id != data.get("cp_id"):
-                return  # ignorar sesiones de otro CP
-
-            current_session = {
-                "session_id": data["session_id"],
-                "driver_id": data["driver_id"],
-                "price": float(data.get("price", config.DEFAULT_PRICE_EUR_KWH)), #cambiar esto
-                "kwh": 0.0,
-                "eur": 0.0,
-            }
-            utils.ok(f"[ENGINE] START session={current_session['session_id']} price={current_session['price']}")
-
-            def supply_loop():
-                while current_session and not KO_FLAG:
-                    kw = random.uniform(5.0, 30.0)
-                    current_session["kwh"] += kw / 3600.0
-                    current_session["eur"] = current_session["kwh"] * current_session["price"]
-
-                    kafka_utils.send(prod, topics.EV_SUPPLY_TELEMETRY, {
-                        "session_id": current_session["session_id"],
-                        "cp_id": cp_id,
-                        "driver_id": current_session["driver_id"],
-                        "kw": kw,
-                        "euros": current_session["eur"],
-                    })
-                    time.sleep(1.0)
-
-                # Fin del suministro
-                if current_session:
-                    kafka_utils.send(prod, topics.EV_SUPPLY_DONE, {
-                        "session_id": current_session["session_id"],
-                        "cp_id": cp_id,
-                        "driver_id": current_session["driver_id"],
-                        "total_kwh": current_session["kwh"],
-                        "total_eur": current_session["eur"],
-                        "reason": "KO" if KO_FLAG else "FINISHED"
-                    })
-
-            threading.Thread(target=supply_loop, daemon=True).start()
-
-        # --- Comandos de CENTRAL ---
-        elif topic == topics.EV_COMMANDS and AUTH_OK:
-            if data.get("cp_id") != cp_id:
-                return
-            cmd = data.get("cmd")
-            if cmd == "STOP_SUPPLY" and current_session:
-                utils.warn("[ENGINE] STOP by CENTRAL")
-                tmp = current_session
-                current_session = None
-                kafka_utils.send(prod, topics.EV_SUPPLY_DONE, {
-                    "session_id": tmp["session_id"],
-                    "cp_id": cp_id,
-                    "driver_id": tmp["driver_id"],
-                    "total_kwh": tmp["kwh"],
-                    "total_eur": tmp["eur"],
-                    "reason": "STOP_BY_CENTRAL",
-                })
-            elif cmd == "OUT_OF_ORDER":
-                KO_FLAG = True
-                utils.err("[ENGINE] Marcado como OUT_OF_ORDER (KO)")
-            elif cmd == "RESUME":
-                KO_FLAG = False
-                utils.ok("[ENGINE] RESUME (RECOVERED)")
-
-    kafka_utils.poll_loop(cons, handler)
-
-if __name__ == "__main__":
-    main()
+main()
