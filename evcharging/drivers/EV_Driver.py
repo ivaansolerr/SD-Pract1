@@ -1,6 +1,52 @@
-import argparse, time, sys
+import sys, time, threading, json
 from .. import topics, kafka_utils, utils
 from confluent_kafka import Producer, Consumer
+
+def handle_kafka_message(topic, data, prod, clientId):
+    if topic == topics.EV_SUPPLY_AUTH_DRI:
+        cp_id = data.get("cp_id")
+        authorized = data.get("authorized")
+        reason = data.get("reason", "")
+
+        if authorized:
+            utils.ok(f"[DRIVER {clientId}] Autorizado para recargar en {cp_id} ({reason})")
+        else:
+            utils.err(f"[DRIVER {clientId}] Recarga DENEGADA en {cp_id}: {reason}")
+
+    elif topic == topics.EV_SUPPLY_STARTED:
+        status = data.get("status")
+        cp_id = data.get("cp_id")
+
+        if status == "APPROVED":
+            utils.ok(f"[DRIVER {clientId}] Carga iniciada en {cp_id}")
+        else:
+            utils.err(f"[DRIVER {clientId}] Carga RECHAZADA por ENGINE")
+
+    elif topic == topics.EV_SUPPLY_TICKET:
+        cp_id = data.get("cp_id")
+        price = data.get("price", 0)
+        utils.info(f"[DRIVER {clientId}] Ticket recibido de {cp_id}: {price:.6f} EUR")
+        return
+
+    else:
+        utils.info(f"[DRIVER {clientId}] Mensaje Kafka desconocido en {topic}: {data}")
+
+
+def kafka_listener(kafka, clientId):
+    prod = kafka_utils.build_producer(kafka)
+    cons = kafka_utils.build_consumer(kafka, f"driver-{clientId}", [
+        topics.EV_SUPPLY_TICKET,
+        topics.EV_SUPPLY_STARTED,
+        topics.EV_SUPPLY_AUTH_DRI
+    ])
+
+    print(f"[DRIVER {clientId}] Esperando mensajes Kafka...")
+
+    kafka_utils.poll_loop(
+        cons,
+        lambda topic, data: handle_kafka_message(topic, data, prod, clientId)
+    )
+
 
 def main():
     if len(sys.argv) != 4:
@@ -12,39 +58,27 @@ def main():
     fileName = sys.argv[3]
 
     prod = kafka_utils.build_producer(kafka)
-    cons = kafka_utils.build_consumer(kafka, f"driver-{clientId}", [topics.EV_SUPPLY_AUTH])
 
-    def request(cp_id: str):
+    # Lanzamos el listener de Kafka en paralelo
+    threading.Thread(target=kafka_listener, args=(kafka, clientId), daemon=True).start()
+
+    # Peticiones de recarga leídas del archivo
+    with open(fileName, "r") as f:
+        lines = [ln.strip() for ln in f if ln.strip()]
+
+    for cp_id in lines:
         utils.info(f"[DRIVER {clientId}] Solicito recarga en {cp_id}")
-        kafka_utils.send(prod, topics.EV_SUPPLY_REQUEST, {"driver_id": clientId, "cp_id": cp_id})
-        # Esperar respuesta de auth (simple)
-        start = time.time()
-        authorized = None; reason = ""
-        while time.time() - start < 10:
-            msg = cons.poll(1.0)
-            if not msg: continue
-            if msg.error(): continue
-            import json
-            data = json.loads(msg.value().decode("utf-8"))
-            if data.get("driver_id") == clientId and data.get("cp_id") == cp_id:
-                authorized = data.get("authorized"); reason = data.get("reason", "")
-                break
-        if authorized is None:
-            utils.err("[DRIVER] No response from CENTRAL")
-        elif authorized:
-            utils.ok("[DRIVER] Autorizado. Esperando a que el CP empiece el suministro...")
-        else:
-            utils.err(f"[DRIVER] Denegado: {reason}")
+        kafka_utils.send(prod, topics.EV_SUPPLY_REQUEST, {
+            "driver_id": clientId,
+            "cp_id": cp_id
+        })
+        time.sleep(10)
+    
+    time.sleep(5)  # Esperamos a recibir los tickets antes de salir
 
-    # estoy hay que cambiarlo para que lo lea siempre y vigilar extensión
-    if fileName:
-        with open(fileName, "r") as f:
-            lines = [ln.strip() for ln in f if ln.strip()]
-        for cp_id in lines:
-            request(cp_id)
-            time.sleep("4") # no sé si es string o int
-    else:
-        print("Debes indicar el nombre de un archivo")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n[DRIVER] Finalizado por usuario")

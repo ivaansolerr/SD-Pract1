@@ -55,11 +55,37 @@ def handle(conn):
     print("[ENGINE] Monitor desconectado")
     conn.close()
 
-def main():
-    if len(sys.argv) != 3:
-        print("Uso: engine.py <kafka_ip> <kafka_port>")
-        return
+def handle_request(topic, data):
+    if topic == topics.EV_SUPPLY_AUTH:
+        if(data.get("authorized") == True and data.get("cp_id") == registered_cp):
+            utils.ok(f"[ENGINE] Autorización aprobada para driver {data.get('driver_id')}")
+            print("[OPCIONES] \n"
+                  "1. Iniciar suministro\n2. Rechazar")
+            choice = input("Seleccione una opción: ")
+            if choice == "1":
+                utils.info(f"[ENGINE] Iniciando suministro para driver {data.get('driver_id')}")
+                kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
+                    "driver_id": data.get("driver_id"),
+                    "cp_id": registered_cp,
+                    "status": "CONNECTED"
+                })
+                print("Ingrese 'FIN' para finalizar el suministro cuando desee.")
+                input_cmd = input().strip()
+                if input_cmd.upper() == "FIN":
+                    kafka_utils.send(prod, topics.EV_SUPPLY_END, {
+                        "driver_id": data.get("driver_id"),
+                        "cp_id": registered_cp
+                    })
+                    utils.info(f"[ENGINE] Suministro finalizado para driver {data.get('driver_id')}")
+            else:
+                utils.err(f"[ENGINE] Rechazando suministro para driver {data.get('driver_id')}")
+                kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
+                    "driver_id": data.get("driver_id"),
+                    "cp_id": registered_cp,
+                    "status": "REJECTED"
+                })
 
+def socket_server():
     s = socket.socket()
     s.bind(("0.0.0.0", 7100))
     s.listen(1)
@@ -68,5 +94,38 @@ def main():
     while True:
         conn, _ = s.accept()
         threading.Thread(target=handle, args=(conn,)).start()
+
+def kafka_listener(kafka_ip, kafka_port):
+    kafka_info = f"{kafka_ip}:{kafka_port}"
+    global prod
+    prod = kafka_utils.build_producer(kafka_info)
+    kafka_consumer = kafka_utils.build_consumer(kafka_info, "engine-central", [
+        topics.EV_SUPPLY_AUTH,
+        topics.EV_SUPPLY_CONNECTED,
+        topics.EV_SUPPLY_END,
+        topics.EV_SUPPLY_REQUEST
+    ])
+    print("[ENGINE] Escuchando mensajes de CENTRAL...")
+    while True:
+        msg = kafka_consumer.poll(0.1)
+        if not msg or msg.error():
+            continue
+        data = json.loads(msg.value().decode("utf-8"))
+        handle_request(msg.topic(), data)
+
+def main():
+    if len(sys.argv) != 3:
+        print("Uso: engine.py <kafka_ip> <kafka_port>")
+        return
+
+    kafka_ip = sys.argv[1]
+    kafka_port = sys.argv[2]
+
+    t1 = threading.Thread(target=socket_server, daemon=True)
+    t2 = threading.Thread(target=kafka_listener, args=(kafka_ip, kafka_port), daemon=True)
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
 
 main()
