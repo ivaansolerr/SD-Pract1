@@ -74,7 +74,10 @@ def main():
         })
         time.sleep(10)
     
-    time.sleep(5)  # Esperamos a recibir los tickets antes de salir
+    #time.sleep(5)  # Esperamos a recibir los tickets antes de salir
+    while True:
+        time.sleep(1)
+
 
 
 if __name__ == "__main__":

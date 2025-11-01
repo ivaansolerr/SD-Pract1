@@ -10,7 +10,9 @@ ETX = b"\x03"
 ACK = b"<ACK>"
 NACK = b"<NACK>"
 
-registered_cp = None
+registered_cp: str | None = None
+registered_cp_event = threading.Event()
+prod = None
 
 def xor_checksum(data: bytes) -> bytes:
     lrc = 0
@@ -38,6 +40,7 @@ def handle(conn):
     if cp is None: conn.send(NACK); conn.close(); return
 
     registered_cp = cp
+    registered_cp_event.set() 
     print(f"[ENGINE] CP registrado: {registered_cp}")
     conn.send(ACK)
     conn.send(build_frame("OK"))
@@ -85,11 +88,11 @@ def handle_request(topic, data):
                     "status": "REJECTED"
                 })
 
-def socket_server():
+def socket_server(socket_port):
     s = socket.socket()
-    s.bind(("0.0.0.0", 7100))
+    s.bind(("0.0.0.0", int(socket_port)))
     s.listen(1)
-    print("[ENGINE] Esperando monitor en puerto 7100...")
+    print(f"[ENGINE] Esperando monitor en puerto {socket_port}...")
 
     while True:
         conn, _ = s.accept()
@@ -98,14 +101,15 @@ def socket_server():
 def kafka_listener(kafka_ip, kafka_port):
     kafka_info = f"{kafka_ip}:{kafka_port}"
     global prod
+    registered_cp_event.wait()
     prod = kafka_utils.build_producer(kafka_info)
-    kafka_consumer = kafka_utils.build_consumer(kafka_info, "engine-central", [
+    kafka_consumer = kafka_utils.build_consumer(kafka_info, f"engine-{registered_cp}", [
         topics.EV_SUPPLY_AUTH,
         topics.EV_SUPPLY_CONNECTED,
         topics.EV_SUPPLY_END,
         topics.EV_SUPPLY_REQUEST
     ])
-    print("[ENGINE] Escuchando mensajes de CENTRAL...")
+    print(f"[ENGINE {registered_cp}] Escuchando mensajes de CENTRAL...")
     while True:
         msg = kafka_consumer.poll(0.1)
         if not msg or msg.error():
@@ -114,14 +118,15 @@ def kafka_listener(kafka_ip, kafka_port):
         handle_request(msg.topic(), data)
 
 def main():
-    if len(sys.argv) != 3:
-        print("Uso: engine.py <kafka_ip> <kafka_port>")
+    if len(sys.argv) != 4:
+        print("Uso: engine.py <kafka_ip> <kafka_port> <socket_port>")
         return
 
     kafka_ip = sys.argv[1]
     kafka_port = sys.argv[2]
+    socket_port = sys.argv[3]
 
-    t1 = threading.Thread(target=socket_server, daemon=True)
+    t1 = threading.Thread(target=socket_server, args=(socket_port,), daemon=True)
     t2 = threading.Thread(target=kafka_listener, args=(kafka_ip, kafka_port), daemon=True)
     t1.start()
     t2.start()
