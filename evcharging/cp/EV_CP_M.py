@@ -1,34 +1,13 @@
-import socket
-import sys
-import time
+import socket, sys, time
 from datetime import datetime
 from typing import Dict, Any
-from .. import topics, kafka_utils, utils  # si no usás estos, podés quitarlos
+from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
 STX = b"\x02"
 ETX = b"\x03"
 ACK = b"<ACK>"
 NACK = b"<NACK>"
-
-def xor_checksum(data: bytes) -> bytes:
-    """Calcula el checksum XOR simple (LRC)"""
-    lrc = 0
-    for b in data:
-        lrc ^= b
-    return bytes([lrc])
-
-def build_frame(msg: str) -> bytes:
-    """Crea un frame con STX, ETX y checksum"""
-    data = msg.encode()
-    return STX + data + ETX + xor_checksum(data)
-
-def parse_frame(frame: bytes):
-    """Valida y extrae datos de un frame"""
-    if len(frame) < 3 or frame[0] != 2 or frame[-2] != 3:
-        return None
-    data = frame[1:-2]
-    return data.decode() if xor_checksum(data) == frame[-1:] else None
 
 def handshake(sock, cp, name=""):
     """Ejecuta el protocolo de autenticación con CENTRAL o ENGINE"""
@@ -39,12 +18,12 @@ def handshake(sock, cp, name=""):
             print(f"[MONITOR] {name} no envió ACK tras <ENC>")
             return False
 
-        sock.send(build_frame(cp))
+        sock.send(socketCommunication.encodeMess(cp))
         if sock.recv(1024) != ACK:
             print(f"[MONITOR] {name} no envió ACK tras CP_ID")
             return False
 
-        ans = parse_frame(sock.recv(1024))
+        ans = socketCommunication.parseFrame(sock.recv(1024))
         if ans != "OK":
             print(f"[MONITOR] {name} rechazó autenticación ({ans})")
             return False
@@ -211,7 +190,6 @@ def main():
 
         time.sleep(heartbeat_interval)
 
-    # === 4️⃣ Cierre ordenado ===
     sc.close()
     se.close()
     print("[MONITOR] Finalizado.")
