@@ -33,8 +33,8 @@ def handle_kafka_message(topic, data, prod, clientId):
 
 
 def kafka_listener(kafka, clientId):
-    prod = kafka_utils.build_producer(kafka)
-    cons = kafka_utils.build_consumer(kafka, f"driver-{clientId}", [
+    prod = kafka_utils.buildProducer(kafka)
+    cons = kafka_utils.buildConsumer(kafka, f"driver-{clientId}", [
         topics.EV_SUPPLY_TICKET,
         topics.EV_SUPPLY_STARTED,
         topics.EV_SUPPLY_AUTH_DRI
@@ -42,11 +42,10 @@ def kafka_listener(kafka, clientId):
 
     print(f"[DRIVER {clientId}] Esperando mensajes Kafka...")
 
-    kafka_utils.poll_loop(
+    kafka_utils.pollLoop(
         cons,
         lambda topic, data: handle_kafka_message(topic, data, prod, clientId)
     )
-
 
 def main():
     if len(sys.argv) != 4:
@@ -57,7 +56,7 @@ def main():
     clientId = sys.argv[2]
     fileName = sys.argv[3]
 
-    prod = kafka_utils.build_producer(kafka)
+    prod = kafka_utils.buildProducer(kafka)
 
     # Lanzamos el listener de Kafka en paralelo
     threading.Thread(target=kafka_listener, args=(kafka, clientId), daemon=True).start()
@@ -77,8 +76,6 @@ def main():
     #time.sleep(5)  # Esperamos a recibir los tickets antes de salir
     while True:
         time.sleep(1)
-
-
 
 if __name__ == "__main__":
     try:

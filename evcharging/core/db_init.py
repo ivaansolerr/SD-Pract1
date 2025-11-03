@@ -1,8 +1,5 @@
 from pymongo import MongoClient, ASCENDING
 import os
-from dotenv import load_dotenv
-
-#load_dotenv()
 
 client = MongoClient("mongodb://127.0.0.1:27017/evcharging_db")
 db = client.get_database("evcharging_db")
@@ -20,20 +17,24 @@ db.sessions.create_index(
     [("driver_id"), ("cp_id"), ("start_time")]
 )
 
-db.charging_points.insert_one({
+db.charging_points.insert_one(
+    {
     "id": "cp-001",
     "location": "UA-Lab",
     "price_eur_kwh": 0.30,
     "state": "DISCONNECTED",
-    "updated_at": None
-})
+    "updated_at": None 
+    }
+)
 
-db.charging_points.insert_one({
+db.charging_points.insert_one(
+    {
     "id": "cp-002",
     "location": "Luceros",
     "price_eur_kwh": 0.72,
     "state": "DISCONNECTED",
     "updated_at": None
-})
+    }
+)
 
 print("Creamos de nuevo e insertamos los CPs")

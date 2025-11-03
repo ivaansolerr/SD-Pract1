@@ -4,22 +4,17 @@ from typing import Dict, Any
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
-STX = b"\x02"
-ETX = b"\x03"
-ACK = b"<ACK>"
-NACK = b"<NACK>"
-
 def handshake(sock, cp, name=""):
     """Ejecuta el protocolo de autenticación con CENTRAL o ENGINE"""
     try:
         sock.settimeout(5)
         sock.send(b"<ENC>")
-        if sock.recv(1024) != ACK:
+        if sock.recv(1024) != socketCommunication.ACK:
             print(f"[MONITOR] {name} no envió ACK tras <ENC>")
             return False
 
         sock.send(socketCommunication.encodeMess(cp))
-        if sock.recv(1024) != ACK:
+        if sock.recv(1024) != socketCommunication.ACK:
             print(f"[MONITOR] {name} no envió ACK tras CP_ID")
             return False
 
@@ -28,7 +23,7 @@ def handshake(sock, cp, name=""):
             print(f"[MONITOR] {name} rechazó autenticación ({ans})")
             return False
 
-        sock.send(ACK)
+        sock.send(socketCommunication.ACK)
         if sock.recv(1024) != b"<EOT>":
             print(f"[MONITOR] {name} no envió <EOT>")
             return False

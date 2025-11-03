@@ -5,11 +5,6 @@ from . import db
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
-STX = b"\x02"
-ETX = b"\x03"
-ACK = b"<ACK>"
-NACK = b"<NACK>"
-
 active_sessions: Dict[str, Dict[str, Any]] = {}
 
 def printCpPanel():
@@ -38,16 +33,16 @@ def handleClient(conn, addr):
         if conn.recv(1024) != b"<ENC>": # primer mensaje según el protocolo
             conn.close()
             return
-        conn.send(ACK) # mandamos el ACK
+        conn.send(socketCommunication.ACK) # mandamos el ACK
 
         cp = socketCommunication.parseFrame(conn.recv(1024)) # sacamos el id del CP
         if cp is None:
-            conn.send(NACK)
+            conn.send(socketCommunication.NACK)
             conn.close()
             return
 
         print(f"[CENTRAL] Solicitud por CP: {cp}")
-        conn.send(ACK)
+        conn.send(socketCommunication.ACK)
 
         if cpExists(cp): # comprobamos que exista en la base de datos y autenticamos
             print(f"[CENTRAL] CP :) {cp} autenticado. Estado → AVAILABLE")
@@ -63,7 +58,7 @@ def handleClient(conn, addr):
 
         conn.send(socketCommunication.encodeMess(result)) # mandamos la respuesta
 
-        if conn.recv(1024) != ACK:
+        if conn.recv(1024) != socketCommunication.ACK:
             conn.close()
             return
 
@@ -84,7 +79,7 @@ def handleClient(conn, addr):
                         "state": "UNAVAILABLE",
                         #"last_seen": datetime.now(timezone.utc)
                     })
-                    conn.send(ACK)  
+                    conn.send(socketCommunication.ACK)  
                 elif msg == b"OK":
                     print(f"[CENTRAL] :) CP {cp} recuperado → AVAILABLE")
                     db.upsertCp({
@@ -92,7 +87,7 @@ def handleClient(conn, addr):
                         "state": "AVAILABLE",
                         #"last_seen": datetime.now(timezone.utc)
                     })
-                    conn.send(ACK)
+                    conn.send(socketCommunication.ACK)
                 else:
                     print(f"[CENTRAL] Mensaje desconocido de {cp}: {msg}")
 

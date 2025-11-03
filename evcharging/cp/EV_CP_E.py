@@ -4,11 +4,6 @@ from typing import Dict, Any
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
-STX = b"\x02"
-ETX = b"\x03"
-ACK = b"<ACK>"
-NACK = b"<NACK>"
-
 registered_cp: str | None = None
 registered_cp_event = threading.Event()
 prod = None
@@ -18,18 +13,18 @@ def handle(conn):
     print("[ENGINE] Conectado monitor")
 
     if conn.recv(1024) != b"<ENC>": conn.close(); return
-    conn.send(ACK)
+    conn.send(socketCommunication.ACK)
 
     cp = socketCommunication.parseFrame(conn.recv(1024))
-    if cp is None: conn.send(NACK); conn.close(); return
+    if cp is None: conn.send(socketCommunication.NACK); conn.close(); return
 
     registered_cp = cp
     registered_cp_event.set() 
     print(f"[ENGINE] CP registrado: {registered_cp}")
-    conn.send(ACK)
+    conn.send(socketCommunication.ACK)
     conn.send(socketCommunication.encodeMess("OK"))
 
-    if conn.recv(1024) != ACK: conn.close(); return
+    if conn.recv(1024) != socketCommunication.ACK: conn.close(); return
     conn.send(b"<EOT>")
     print("[ENGINE] Registrado, esperando heartbeats...")
 
@@ -86,8 +81,8 @@ def kafka_listener(kafka_ip, kafka_port):
     kafka_info = f"{kafka_ip}:{kafka_port}"
     global prod
     registered_cp_event.wait()
-    prod = kafka_utils.build_producer(kafka_info)
-    kafka_consumer = kafka_utils.build_consumer(kafka_info, f"engine-{registered_cp}", [
+    prod = kafka_utils.buildProducer(kafka_info)
+    kafka_consumer = kafka_utils.buildConsumer(kafka_info, f"engine-{registered_cp}", [
         topics.EV_SUPPLY_AUTH,
         topics.EV_SUPPLY_CONNECTED,
         topics.EV_SUPPLY_END,
