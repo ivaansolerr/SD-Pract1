@@ -10,13 +10,21 @@ prod = None
 
 def handle(conn):
     global registered_cp
-    print("[ENGINE] Conectando con monitor...")
+    #print("[ENGINE] Conectando con monitor...")
     
-    msg_enc = conn.recv(1024)
-    if msg_enc != b"<ENC>": # es como tiene que empezar la comunicación
-        print(f"[ENGINE] Error: Esperaba <ENC>, recibí {msg_enc}")
+    msgEnc = conn.recv(1024)
+
+    # Mensajes fuera de handshake
+    if msgEnc in [b"CENTRAL_DOWN", b"CENTRAL_UP_AGAIN"]:
+        
+        print(f"[ENGINE] {msgEnc}")
         conn.close()
-        return
+        return  
+    else:
+        if msgEnc != b"<ENC>":
+            print(f"[ENGINE] Error: Esperaba <ENC>, recibí {msgEnc}")
+            conn.close()
+            return
 
     conn.send(socketCommunication.ACK)
 
@@ -45,11 +53,23 @@ def handle(conn):
     while True:
         try:
             beat = conn.recv(1024)
-            if not beat: break
+            if not beat:
+                break
+
             if beat == b"PING":
                 conn.send(b"PONG")
+
+            elif beat == b"CENTRAL_DOWN":
+                print("[ENGINE] ⚠️ CENTRAL caída detectada")
+                print("[ENGINE] 🚨 Actuando en modo aislamiento...")
+
+            elif beat == b"CENTRAL_UP_AGAIN":
+                print("[ENGINE] ✅ CENTRAL ha vuelto")
+                print("[ENGINE] 🔄 Reanudando coordinación con CENTRAL")
+
         except Exception:
             break
+
 
     print("[ENGINE] Monitor desconectado")
     conn.close()

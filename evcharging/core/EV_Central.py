@@ -66,33 +66,37 @@ def handleClient(conn, addr):
         print(f"[CENTRAL] Handshake completado con CP {cp}, esperando mensajes...")
 
         conn.settimeout(10)
-        while True: # nos quedamos escuchando posibles averías o rehabilitaciones de cps
+        while True:
             try:
                 msg = conn.recv(1024)
                 if not msg:
                     break
+                
+                if msg == b"PING":
+                    # Nuevo: respuesta al heartbeat del monitor
+                    conn.send(b"PONG")
 
-                if msg == b"KO":
+                elif msg == b"KO":
                     print(f"[CENTRAL] :( CP {cp} averiado → UNAVAILABLE")
                     db.upsertCp({
                         "id": cp,
                         "state": "UNAVAILABLE",
-                        #"last_seen": datetime.now(timezone.utc)
                     })
-                    conn.send(socketCommunication.ACK)  
+                    conn.send(socketCommunication.ACK)
+
                 elif msg == b"OK":
                     print(f"[CENTRAL] :) CP {cp} recuperado → AVAILABLE")
                     db.upsertCp({
                         "id": cp,
                         "state": "AVAILABLE",
-                        #"last_seen": datetime.now(timezone.utc)
                     })
                     conn.send(socketCommunication.ACK)
+
                 else:
                     print(f"[CENTRAL] Mensaje desconocido de {cp}: {msg}")
-
+    
             except socket.timeout:
-                continue  # seguir escuchando
+                continue
             except Exception as e:
                 print(f"[CENTRAL] Error recibiendo de {cp}: {e}")
                 break
@@ -130,13 +134,14 @@ def handleDriver(topic, data, prod):
             authorized = False
             reason = "CP no disponible"
             print(f"[CENTRAL] Recarga denegada para Driver {driver_id} en CP {cp_id}: {reason}")
-
+        # autorizamos driver y envíamos al driver
         kafka_utils.send(prod, topics.EV_SUPPLY_AUTH_DRI, {
             "driver_id": driver_id,
             "cp_id": cp_id,
             "authorized": authorized,
             "reason": reason
         })
+        # autorizamos driver y envíamos al engine
         kafka_utils.send(prod, topics.EV_SUPPLY_AUTH, {
             "driver_id": driver_id,
             "cp_id": cp_id,
@@ -227,6 +232,7 @@ def main():
     print(f"[CENTRAL] En escucha permanente en {port}")
     printCpPanel()
 
+    # un thread para kafka y otro para el socket para que ambos puedan tener los bucles escuchando
     threading.Thread(target=tcpServer, args=(s,), daemon=True).start()
     threading.Thread(target=kafkaListener, args=(kafkaInfo,), daemon=True).start()
 

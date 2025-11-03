@@ -1,11 +1,10 @@
-import socket, sys, time
+import socket, sys, time, threading
 from datetime import datetime
 from typing import Dict, Any
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
 def handshake(sock, cp, name=""):
-    """Ejecuta el protocolo de autenticación con CENTRAL o ENGINE"""
     try:
         sock.settimeout(5)
         sock.send(b"<ENC>")
@@ -37,7 +36,6 @@ def handshake(sock, cp, name=""):
         return False
 
 def connectWithRetry(ip, port, name, retries=5, wait=3):
-    """Intenta conectar con reintentos y pausas"""
     for attempt in range(1, retries + 1):
         try:
             sock = socket.socket()
@@ -50,42 +48,59 @@ def connectWithRetry(ip, port, name, retries=5, wait=3):
             time.sleep(wait)
     return None
 
-def main():
-    if len(sys.argv) != 6:
-        print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID>")
-        return
+# === NUEVO: función hilo para mantener conexión con CENTRAL ===
+def monitorCentral(ipC, pC, cp, ipE, pE):
+    sc = None
+    while True:
+        try:
+            sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=3)
+            if sc and handshake(sc, cp, "CENTRAL"):
+                print("[MONITOR] ✅ CP validado por CENTRAL")
+                break
+            else:
+                print("[MONITOR] Fallo en handshake con CENTRAL, reintentando...")
+        except Exception as e:
+            print(f"[MONITOR] Error conectando con CENTRAL: {e}")
+        time.sleep(5)
 
-    ipC = sys.argv[1]
-    pC = int(sys.argv[2])
-    ipE =  sys.argv[3]
-    pE = int(sys.argv[4])
-    cp = sys.argv[5]
-
-    # === Conexión indefinida con CENTRAL ===
-    ko_sent = False  # opcional: si queremos marcar que ya enviamos KO por fallo de handshake
-    failedAttempts = 0
+    # Heartbeat a CENTRAL en bucle
+    sc.settimeout(3)
+    central_alive = True
+    heartbeat_interval = 5
 
     while True:
         try:
-            sc = socket.socket()
-            sc.settimeout(5)
-            sc.connect((ipC, pC))
-            print(f"[MONITOR] Conectado a CENTRAL ({ipC}:{pC})")
+            sc.send(b"PING")
+            resp = sc.recv(1024)
+            if resp != b"PONG":
+                raise socket.timeout
+            print("[MONITOR] Conexión con Engine: OK")
+        except (socket.timeout, ConnectionError, OSError):
+            if central_alive:
+                print("[MONITOR] ⚠️ CENTRAL no responde, intentando reconectar...")
+                se = socket.socket()
+                se.settimeout(1)
+                se.connect((ipE, pE))
+                se.send(b"CENTRAL_DOWN")
+                print("[MONITOR] 🚨 Aviso enviado a ENGINE: CENTRAL caída")
+                central_alive = False
+            while True:
+                sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=5)
+                if sc and handshake(sc, cp, "CENTRAL"):
+                    print("[MONITOR] ✅ Reconexión exitosa con CENTRAL")
+                    se = socket.socket()
+                    se.settimeout(1)
+                    se.connect((ipE, pE))
+                    se.send(b"CENTRAL_UP_AGAIN")
+                    central_alive = True
+                    break
+                else:
+                    print("[MONITOR] Fallo reconectando con CENTRAL, reintentando...")
+                    time.sleep(5)
+        time.sleep(heartbeat_interval)
 
-            if handshake(sc, cp, "CENTRAL"):
-                print("[MONITOR] ✅ CP validado por CENTRAL")
-                break  # handshake exitoso, seguimos al Engine
-            else:
-                failedAttempts += 1
-                print(f"[MONITOR] Fallo de handshake con CENTRAL ({failedAttempts})")
-        except Exception as e:
-            failedAttempts += 1
-            print(f"[MONITOR] Error conectando con CENTRAL: {e}")
-
-        # Retardo entre reintentos
-        time.sleep(5)
-
-    # === Conexión y reintentos con ENGINE indefinidamente ===
+# === NUEVO: función hilo para mantener conexión con ENGINE ===
+def monitorEngine(ipE, pE, cp, sc):
     failedAttempts = 0
     ko_sent = False
 
@@ -94,33 +109,36 @@ def main():
         if se and handshake(se, cp, "ENGINE"):
             print("[MONITOR] ✅ CP registrado en ENGINE")
 
-            # Si antes habíamos enviado KO, ahora notificamos recuperación
             if ko_sent:
                 try:
-                    sc.send(b"OK")  # mensaje de recuperación a Central
+                    sc.send(b"OK")
                     print("[MONITOR] ✅ OK enviado a CENTRAL: CP recuperado")
                     ko_sent = False
                 except Exception as e:
                     print(f"[MONITOR] Error enviando OK a CENTRAL: {e}")
 
             failedAttempts = 0
-            break  # listo para iniciar heartbeat
+            break
         else:
             failedAttempts += 1
             print(f"[MONITOR] Fallo handshake/conexión con ENGINE ({failedAttempts}/5)")
-            if failedAttempts >= 5 and not ko_sent:
+            if failedAttempts == 1 and not ko_sent:
+                sc.send(b"KO")
+                print("[MONITOR] ⚠️ KO enviado a CENTRAL")
+                ko_sent = True
+            elif failedAttempts >= 5 and not ko_sent:
                 try:
                     sc.send(b"KO")
-                    print("[MONITOR] ⚠️ KO enviado a CENTRAL tras 5 fallos consecutivos con ENGINE")
+                    print("[MONITOR] ⚠️ KO enviado a CENTRAL")
                     ko_sent = True
                 except Exception as e:
                     print(f"[MONITOR] Error enviando KO a CENTRAL: {e}")
             time.sleep(2)
 
-    # === 3️⃣ Heartbeat loop ===
+    # Heartbeat loop con ENGINE
     se.settimeout(3)
     heartbeat_interval = 2
-    engine_alive = True  # Estado inicial: ENGINE está respondiendo
+    engine_alive = True
 
     while True:
         try:
@@ -128,68 +146,63 @@ def main():
             resp = se.recv(1024)
             if resp != b"PONG":
                 raise socket.timeout
-
-            # Si antes estaba caído y ahora responde, avisamos a CENTRAL
-            if not engine_alive:
-                try:
-                    sc.send(b"OK")
-                    print("[MONITOR] OK enviado a CENTRAL (ENGINE volvió a responder)")
-                except Exception as e:
-                    print(f"[MONITOR] Error enviando OK a CENTRAL: {e}")
-                engine_alive = True  # Marcamos que volvió
-
-            print("[MONITOR] Heartbeat OK")
-
-        except (socket.timeout, ConnectionError):
-            # Si antes estaba bien y ahora falla, mandamos KO
+        except (socket.timeout, ConnectionError, OSError):
             if engine_alive:
-                print("[MONITOR] :( Timeout esperando PONG de ENGINE → avisar CENTRAL")
+                print("[MONITOR] ⚠️ ENGINE no responde → enviar KO a CENTRAL")
                 try:
                     sc.send(b"KO")
                     print("[MONITOR] KO enviado a CENTRAL por caída del ENGINE")
                 except Exception as e:
                     print(f"[MONITOR] Error enviando KO a CENTRAL: {e}")
-                engine_alive = False  # Marcamos que está caído
+                engine_alive = False
 
-            # Si ya estaba caído, no repetimos el KO
-            else:
-                # === Conexión y reintentos con ENGINE indefinidamente ===
-                failed_attempts = 0
-                ko_sent = False
-            
-                while True:
-                    se = connectWithRetry(ipE, pE, "ENGINE", retries=1, wait=2)
-                    if se and handshake(se, cp, "ENGINE"):
-                        print("[MONITOR] ✅ CP registrado en ENGINE")
-            
-                        # Si antes habíamos enviado KO, ahora notificamos recuperación
-                        if ko_sent:
-                            try:
-                                sc.send(b"OK")  # mensaje de recuperación a Central
-                                print("[MONITOR] ✅ OK enviado a CENTRAL: CP recuperado")
-                                ko_sent = False
-                            except Exception as e:
-                                print(f"[MONITOR] Error enviando OK a CENTRAL: {e}")
-            
-                        failed_attempts = 0
-                        break  # listo para iniciar heartbeat
-                    else:
-                        failed_attempts += 1
-                        print(f"[MONITOR] Fallo handshake/conexión con ENGINE ({failed_attempts}/5)")
-                        if failed_attempts >= 5 and not ko_sent:
-                            try:
-                                sc.send(b"KO")
-                                print("[MONITOR] ⚠️ KO enviado a CENTRAL tras 5 fallos consecutivos con ENGINE")
-                                ko_sent = True
-                            except Exception as e:
-                                print(f"[MONITOR] Error enviando KO a CENTRAL: {e}")
-                        time.sleep(2)
-
+            # Intentar reconectar ENGINE
+            while True:
+                se = connectWithRetry(ipE, pE, "ENGINE", retries=1, wait=2)
+                if se and handshake(se, cp, "ENGINE"):
+                    print("[MONITOR] ✅ Reconexión exitosa con ENGINE")
+                    try:
+                        sc.send(b"OK")
+                        print("[MONITOR] ✅ OK enviado a CENTRAL: CP recuperado")
+                    except Exception as e:
+                        print(f"[MONITOR] Error enviando OK a CENTRAL: {e}")
+                    engine_alive = True
+                    break
+                else:
+                    print("[MONITOR] Fallo reconectando con ENGINE, reintentando...")
+                    time.sleep(3)
         time.sleep(heartbeat_interval)
 
-    sc.close()
-    se.close()
-    print("[MONITOR] Finalizado.")
+
+def main():
+    if len(sys.argv) != 6:
+        print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID>")
+        return
+
+    ipC = sys.argv[1]
+    pC = int(sys.argv[2])
+    ipE = sys.argv[3]
+    pE = int(sys.argv[4])
+    cp = sys.argv[5]
+
+    # Creamos un socket inicial con CENTRAL solo para pasar a ENGINE monitor
+    sc = connectWithRetry(ipC, pC, "CENTRAL", retries=3, wait=3)
+    if not sc or not handshake(sc, cp, "CENTRAL"):
+        print("[MONITOR] ❌ No se pudo establecer conexión inicial con CENTRAL")
+        return
+
+    print("[MONITOR] ✅ CP validado inicialmente con CENTRAL")
+
+    # Lanzamos hilo para mantener CENTRAL
+    threading.Thread(target=monitorCentral, args=(ipC, pC, cp, ipE, pE), daemon=True).start()
+
+    # Lanzamos hilo para mantener ENGINE (requiere socket CENTRAL activo)
+    threading.Thread(target=monitorEngine, args=(ipE, pE, cp, sc), daemon=True).start()
+
+    # Bucle principal (solo mantiene el proceso vivo)
+    while True:
+        time.sleep(1)
+
 
 if __name__ == "__main__":
     main()
