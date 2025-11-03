@@ -36,7 +36,7 @@ def handshake(sock, cp, name=""):
         print(f"[MONITOR] Error en handshake con {name}: {e}")
         return False
 
-def connect_with_retry(ip, port, name, retries=5, wait=3):
+def connectWithRetry(ip, port, name, retries=5, wait=3):
     """Intenta conectar con reintentos y pausas"""
     for attempt in range(1, retries + 1):
         try:
@@ -55,13 +55,15 @@ def main():
         print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID>")
         return
 
-    ipC, pC = sys.argv[1], int(sys.argv[2])
-    ipE, pE = sys.argv[3], int(sys.argv[4])
+    ipC = sys.argv[1]
+    pC = int(sys.argv[2])
+    ipE =  sys.argv[3]
+    pE = int(sys.argv[4])
     cp = sys.argv[5]
 
     # === Conexión indefinida con CENTRAL ===
     ko_sent = False  # opcional: si queremos marcar que ya enviamos KO por fallo de handshake
-    failed_attempts = 0
+    failedAttempts = 0
 
     while True:
         try:
@@ -74,21 +76,21 @@ def main():
                 print("[MONITOR] ✅ CP validado por CENTRAL")
                 break  # handshake exitoso, seguimos al Engine
             else:
-                failed_attempts += 1
-                print(f"[MONITOR] Fallo de handshake con CENTRAL ({failed_attempts})")
+                failedAttempts += 1
+                print(f"[MONITOR] Fallo de handshake con CENTRAL ({failedAttempts})")
         except Exception as e:
-            failed_attempts += 1
+            failedAttempts += 1
             print(f"[MONITOR] Error conectando con CENTRAL: {e}")
 
         # Retardo entre reintentos
         time.sleep(5)
 
     # === Conexión y reintentos con ENGINE indefinidamente ===
-    failed_attempts = 0
+    failedAttempts = 0
     ko_sent = False
 
     while True:
-        se = connect_with_retry(ipE, pE, "ENGINE", retries=1, wait=2)
+        se = connectWithRetry(ipE, pE, "ENGINE", retries=1, wait=2)
         if se and handshake(se, cp, "ENGINE"):
             print("[MONITOR] ✅ CP registrado en ENGINE")
 
@@ -101,12 +103,12 @@ def main():
                 except Exception as e:
                     print(f"[MONITOR] Error enviando OK a CENTRAL: {e}")
 
-            failed_attempts = 0
+            failedAttempts = 0
             break  # listo para iniciar heartbeat
         else:
-            failed_attempts += 1
-            print(f"[MONITOR] Fallo handshake/conexión con ENGINE ({failed_attempts}/5)")
-            if failed_attempts >= 5 and not ko_sent:
+            failedAttempts += 1
+            print(f"[MONITOR] Fallo handshake/conexión con ENGINE ({failedAttempts}/5)")
+            if failedAttempts >= 5 and not ko_sent:
                 try:
                     sc.send(b"KO")
                     print("[MONITOR] ⚠️ KO enviado a CENTRAL tras 5 fallos consecutivos con ENGINE")
@@ -156,7 +158,7 @@ def main():
                 ko_sent = False
             
                 while True:
-                    se = connect_with_retry(ipE, pE, "ENGINE", retries=1, wait=2)
+                    se = connectWithRetry(ipE, pE, "ENGINE", retries=1, wait=2)
                     if se and handshake(se, cp, "ENGINE"):
                         print("[MONITOR] ✅ CP registrado en ENGINE")
             
