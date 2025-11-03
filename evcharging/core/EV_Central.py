@@ -26,6 +26,14 @@ def cpExists(cp_id):
     cp = db.getCp(cp_id) 
     return cp is not None
 
+def heartbeat_loop(kafkaInfo):
+    prod = kafka_utils.buildProducer(kafkaInfo)
+    while True:
+        kafka_utils.send(prod, topics.EV_CENTRAL_HEARTBEAT, {
+            "timestamp": int(time.time() * 1000)
+        })
+        time.sleep(5)
+
 def handleClient(conn, addr):
     print(f"[CENTRAL] Nueva conexión desde {addr}")
 
@@ -165,32 +173,64 @@ def handleDriver(topic, data, prod):
             "cp_id": cp_id,
             "status": "APPROVED"
         })
-        db.setCpState(cp_id, "SUPPLYING") # aquí almjr habría que crear un nuevo topic para mandar los datos en directo
+        db.setCpState(cp_id, "SUPPLYING")
         session_id = f"{driver_id}_{cp_id}"
         active_sessions[session_id] = {
             "driver_id": driver_id,
             "cp_id": cp_id,
-            "start_time": datetime.now(timezone.utc)
+            "start_time": datetime.now(timezone.utc),
+            "energy_kwh": 0.0
             }
+    elif topic == topics.EV_SUPPLY_HEARTBEAT:
+        driver_id = data.get("driver_id")
+        cp_id = data.get("cp_id")
+        power_kw = data.get("power_kw", 0.0)
+        energy_kwh = data.get("energy_kwh", 0.0)
+        timestamp = data.get("timestamp", 0)
+
+        session_id = f"{driver_id}_{cp_id}"
+        if session_id in active_sessions:
+            last_energy = active_sessions[session_id].get("energy_kwh", 0.0)
+            delta = max(0, energy_kwh - last_energy)
+            active_sessions[session_id]["energy_kwh"] = last_energy + delta
+
+            print(f"[CENTRAL] Driver {driver_id} consumiendo en CP {cp_id}: "
+                  f"Power: {power_kw} kW, Energy: {energy_kwh} kWh")
+            kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_HEARTBEAT, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "power_kw": power_kw,
+                "energy_kwh": energy_kwh,
+                "timestamp": timestamp
+            })
+        else:
+            print(f"[CENTRAL] Heartbeat recibido de Driver {driver_id} en CP {cp_id} sin sesión activa.")
+
     elif topic == topics.EV_SUPPLY_END:
         driver_id = data.get("driver_id")
         cp_id = data.get("cp_id")
         print(f"[CENTRAL] Driver {driver_id} ha terminado la recarga en CP {cp_id}")
         db.setCpState(cp_id, "AVAILABLE")
+        session_id = f"{driver_id}_{cp_id}"
         start_time = active_sessions.get(f"{driver_id}_{cp_id}", {}).get("start_time")
 
-        if start_time:
+        session = active_sessions.get(session_id)
+        if session:
+            start_time = session.get("start_time")
+            energy_total = session.get("energy_kwh", 0.0)
             duration = datetime.now(timezone.utc) - start_time
             hours = duration.total_seconds() / 3600
         else:
-            hours = 0
+            hours = 0.0
+            energy_total = 0.0
 
         cp_price = db.getCp(cp_id).get("price_eur_kwh", 0.3)
-        total_price = hours * cp_price
+        total_price = energy_total * cp_price
         kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
             "driver_id": driver_id,
             "cp_id": cp_id,
-            "price": total_price
+            "price": round(total_price, 2),
+            "energy_kwh": round(energy_total, 3)
         })
         active_sessions.pop(f"{driver_id}_{cp_id}", None)
 
@@ -208,7 +248,8 @@ def kafkaListener(kafkaInfo):
         [
         topics.EV_SUPPLY_CONNECTED,
         topics.EV_SUPPLY_END,
-        topics.EV_SUPPLY_REQUEST
+        topics.EV_SUPPLY_REQUEST,
+        topics.EV_SUPPLY_HEARTBEAT
     ]
     )
     print("[CENTRAL] Esperando mensajes Kafka...")
@@ -235,6 +276,7 @@ def main():
     # un thread para kafka y otro para el socket para que ambos puedan tener los bucles escuchando
     threading.Thread(target=tcpServer, args=(s,), daemon=True).start()
     threading.Thread(target=kafkaListener, args=(kafkaInfo,), daemon=True).start()
+    threading.Thread(target=heartbeat_loop, args=(kafkaInfo,), daemon=True).start()
 
     while True:
         time.sleep(1)

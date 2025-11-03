@@ -8,3 +8,7 @@ EV_SUPPLY_TICKET = "evSupplyTicket"         # Central -> Driver (ticket final co
 EV_SUPPLY_CONNECTED = "evSupplyConnected" # Engine -> Central (Comienza el supply engine) 
 EV_SUPPLY_AUTH = "evSupplyAuth" # Engine -> Central (iniciar o rechazar)
 EV_SUPPLY_END = "evSupplyEnd"   # Engine -> Central (fin del supply, trigger para que central mande el ticket)
+EV_SUPPLY_HEARTBEAT = "evSupplyHeartbeat" # 
+EV_CENTRAL_HEARTBEAT = "evCentralHeartbeat" # Central <-> Driver (latido para monitorizar estado)
+EV_DRIVER_SUPPLY_HEARTBEAT = "evDriverSupplyHeartbeat" # Driver <-> Engine (latido para monitorizar estado)
+EV_DRIVER_SUPPLY_ERROR = "evDriverSupplyError" # Driver -> Central (error durante el suministro)

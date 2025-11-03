@@ -11,6 +11,10 @@ TOPICS=(
   "evSupplyTicket"
   "evSupplyStarted"
   "evSupplyAuthDri"
+  "evSupplyHeartbeat"
+  "evCentralHeartbeat"
+  "evDriverSupplyHeartbeat"
+  "evDriverSupplyError"
 )
 
 for topic in "${TOPICS[@]}"; do

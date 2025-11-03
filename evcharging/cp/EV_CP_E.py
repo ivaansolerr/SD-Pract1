@@ -1,4 +1,4 @@
-import threading, socket, time, json, sys
+import threading, socket, time, json, sys, random
 from datetime import datetime
 from typing import Dict, Any
 from .. import topics, kafka_utils, utils, socketCommunication
@@ -7,6 +7,7 @@ from confluent_kafka import Producer, Consumer
 registered_cp: str | None = None
 registered_cp_event = threading.Event()
 prod = None
+stop_event = threading.Event()
 
 def handle(conn):
     global registered_cp
@@ -74,6 +75,20 @@ def handle(conn):
     print("[ENGINE] Monitor desconectado")
     conn.close()
 
+def send_supply_heartbeat(prod, driver_id: str):
+    energy = 0.0
+    while not stop_event.is_set():
+        consumption = round(random.uniform(0.5, 2.5), 2)  # kW instantáneo simulado
+        energy += consumption * (3 / 3600)  # kWh cada 3 segundos
+        kafka_utils.send(prod, topics.EV_SUPPLY_HEARTBEAT, {
+            "timestamp": int(time.time() * 1000),
+            "cp_id": registered_cp,
+            "driver_id": driver_id,
+            "power_kw": consumption,
+            "energy_kwh": round(energy, 3)
+        })
+        time.sleep(3)
+
 def handleRequest(topic, data):
     if topic == topics.EV_SUPPLY_AUTH:
         if (data.get("authorized") == True) and (data.get("cp_id") == registered_cp):
@@ -88,9 +103,14 @@ def handleRequest(topic, data):
                     "cp_id": registered_cp,
                     "status": "CONNECTED"
                 })
+                stop_event.clear()
+                heartbeat_thread = threading.Thread(target=send_supply_heartbeat, args=(prod, data.get("driver_id")), daemon=True)
+                heartbeat_thread.start()
                 print("Ingrese 'FIN' para finalizar el suministro cuando desee.")
                 input_cmd = input().strip()
                 if input_cmd.upper() == "FIN":
+                    stop_event.set()
+                    heartbeat_thread.join(1)
                     kafka_utils.send(prod, topics.EV_SUPPLY_END, {
                         "driver_id": data.get("driver_id"),
                         "cp_id": registered_cp
