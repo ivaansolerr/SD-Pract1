@@ -1,40 +1,40 @@
 from pymongo import MongoClient, ASCENDING
 from typing import Optional, Dict, Any
 
-_client = MongoClient("mongodb://127.0.0.1:27017/evcharging_db")  # <--- CAMBIA si tu Mongo requiere auth/SSL
-_db = _client.get_database()
+client = MongoClient("mongodb://127.0.0.1:27017/evcharging_db")
+db = client.get_database()
 
-charging_points = _db.get_collection("charging_points")
-drivers = _db.get_collection("drivers")
-sessions = _db.get_collection("sessions")
+charging_points = db.get_collection("charging_points")
+drivers = db.get_collection("drivers")
+sessions = db.get_collection("sessions")
 
-# Índices básicos
-charging_points.create_index([("id", ASCENDING)], unique=True)
-drivers.create_index([("id", ASCENDING)], unique=True)
-sessions.create_index([("driver_id", ASCENDING), ("cp_id", ASCENDING), ("start_time", ASCENDING)])
+# # Índices básicos # No deberían de hacer falta
+# charging_points.create_index([("id", ASCENDING)], unique=True)
+# drivers.create_index([("id", ASCENDING)], unique=True)
+# sessions.create_index([("driver_id", ASCENDING), ("cp_id", ASCENDING), ("start_time", ASCENDING)])
 
-def upsert_cp(cp):
+def upsertCp(cp):
     charging_points.update_one({"id": cp["id"]}, {"$set": cp}, upsert=True)
 
-def list_charging_points():
+def listChargingPoints():
     return list(charging_points.find({}, {"_id": 0}))
 
-def get_cp(cp_id):
-    return charging_points.find_one({"id": cp_id})
+def getCp(cpId):
+    return charging_points.find_one({"id": cpId})
 
-def set_cp_state(cp_id: str, state: str):
-    charging_points.update_one({"id": cp_id}, {"$set": {"state": state}})
+def setCpState(cpId, state):
+    charging_points.update_one({"id": cpId}, {"$set": {"state": state}})
 
-def upsert_driver(driver: Dict[str, Any]):
+def upsertDriver(driver):
     drivers.update_one({"id": driver["id"]}, {"$set": driver}, upsert=True)
 
-def create_session(doc: Dict[str, Any]) -> str:
+def createSession(doc):
     res = sessions.insert_one(doc)
     return str(res.inserted_id)
 
-def append_telemetry(session_id: str, telemetry: Dict[str, Any]):
-    sessions.update_one({"_id": sessions.codec_options.document_class()._factory(session_id)}, {"$push": {"telemetry": telemetry}})
+def appendTelemetry(sessionId, telemetry):
+    sessions.update_one({"_id": sessions.codec_options.document_class()._factory(sessionId)}, {"$push": {"telemetry": telemetry}})
 
-def update_session(session_id: str, updates: Dict[str, Any]):
+def updateSession(sessionId, updates):
     from bson import ObjectId
-    sessions.update_one({"_id": ObjectId(session_id)}, {"$set": updates})
+    sessions.update_one({"_id": ObjectId(sessionId)}, {"$set": updates})

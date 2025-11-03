@@ -2,16 +2,13 @@ from pymongo import MongoClient, ASCENDING
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
 
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://127.0.0.1:27017/evcharging_db")
-
-client = MongoClient(MONGO_URI)
+client = MongoClient("mongodb://127.0.0.1:27017/evcharging_db")
+db = client.get_database("evcharging_db")
 
 client.drop_database("evcharging_db")
 print("Borramos la base de datos para evitar conflictos...")
-
-db = client.get_database("evcharging_db")
 
 db.create_collection("charging_points")
 db.create_collection("drivers")
