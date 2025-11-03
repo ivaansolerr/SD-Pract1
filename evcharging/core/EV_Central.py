@@ -34,7 +34,7 @@ def heartbeat_loop(kafkaInfo):
         })
         time.sleep(5)
 
-def handleClient(conn, addr):
+def handleClient(conn, addr, kafkaInfo):
     print(f"[CENTRAL] Nueva conexión desde {addr}")
 
     try:
@@ -91,6 +91,33 @@ def handleClient(conn, addr):
                         "state": "UNAVAILABLE",
                     })
                     conn.send(socketCommunication.ACK)
+                    session_found = None
+                    session_key = None
+                    for sid, session_data in active_sessions.items():
+                        if session_data.get("cp_id") == cp:
+                            session_found = session_data
+                            session_key = sid
+                            break
+                    if session_found:
+                        driver_id = session_found.get("driver_id")
+                        energy_total = session_found.get("energy_kwh", 0.0)
+                        price = db.getCp(cp).get("price_eur_kwh", 0.3)
+                        total_price = energy_total * price
+                        print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
+                        prod = kafka_utils.buildProducer(kafkaInfo)
+                        kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                            "driver_id": driver_id,
+                            "cp_id": cp,
+                        })
+                        kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
+                            "driver_id": driver_id,
+                            "cp_id": cp,
+                            "price": round(total_price, 2),
+                            "energy_kwh": round(energy_total, 3)
+                        })
+                        active_sessions.pop(session_key, None)
+
+                    
 
                 elif msg == b"OK":
                     print(f"[CENTRAL] :) CP {cp} recuperado → AVAILABLE")
@@ -234,10 +261,10 @@ def handleDriver(topic, data, prod):
         })
         active_sessions.pop(f"{driver_id}_{cp_id}", None)
 
-def tcpServer(s):
+def tcpServer(s, kafkaInfo):
     while True:
         conn, addr = s.accept()
-        t = threading.Thread(target=handleClient, args=(conn, addr), daemon=True)
+        t = threading.Thread(target=handleClient, args=(conn, addr, kafkaInfo), daemon=True)
         t.start()
 
 def kafkaListener(kafkaInfo):
@@ -274,7 +301,7 @@ def main():
     printCpPanel()
 
     # un thread para kafka y otro para el socket para que ambos puedan tener los bucles escuchando
-    threading.Thread(target=tcpServer, args=(s,), daemon=True).start()
+    threading.Thread(target=tcpServer, args=(s, kafkaInfo), daemon=True).start()
     threading.Thread(target=kafkaListener, args=(kafkaInfo,), daemon=True).start()
     threading.Thread(target=heartbeat_loop, args=(kafkaInfo,), daemon=True).start()
 

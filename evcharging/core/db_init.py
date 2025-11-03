@@ -21,7 +21,7 @@ db.charging_points.insert_one(
     {
     "id": "cp-001",
     "location": "UA-Lab",
-    "price_eur_kwh": 0.30,
+    "price_eur_kwh": 1.50,
     "state": "DISCONNECTED",
     "updated_at": None 
     }

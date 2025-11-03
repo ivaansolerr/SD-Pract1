@@ -9,6 +9,8 @@ last_heartbeat = 0
 
 def handle_kafka_message(topic, data, prod, clientId):
     if topic == topics.EV_SUPPLY_AUTH_DRI:
+        if data.get("driver_id") != clientId:
+            return
         cp_id = data.get("cp_id")
         authorized = data.get("authorized")
         reason = data.get("reason", "")
@@ -19,6 +21,8 @@ def handle_kafka_message(topic, data, prod, clientId):
             utils.err(f"[DRIVER {clientId}] Recarga DENEGADA en {cp_id}: {reason}")
 
     elif topic == topics.EV_SUPPLY_STARTED:
+        if data.get("driver_id") != clientId:
+            return
         status = data.get("status")
         cp_id = data.get("cp_id")
 
@@ -28,6 +32,8 @@ def handle_kafka_message(topic, data, prod, clientId):
             utils.err(f"[DRIVER {clientId}] Carga RECHAZADA por ENGINE")
 
     elif topic == topics.EV_SUPPLY_TICKET:
+        if data.get("driver_id") != clientId:
+            return
         cp_id = data.get("cp_id")
         price = data.get("price", 0)
         utils.info(f"[DRIVER {clientId}] Ticket recibido de {cp_id}: {price:.6f} EUR")
@@ -42,6 +48,8 @@ def handle_kafka_message(topic, data, prod, clientId):
         central_alive = True
 
     elif topic == topics.EV_DRIVER_SUPPLY_HEARTBEAT:
+        if data.get("driver_id") != clientId:
+            return
         cp_id = data.get("cp_id")
         power_kw = data.get("power_kw", 0.0)
         energy_kwh = data.get("energy_kwh", 0.0)
@@ -49,6 +57,18 @@ def handle_kafka_message(topic, data, prod, clientId):
         hora = datetime.fromtimestamp(timestamp / 1000).strftime("%H:%M:%S")
         utils.info(f"[DRIVER {clientId} Consumiendo en {cp_id}: "
                    f"Power: {power_kw} kW, Energy: {energy_kwh} kWh at {hora}")
+
+    elif topic == topics.EV_DRIVER_SUPPLY_ERROR:
+        if data.get("driver_id") != clientId:
+            return
+        cp_id = data.get("cp_id")
+        utils.err(f"[DRIVER {clientId}] se ha caído el charging point: {cp_id}")
+
+    elif topic == topics.EV_DRIVER_SUPPLY_ERROR:
+        if data.get("driver_id") != clientId:
+            return
+        cp_id = data.get("cp_id")
+        utils.err(f"[DRIVER {clientId}] se ha producido un error durante el suministro en {cp_id}")
 
     else:
         utils.info(f"[DRIVER {clientId}] Mensaje Kafka desconocido en {topic}: {data}")
@@ -71,7 +91,8 @@ def kafka_listener(kafka, clientId):
             topics.EV_SUPPLY_STARTED,
             topics.EV_SUPPLY_AUTH_DRI,
             topics.EV_CENTRAL_HEARTBEAT,
-            topics.EV_DRIVER_SUPPLY_HEARTBEAT
+            topics.EV_DRIVER_SUPPLY_HEARTBEAT,
+            topics.EV_DRIVER_SUPPLY_ERROR
         ])
     except Exception as e:
         utils.err(f"[DRIVER {clientId}] Error al conectar con Kafka: {e}")
