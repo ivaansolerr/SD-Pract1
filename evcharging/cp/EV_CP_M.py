@@ -48,7 +48,6 @@ def connectWithRetry(ip, port, name, retries=5, wait=3):
             time.sleep(wait)
     return None
 
-# === NUEVO: función hilo para mantener conexión con CENTRAL ===
 def monitorCentral(ipC, pC, cp, ipE, pE, shared_state):
     sc = None
     while True:
@@ -71,36 +70,53 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state):
 
     while True:
         try:
-            sc.send(b"PING")
+            sc.sendall(b"PING")
             resp = sc.recv(1024)
+    
             if resp != b"PONG":
-                raise socket.timeout
-            print("[MONITOR] Conexión con Engine: OK")
+                try:
+                    resp2 = sc.recv(1024)
+                    resp = resp2
+                except:
+                    pass
+                
+            if not resp:
+                raise ConnectionError("socket closed")
+            if resp != b"PONG":
+                raise ConnectionError(f"unexpected reply: {resp!r}")
+    
         except (socket.timeout, ConnectionError, OSError):
             if central_alive:
                 print("[MONITOR] ⚠️ CENTRAL no responde, intentando reconectar...")
-                se = socket.socket()
-                se.settimeout(1)
-                se.connect((ipE, pE))
-                se.send(b"CENTRAL_DOWN")
-                print("[MONITOR] 🚨 Aviso enviado a ENGINE: CENTRAL caída")
+                try:
+                    se = socket.socket()
+                    se.settimeout(1)
+                    se.connect((ipE, pE))
+                    se.send(b"CENTRAL_DOWN")
+                    print("[MONITOR] 🚨 Aviso enviado a ENGINE: CENTRAL caída")
+                except Exception as e:
+                    print("[MONITOR] ENGINE caído (no se pudo avisar):", e)
                 central_alive = False
+    
             while True:
                 sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=5)
                 if sc and handshake(sc, cp, "CENTRAL"):
                     print("[MONITOR] ✅ Reconexión exitosa con CENTRAL")
-                    se = socket.socket()
-                    se.settimeout(1)
-                    se.connect((ipE, pE))
-                    se.send(b"CENTRAL_UP_AGAIN")
+                    try:
+                        se = socket.socket()
+                        se.settimeout(1)
+                        se.connect((ipE, pE))
+                        se.send(b"CENTRAL_UP_AGAIN")
+                    except Exception as e:
+                        print("[MONITOR] ENGINE sigue caído (no se pudo avisar):", e)
                     central_alive = True
                     break
                 else:
                     print("[MONITOR] Fallo reconectando con CENTRAL, reintentando...")
                     time.sleep(5)
+    
         time.sleep(heartbeat_interval)
 
-# === NUEVO: función hilo para mantener conexión con ENGINE ===
 def monitorEngine(ipE, pE, cp, shared_state):
     while shared_state["sc"] is None:
         time.sleep(0.2)  # esperar a que CENTRAL conecte primero
@@ -152,6 +168,7 @@ def monitorEngine(ipE, pE, cp, shared_state):
             resp = se.recv(1024)
             if resp != b"PONG":
                 raise socket.timeout
+            print("[MONITOR] Conexión con ENGINE: OK")
         except (socket.timeout, ConnectionError, OSError):
             if engine_alive:
                 print("[MONITOR] ⚠️ ENGINE no responde → enviar KO a CENTRAL")

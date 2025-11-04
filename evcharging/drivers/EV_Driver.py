@@ -163,9 +163,8 @@ def main():
                 utils.err(f"[DRIVER {clientId}] No se recibió ticket para {cp_id}, intento {attempt + 1}")
 
         if not ticket_received:
-            utils.err(f"[DRIVER {clientId}] No se pudo recibir ticket para {cp_id} tras 5 intentos, pasando al siguiente CP.")
+            utils.err(f"[DRIVER {clientId}] No se pudo recibir ticket para {cp_id} tras 2 intentos, pasando al siguiente CP.")
             continue
-
 
         time.sleep(5)  # Espera antes de proceder al siguiente paso
 

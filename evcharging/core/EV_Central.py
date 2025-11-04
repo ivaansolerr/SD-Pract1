@@ -118,8 +118,6 @@ def handleClient(conn, addr, kafkaInfo):
                         active_sessions.pop(session_key, None)
                         db.deleteSession(driver_id, cp_id)
 
-                    
-
                 elif msg == b"OK":
                     print(f"[CENTRAL] :) CP {cp} recuperado → AVAILABLE")
                     db.upsertCp({
@@ -298,7 +296,7 @@ def kafkaListener(kafkaInfo):
         topics.EV_SUPPLY_HEARTBEAT
     ]
     )
-    print("[CENTRAL] Esperando mensajes Kafka...")
+    print("[CENTRAL] Esperando mensajes...")
 
     kafka_utils.pollLoop(
         kafkaConsumer,
@@ -320,8 +318,6 @@ def load_active_sessions():
         }
         print(f"[CENTRAL] Cargada sesión desde base de datos: {session_id}")
 
-
-
 def main():
     if len(sys.argv) != 3:
         print("Uso: central.py <puerto> <kafka_ip:port>")
@@ -329,8 +325,6 @@ def main():
 
     port = int(sys.argv[1])
     kafkaInfo = sys.argv[2]
-
-    
 
     s = socket.socket()
     s.bind(("0.0.0.0", port))
