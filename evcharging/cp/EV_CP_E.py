@@ -93,36 +93,36 @@ def handleRequest(topic, data):
     if topic == topics.EV_SUPPLY_AUTH:
         if (data.get("authorized") == True) and (data.get("cp_id") == registered_cp):
             utils.ok(f"[ENGINE] Autorización aprobada para driver {data.get('driver_id')}")
-            print("[OPCIONES] \n"
-                  "1. Iniciar suministro\n2. Rechazar")
-            choice = input("Seleccione una opción: ")
-            if choice == "1":
-                utils.info(f"[ENGINE] Iniciando suministro para driver {data.get('driver_id')}")
-                kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
+            # print("[OPCIONES] \n"
+            #       "1. Iniciar suministro\n2. Rechazar")
+            # choice = input("Seleccione una opción: ")
+            # if choice == "1":
+            utils.info(f"[ENGINE] Iniciando suministro para driver {data.get('driver_id')}")
+            kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
+                "driver_id": data.get("driver_id"),
+                "cp_id": registered_cp,
+                "status": "CONNECTED"
+            })
+            stop_event.clear()
+            heartbeat_thread = threading.Thread(target=send_supply_heartbeat, args=(prod, data.get("driver_id")), daemon=True)
+            heartbeat_thread.start()
+            print("Ingrese 'FIN' para finalizar el suministro cuando desee.")
+            input_cmd = input().strip()
+            if input_cmd.upper() == "FIN":
+                stop_event.set()
+                heartbeat_thread.join(1)
+                kafka_utils.send(prod, topics.EV_SUPPLY_END, {
                     "driver_id": data.get("driver_id"),
-                    "cp_id": registered_cp,
-                    "status": "CONNECTED"
+                    "cp_id": registered_cp
                 })
-                stop_event.clear()
-                heartbeat_thread = threading.Thread(target=send_supply_heartbeat, args=(prod, data.get("driver_id")), daemon=True)
-                heartbeat_thread.start()
-                print("Ingrese 'FIN' para finalizar el suministro cuando desee.")
-                input_cmd = input().strip()
-                if input_cmd.upper() == "FIN":
-                    stop_event.set()
-                    heartbeat_thread.join(1)
-                    kafka_utils.send(prod, topics.EV_SUPPLY_END, {
-                        "driver_id": data.get("driver_id"),
-                        "cp_id": registered_cp
-                    })
-                    utils.info(f"[ENGINE] Suministro finalizado para driver {data.get('driver_id')}")
-            else:
-                utils.err(f"[ENGINE] Rechazando suministro para driver {data.get('driver_id')}")
-                kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
-                    "driver_id": data.get("driver_id"),
-                    "cp_id": registered_cp,
-                    "status": "REJECTED"
-                })
+                utils.info(f"[ENGINE] Suministro finalizado para driver {data.get('driver_id')}")
+            # else:
+            #     utils.err(f"[ENGINE] Rechazando suministro para driver {data.get('driver_id')}")
+            #     kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
+            #         "driver_id": data.get("driver_id"),
+            #         "cp_id": registered_cp,
+            #         "status": "REJECTED"
+            #     })
 
 def socketServer(socketPort):
     s = socket.socket()
