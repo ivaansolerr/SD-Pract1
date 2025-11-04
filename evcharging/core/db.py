@@ -8,11 +8,6 @@ charging_points = db.get_collection("charging_points")
 drivers = db.get_collection("drivers")
 sessions = db.get_collection("sessions")
 
-# # Índices básicos # No deberían de hacer falta
-# charging_points.create_index([("id", ASCENDING)], unique=True)
-# drivers.create_index([("id", ASCENDING)], unique=True)
-# sessions.create_index([("driver_id", ASCENDING), ("cp_id", ASCENDING), ("start_time", ASCENDING)])
-
 def upsertCp(cp):
     charging_points.update_one({"id": cp["id"]}, {"$set": cp}, upsert=True)
 
