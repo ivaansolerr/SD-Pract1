@@ -49,12 +49,13 @@ def connectWithRetry(ip, port, name, retries=5, wait=3):
     return None
 
 # === NUEVO: función hilo para mantener conexión con CENTRAL ===
-def monitorCentral(ipC, pC, cp, ipE, pE):
+def monitorCentral(ipC, pC, cp, ipE, pE, shared_state):
     sc = None
     while True:
         try:
             sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=3)
             if sc and handshake(sc, cp, "CENTRAL"):
+                shared_state["sc"] = sc
                 print("[MONITOR] ✅ CP validado por CENTRAL")
                 break
             else:
@@ -100,7 +101,12 @@ def monitorCentral(ipC, pC, cp, ipE, pE):
         time.sleep(heartbeat_interval)
 
 # === NUEVO: función hilo para mantener conexión con ENGINE ===
-def monitorEngine(ipE, pE, cp, sc):
+def monitorEngine(ipE, pE, cp, shared_state):
+    while shared_state["sc"] is None:
+        time.sleep(0.2)  # esperar a que CENTRAL conecte primero
+
+    sc = shared_state["sc"]
+
     failedAttempts = 0
     ko_sent = False
 
@@ -184,25 +190,15 @@ def main():
     ipE = sys.argv[3]
     pE = int(sys.argv[4])
     cp = sys.argv[5]
-
-    # Creamos un socket inicial con CENTRAL solo para pasar a ENGINE monitor
-    sc = connectWithRetry(ipC, pC, "CENTRAL", retries=3, wait=3)
-    if not sc or not handshake(sc, cp, "CENTRAL"):
-        print("[MONITOR] ❌ No se pudo establecer conexión inicial con CENTRAL")
-        return
-
-    print("[MONITOR] ✅ CP validado inicialmente con CENTRAL")
+    shared_state = {"sc": None}
 
     # Lanzamos hilo para mantener CENTRAL
-    threading.Thread(target=monitorCentral, args=(ipC, pC, cp, ipE, pE), daemon=True).start()
-
+    threading.Thread(target=monitorCentral, args=(ipC, pC, cp, ipE, pE, shared_state), daemon=True).start()
     # Lanzamos hilo para mantener ENGINE (requiere socket CENTRAL activo)
-    threading.Thread(target=monitorEngine, args=(ipE, pE, cp, sc), daemon=True).start()
+    threading.Thread(target=monitorEngine, args=(ipE, pE, cp, shared_state), daemon=True).start()
 
     # Bucle principal (solo mantiene el proceso vivo)
     while True:
         time.sleep(1)
 
-
-if __name__ == "__main__":
-    main()
+main()

@@ -143,6 +143,16 @@ def handleClient(conn, addr, kafkaInfo):
         conn.close()
         print(f"[CENTRAL] Conexión cerrada con {addr}")
 
+        try:
+            if 'cp' in locals() and cp is not None:
+                print(f"[CENTRAL] ⚠️ CP {cp} desconectado → DISCONNECTED")
+                db.upsertCp({
+                    "id": cp,
+                    "state": "DISCONNECTED"
+                })
+        except Exception as e:
+            print(f"[CENTRAL] ❌ Error marcando CP desconectado: {e}")
+
 def handleDriver(topic, data, prod):
 
     if topic == topics.EV_SUPPLY_REQUEST:
