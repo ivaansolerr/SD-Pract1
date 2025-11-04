@@ -14,7 +14,7 @@ db.create_collection("sessions")
 db.charging_points.create_index([("id")], unique=True)
 db.drivers.create_index([("id")], unique=True)
 db.sessions.create_index(
-    [("driver_id"), ("cp_id"), ("start_time")]
+    [("driver_id"), ("cp_id")]
 )
 
 db.charging_points.insert_one(
@@ -31,7 +31,7 @@ db.charging_points.insert_one(
     {
     "id": "cp-002",
     "location": "Luceros",
-    "price_eur_kwh": 0.72,
+    "price_eur_kwh": 2.00,
     "state": "DISCONNECTED",
     "updated_at": None
     }

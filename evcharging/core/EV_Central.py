@@ -116,6 +116,7 @@ def handleClient(conn, addr, kafkaInfo):
                             "energy_kwh": round(energy_total, 3)
                         })
                         active_sessions.pop(session_key, None)
+                        db.deleteSession(driver_id, cp_id)
 
                     
 
@@ -217,7 +218,13 @@ def handleDriver(topic, data, prod):
             "cp_id": cp_id,
             "start_time": datetime.now(timezone.utc),
             "energy_kwh": 0.0
-            }
+        }
+        db.upsertSession({
+            "driver_id": driver_id,
+            "cp_id": cp_id,
+            "start_time": datetime.now(timezone.utc),
+            "energy_kwh": 0.0
+        })
     elif topic == topics.EV_SUPPLY_HEARTBEAT:
         driver_id = data.get("driver_id")
         cp_id = data.get("cp_id")
@@ -230,6 +237,7 @@ def handleDriver(topic, data, prod):
             last_energy = active_sessions[session_id].get("energy_kwh", 0.0)
             delta = max(0, energy_kwh - last_energy)
             active_sessions[session_id]["energy_kwh"] = last_energy + delta
+            db.updateSessionEnergy(driver_id, cp_id, active_sessions[session_id]["energy_kwh"])
 
             print(f"[CENTRAL] Driver {driver_id} consumiendo en CP {cp_id}: "
                   f"Power: {power_kw} kW, Energy: {energy_kwh} kWh")
@@ -270,6 +278,7 @@ def handleDriver(topic, data, prod):
             "energy_kwh": round(energy_total, 3)
         })
         active_sessions.pop(f"{driver_id}_{cp_id}", None)
+        db.deleteSession(driver_id, cp_id)
 
 def tcpServer(s, kafkaInfo):
     while True:
@@ -296,6 +305,23 @@ def kafkaListener(kafkaInfo):
         lambda topic, data: handleDriver(topic, data, kafkaProducer)
     )
 
+def load_active_sessions():
+    # Consultamos todas las sesiones en la base de datos
+    sessions_in_db = db.sessions.find() 
+    for session in sessions_in_db:
+        session_id = f"{session['driver_id']}_{session['cp_id']}"
+        if isinstance(session["start_time"], datetime) and session["start_time"].tzinfo is None:
+            session["start_time"] = session["start_time"].replace(tzinfo=timezone.utc)
+        active_sessions[session_id] = {
+            "driver_id": session["driver_id"],
+            "cp_id": session["cp_id"],
+            "start_time": session["start_time"],
+            "energy_kwh": session["energy_kwh"]
+        }
+        print(f"[CENTRAL] Cargada sesión desde base de datos: {session_id}")
+
+
+
 def main():
     if len(sys.argv) != 3:
         print("Uso: central.py <puerto> <kafka_ip:port>")
@@ -304,10 +330,13 @@ def main():
     port = int(sys.argv[1])
     kafkaInfo = sys.argv[2]
 
+    
+
     s = socket.socket()
     s.bind(("0.0.0.0", port))
     s.listen(5)
     print(f"[CENTRAL] En escucha permanente en {port}")
+    load_active_sessions() #Cargamos sesiones activas desde la base de datos
     printCpPanel()
 
     # un thread para kafka y otro para el socket para que ambos puedan tener los bucles escuchando

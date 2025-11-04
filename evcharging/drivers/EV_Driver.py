@@ -6,8 +6,10 @@ from confluent_kafka import Producer, Consumer
 ticket_event = threading.Event()
 central_alive = True
 last_heartbeat = 0
+supply_active = False
 
 def handle_kafka_message(topic, data, prod, clientId):
+    global supply_active
     if topic == topics.EV_SUPPLY_AUTH_DRI:
         if data.get("driver_id") != clientId:
             return
@@ -28,8 +30,10 @@ def handle_kafka_message(topic, data, prod, clientId):
 
         if status == "APPROVED":
             utils.ok(f"[DRIVER {clientId}] Carga iniciada en {cp_id}")
+            supply_active = True
         else:
             utils.err(f"[DRIVER {clientId}] Carga RECHAZADA por ENGINE")
+            supply_active = False
 
     elif topic == topics.EV_SUPPLY_TICKET:
         if data.get("driver_id") != clientId:
@@ -38,6 +42,7 @@ def handle_kafka_message(topic, data, prod, clientId):
         price = data.get("price", 0)
         utils.info(f"[DRIVER {clientId}] Ticket recibido de {cp_id}: {price:.6f} EUR")
         ticket_event.set()
+        supply_active = False
         return
     
     elif topic == topics.EV_CENTRAL_HEARTBEAT:
@@ -106,7 +111,7 @@ def kafka_listener(kafka, clientId):
     )
 
 def main():
-    global central_alive, last_heartbeat
+    global central_alive, last_heartbeat, supply_active
     if len(sys.argv) != 4:
         print("Uso: python EV_Driver.py <kafkaIp:KafkaPort> <clientId> <fileName>")
         sys.exit(1)
@@ -135,24 +140,37 @@ def main():
         utils.err(f"[DRIVER {clientId}] CENTRAL no está activa tras {timeout}s, saliendo")
         return
 
-    # Peticiones de recarga leídas del archivo
     with open(fileName, "r") as f:
         lines = [ln.strip() for ln in f if ln.strip()]
 
     for cp_id in lines:
         utils.info(f"[DRIVER {clientId}] Solicito recarga en {cp_id}")
-        ticket_event.clear()
-        kafka_utils.send(prod, topics.EV_SUPPLY_REQUEST, {
-            "driver_id": clientId,
-            "cp_id": cp_id
-        })
-        if ticket_event.wait(timeout=60):
-            utils.ok(f"[DRIVER {clientId}] Ticket recibido para {cp_id}")
-        else:
-            utils.err(f"[DRIVER {clientId}] No se recibió ticket en 60s para {cp_id}")
 
-    time.sleep(5)
-    sys.exit(0)
+        ticket_received = False
+        for attempt in range(2):
+            ticket_event.clear()
+            kafka_utils.send(prod, topics.EV_SUPPLY_REQUEST, {
+                "driver_id": clientId,
+                "cp_id": cp_id
+            })
+            time.sleep(5)
+            timeout = 10 if not supply_active else None
+            if ticket_event.wait(timeout=timeout):  # Esperar el tiempo definido
+                utils.ok(f"[DRIVER {clientId}] Ticket recibido para {cp_id}")
+                ticket_received = True
+                break
+            else:
+                utils.err(f"[DRIVER {clientId}] No se recibió ticket para {cp_id}, intento {attempt + 1}")
+
+        if not ticket_received:
+            utils.err(f"[DRIVER {clientId}] No se pudo recibir ticket para {cp_id} tras 5 intentos, pasando al siguiente CP.")
+            continue
+
+
+        time.sleep(5)  # Espera antes de proceder al siguiente paso
+
+    sys.exit(0)  # Termina cuando no haya más CPs
+
 
 
 if __name__ == "__main__":
