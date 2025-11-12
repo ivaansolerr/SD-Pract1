@@ -8,6 +8,7 @@ registered_cp: str | None = None
 registered_cp_event = threading.Event()
 prod = None
 stop_event = threading.Event()
+cp_price = 0.0
 
 def handle(conn):
     global registered_cp
@@ -80,6 +81,8 @@ def send_supply_heartbeat(prod, driver_id: str):
     while not stop_event.is_set():
         consumption = round(random.uniform(0.5, 2.5), 2)  # kW instantáneo simulado
         energy += consumption * (3 / 3600)  # kWh cada 3 segundos
+        precio = round(energy * cp_price, 6)
+        print(f"[ENGINE] consumiendo {consumption} kW, energía total: {round(energy, 3)} kWh, precio: {precio} eur")
         kafka_utils.send(prod, topics.EV_SUPPLY_HEARTBEAT, {
             "timestamp": int(time.time() * 1000),
             "cp_id": registered_cp,
@@ -90,6 +93,7 @@ def send_supply_heartbeat(prod, driver_id: str):
         time.sleep(3)
 
 def handleRequest(topic, data):
+    global cp_price
     if topic == topics.EV_SUPPLY_AUTH:
         if (data.get("authorized") == True) and (data.get("cp_id") == registered_cp):
             utils.ok(f"[ENGINE] Autorización aprobada para driver {data.get('driver_id')}")
@@ -97,6 +101,7 @@ def handleRequest(topic, data):
             #       "1. Iniciar suministro\n2. Rechazar")
             # choice = input("Seleccione una opción: ")
             # if choice == "1":
+            cp_price = data.get("price_eur_kwh", 0.3)
             utils.info(f"[ENGINE] Iniciando suministro para driver {data.get('driver_id')}")
             kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
                 "driver_id": data.get("driver_id"),

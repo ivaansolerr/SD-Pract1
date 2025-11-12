@@ -149,6 +149,32 @@ def handleClient(conn, addr, kafkaInfo):
                     "id": cp,
                     "state": "DISCONNECTED"
                 })
+                session_found = None
+                session_key = None
+                for sid, session_data in active_sessions.items():
+                    if session_data.get("cp_id") == cp:
+                        session_found = session_data
+                        session_key = sid
+                        break
+                if session_found:
+                    driver_id = session_found.get("driver_id")
+                    energy_total = session_found.get("energy_kwh", 0.0)
+                    price = db.getCp(cp).get("price_eur_kwh", 0.3)
+                    total_price = energy_total * price
+                    print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
+                    prod = kafka_utils.buildProducer(kafkaInfo)
+                    kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                        "driver_id": driver_id,
+                        "cp_id": cp,
+                    })
+                    kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
+                        "driver_id": driver_id,
+                        "cp_id": cp,
+                        "price": round(total_price, 2),
+                        "energy_kwh": round(energy_total, 3)
+                    })
+                    active_sessions.pop(session_key, None)
+                    db.deleteSession(driver_id, cp_id)
         except Exception as e:
             print(f"[CENTRAL] ❌ Error marcando CP desconectado: {e}")
 
@@ -190,7 +216,8 @@ def handleDriver(topic, data, prod):
             "driver_id": driver_id,
             "cp_id": cp_id,
             "authorized": authorized,
-            "reason": reason
+            "reason": reason,
+            "price_eur_kwh": cp.get("price_eur_kwh", 0.3) if cp else None
         })
     elif topic == topics.EV_SUPPLY_CONNECTED:
         driver_id = data.get("driver_id")
@@ -237,8 +264,6 @@ def handleDriver(topic, data, prod):
             active_sessions[session_id]["energy_kwh"] = last_energy + delta
             db.updateSessionEnergy(driver_id, cp_id, active_sessions[session_id]["energy_kwh"])
 
-            print(f"[CENTRAL] Driver {driver_id} consumiendo en CP {cp_id}: "
-                  f"Power: {power_kw} kW, Energy: {energy_kwh} kWh")
             kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_HEARTBEAT, {
                 "driver_id": driver_id,
                 "cp_id": cp_id,
