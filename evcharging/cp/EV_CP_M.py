@@ -196,10 +196,52 @@ def monitorEngine(ipE, pE, cp, shared_state):
                     time.sleep(3)
         time.sleep(heartbeat_interval)
 
+def registrationCorrect(ip, port, retries=5, wait=3):
+    for attempt in range(1, retries + 1):
+        try:
+            sock = socket.socket()
+            sock.settimeout(5)
+            sock.connect((ip, port))
+            print(f"[MONITOR] Registrando CP ({ip}:{port})")
+            return sock
+        except Exception as e:
+            print(f"[MONITOR] Intento de registro {attempt}/{retries} falló")
+            time.sleep(wait)
+
+    return True
+
+def hanshakeRegistry(sock, cp):
+    try:
+        sock.settimeout(5)
+        sock.send(b"<ENC>")
+        if sock.recv(1024) != b"ACK":
+            print(f"[MONITOR] Registry no envió ACK")
+            return False
+        
+        sock.send(socketCommunication.encodeMess(cp))
+
+        if sock.recv(1024) != socketCommunication.ACK:
+            print(f"[MONITOR] Registry no envió ACK tras CP_ID")
+            return False
+
+        ans = socketCommunication.parseFrame(sock.recv(1024))
+        sock.send(b"ACK")
+
+        if sock.recv(1024) == b"END": 
+            return
+        
+        print("Regsitro de {cp} finalizado")
+
+    except socket.timeout:
+        print(f"[MONITOR] Timeout durante handshake con Registry")
+        return False
+    except Exception as e:
+        print(f"[MONITOR] Error en handshake con Registry")
+        return False
 
 def main():
-    if len(sys.argv) != 6:
-        print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID>")
+    if len(sys.argv) != 8:
+        print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID> <IpRegistry> <PortRegistry>")
         return
 
     ipC = sys.argv[1]
@@ -207,15 +249,21 @@ def main():
     ipE = sys.argv[3]
     pE = int(sys.argv[4])
     cp = sys.argv[5]
+    ipR = sys.argv[6]
+    pR = int(sys.argv[7])
+    
     shared_state = {"sc": None}
 
-    # Lanzamos hilo para mantener CENTRAL
+    # no funciona de momento
+    #registrationCorrect(ipR, pR)
+    
+    #Lanzamos hilo para mantener CENTRAL
     threading.Thread(target=monitorCentral, args=(ipC, pC, cp, ipE, pE, shared_state), daemon=True).start()
     # Lanzamos hilo para mantener ENGINE (requiere socket CENTRAL activo)
     threading.Thread(target=monitorEngine, args=(ipE, pE, cp, shared_state), daemon=True).start()
 
     # Bucle principal (solo mantiene el proceso vivo)
     while True:
-        time.sleep(1)
+       time.sleep(1)
 
 main()
