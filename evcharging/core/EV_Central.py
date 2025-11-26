@@ -34,6 +34,70 @@ def heartbeat_loop(kafkaInfo):
         })
         time.sleep(5)
 
+def stopCP(cp_id, kafkaInfo):
+    cp = db.getCp(cp_id)
+    if not cp:
+        print(f"[CENTRAL] ❌ No existe CP {cp_id}")
+        return
+
+    state = cp.get("state", "").upper()
+
+    # Si está SUPPLYING, generamos ticket y terminamos la sesión
+    if state == "SUPPLYING":
+        print(f"[CENTRAL] 🛑 Parando CP {cp_id} (SUPPLYING) → Finalizando sesión")
+
+        # Buscar sesión activa
+        session = db.sessions.find_one({"cp_id": cp_id})
+        if session:
+            driver_id = session["driver_id"]
+            energy_total = session.get("energy_kwh", 0.0)
+            price = cp.get("price_eur_kwh", 0.3)
+            total_price = round(energy_total * price, 2)
+
+            # Enviar ticket
+            prod = kafka_utils.buildProducer(kafkaInfo)
+            kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "price": total_price,
+                "energy_kwh": round(energy_total, 3)
+            })
+
+            # También error explícito si lo deseas
+            kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+            })
+
+            # Borrar sesión
+            db.deleteSession(driver_id, cp_id)
+
+            # Borrar de active_sessions
+            session_key = f"{driver_id}_{cp_id}"
+            active_sessions.pop(session_key, None)
+
+        # Estado final
+        db.setCpState(cp_id, "FUERA DE SERVICIO")
+        print(f"[CENTRAL] 🔴 CP {cp_id} → FUERA DE SERVICIO")
+
+    else:
+        print(f"[CENTRAL] 🛑 Parando CP {cp_id} (NO supplying) → FUERA DE SERVICIO")
+        db.setCpState(cp_id, "FUERA DE SERVICIO")
+
+def enableCP(cp_id):
+    cp = db.getCp(cp_id)
+    if not cp:
+        print(f"[CENTRAL] ❌ No existe CP {cp_id}")
+        return
+
+    if cp.get("state") != "FUERA DE SERVICIO":
+        print(f"[CENTRAL] ⚠️ CP {cp_id} no está fuera de servicio.")
+        return
+
+    db.setCpState(cp_id, "AVAILABLE")
+    print(f"[CENTRAL] 🟢 CP {cp_id} habilitado → AVAILABLE")
+
+
 def handleClient(conn, addr, kafkaInfo):
     print(f"[CENTRAL] Nueva conexión desde {addr}")
 
@@ -273,6 +337,18 @@ def handleDriver(topic, data, prod):
             })
         else:
             print(f"[CENTRAL] Heartbeat recibido de Driver {driver_id} en CP {cp_id} sin sesión activa.")
+            kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "reason": "NO_ACTIVE_SESSION"
+            })
+
+            kafka_utils.send(prod, topics.EV_SUPPLY_END_ENGINE, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "status": "FORCED_END"
+            })
+            db.setCpState(cp_id, "FUERA DE SERVICIO")
 
     elif topic == topics.EV_SUPPLY_END:
         driver_id = data.get("driver_id")
@@ -355,15 +431,37 @@ def main():
     s.bind(("0.0.0.0", port))
     s.listen(5)
     print(f"[CENTRAL] En escucha permanente en {port}")
-    load_active_sessions() #Cargamos sesiones activas desde la base de datos
+
+    load_active_sessions()  # Cargamos sesiones activas desde la base de datos
     printCpPanel()
 
-    # un thread para kafka y otro para el socket para que ambos puedan tener los bucles escuchando
+    # Lanzamos los threads en segundo plano
     threading.Thread(target=tcpServer, args=(s, kafkaInfo), daemon=True).start()
     threading.Thread(target=kafkaListener, args=(kafkaInfo,), daemon=True).start()
     threading.Thread(target=heartbeat_loop, args=(kafkaInfo,), daemon=True).start()
 
+    print("\n[COMANDOS CENTRAL ACTIVADOS]")
+    print("  stop <cp_id>   → Detiene carga, genera ticket y pasa a FUERA DE SERVICIO")
+    print("  enable <cp_id> → Vuelve a poner el CP en AVAILABLE\n")
+
+    # 🔥 BUCLE DE COMANDOS (SIN BLOQUEAR EL RESTO)
     while True:
-        time.sleep(1)
+        try:
+            cmd = input().strip().split()
+            if len(cmd) == 2:
+                if cmd[0].lower() == "stop":
+                    stopCP(cmd[1], kafkaInfo)
+                elif cmd[0].lower() == "enable":
+                    enableCP(cmd[1])
+                else:
+                    print("[CENTRAL] Comando no reconocido.")
+            else:
+                print("[CENTRAL] Formato inválido. Usa: stop <id> o enable <id>")
+        except KeyboardInterrupt:
+            print("\n[CENTRAL] Saliendo...")
+            break
+        except Exception as e:
+            print(f"[CENTRAL] Error procesando comando: {e}")
+
 
 main()

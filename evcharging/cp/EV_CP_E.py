@@ -8,6 +8,7 @@ registered_cp: str | None = None
 registered_cp_event = threading.Event()
 prod = None
 stop_event = threading.Event()
+forced_end = threading.Event()
 cp_price = 0.0
 
 def handle(conn):
@@ -113,7 +114,7 @@ def handleRequest(topic, data):
             heartbeat_thread.start()
             print("Ingrese 'FIN' para finalizar el suministro cuando desee.")
             input_cmd = input().strip()
-            if input_cmd.upper() == "FIN":
+            if input_cmd.upper() == "FIN" or forced_end.is_set():
                 stop_event.set()
                 heartbeat_thread.join(1)
                 kafka_utils.send(prod, topics.EV_SUPPLY_END, {
@@ -128,6 +129,16 @@ def handleRequest(topic, data):
             #         "cp_id": registered_cp,
             #         "status": "REJECTED"
             #     })
+    if topic == topics.EV_SUPPLY_END_ENGINE:
+        if data.get("cp_id") == registered_cp:
+            utils.info(f"[ENGINE] Suministro finalizado por CENTRAL para driver {data.get('driver_id')}")
+            stop_event.set()
+            forced_end.set()
+            kafka_utils.send(prod, topics.EV_SUPPLY_END, {
+                "driver_id": data.get("driver_id"),
+                "cp_id": registered_cp
+            })
+            forced_end.clear()
 
 def socketServer(socketPort):
     s = socket.socket()
@@ -148,7 +159,8 @@ def kafkaListener(kafkaIp, kafkaPort):
         topics.EV_SUPPLY_AUTH,
         topics.EV_SUPPLY_CONNECTED,
         topics.EV_SUPPLY_END,
-        topics.EV_SUPPLY_REQUEST
+        topics.EV_SUPPLY_REQUEST,
+        topics.EV_SUPPLY_END_ENGINE
     ])
     print(f"[ENGINE {registered_cp}] Escuchando mensajes de CENTRAL...")
     while True:

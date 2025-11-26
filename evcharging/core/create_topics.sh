@@ -15,6 +15,7 @@ TOPICS=(
   "evCentralHeartbeat"
   "evDriverSupplyHeartbeat"
   "evDriverSupplyError"
+  "evSupplyEndEngine"
 )
 
 for topic in "${TOPICS[@]}"; do
