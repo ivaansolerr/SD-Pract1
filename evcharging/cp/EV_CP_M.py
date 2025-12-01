@@ -249,8 +249,8 @@ def main():
     ipE = sys.argv[3]
     pE = int(sys.argv[4])
     cp = sys.argv[5]
-    ipR = sys.argv[6]
-    pR = int(sys.argv[7])
+    ipR = sys.argv[6] # IP registry
+    pR = int(sys.argv[7]) # Port registry
     
     shared_state = {"sc": None}
 
