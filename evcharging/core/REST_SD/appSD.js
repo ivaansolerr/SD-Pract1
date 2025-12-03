@@ -42,6 +42,8 @@ async function connectDB() {
 
 connectDB();
 
+
+// estos dos endpoints get no se usan
 appSD.get("/cps", async (request, response) => { 
     try {
         const cps = await db.collection("charging_points")
@@ -69,6 +71,9 @@ appSD.get("/cps/:cpId", async (request, response) => {
 });
 
 appSD.post("/addCP", async (request, response) => {
+    // hay que generar una key en base al id del CP, guardar el hash en al base de datos y enviarlo como respuesta
+    // el texto plano para que lo pille monitor. Hay que usar el mismo algoritmo para guardar el hash
+    // en la base de datos que luego cuando el monitor se autentique para poder compararlos bien
     const usuarioObj = {
         id: request.body.id,
         location: request.body.location,
@@ -83,15 +88,19 @@ appSD.post("/addCP", async (request, response) => {
     }
 });
 
-appSD.delete("/deleteCP", (request, response) => {
-        const usuarioObj = {
-        id: request.body.id
+appSD.delete("/deleteCP", async (request, response) => {
+    const usuarioObj = {
+        cpId: request.body.id
     }
-    try {
-        // mirara aquí para cuando se intenta borrar un cp que no existe
-        const cp = db.collection("charging_points").deleteOne(usuarioObj);
-        response.status(200).json({ message: "Borrado correctamente" });
-    } catch (error) {
-        response.status(404).json(error.errmsg);
+    const cp = await db.collection("charging_points").findOne({ id: usuarioObj.cpId });
+    if (cp) {
+        try {
+            const cp = db.collection("charging_points").deleteOne(usuarioObj);
+            response.status(200).json({ message: "Borrado correctamente" });
+        } catch (error) {
+            response.status(404).json(error.errmsg);
+        }
+    } else {
+        response.status(404).json({ message: "Error" });
     }
 });
