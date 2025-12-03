@@ -77,12 +77,18 @@ def stopCP(cp_id, kafkaInfo):
             active_sessions.pop(session_key, None)
 
         # Estado final
-        db.setCpState(cp_id, "FUERA DE SERVICIO")
+        upsertCp({
+            "id": cp_id,
+            "state": "FUERA DE SERVICIO",
+        })
         print(f"[CENTRAL] 🔴 CP {cp_id} → FUERA DE SERVICIO")
 
     else:
         print(f"[CENTRAL] 🛑 Parando CP {cp_id} (NO supplying) → FUERA DE SERVICIO")
-        db.setCpState(cp_id, "FUERA DE SERVICIO")
+        upsertCp({
+            "id": cp_id,
+            "state": "FUERA DE SERVICIO",
+        })
 
 def enableCP(cp_id):
     cp = db.getCp(cp_id)
