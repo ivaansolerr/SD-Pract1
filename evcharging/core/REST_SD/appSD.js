@@ -4,6 +4,10 @@ const bodyParser = require("body-parser");
 const fs = require("fs")
 const appSD = express();
 
+const md5 = require("md5");
+const prompt = require("prompt");
+const uniqid = require("uniqid");
+
 appSD.use(bodyParser.json()); 
 
 // Se define el puerto 
@@ -71,18 +75,19 @@ appSD.get("/cps/:cpId", async (request, response) => {
 });
 
 appSD.post("/addCP", async (request, response) => {
-    // hay que generar una key en base al id del CP, guardar el hash en al base de datos y enviarlo como respuesta
-    // el texto plano para que lo pille monitor. Hay que usar el mismo algoritmo para guardar el hash
-    // en la base de datos que luego cuando el monitor se autentique para poder compararlos bien
+    
+    let key = uniqid();
+
     const usuarioObj = {
         id: request.body.id,
         location: request.body.location,
-        price: request.body.price
+        price: request.body.price,
+        keyAuth: md5(key) // guardamos el hash de la credencial
     }
 
     try {
         const cp = await db.collection("charging_points").insertOne(usuarioObj);
-        response.status(200).json({ message: "Insertado correctamente" });
+        response.status(200).json({ message:  key}); // devolvemos la clave a monitor sin encriptar
     } catch (error) {
         response.status(404).json(error.errmsg);
     }
