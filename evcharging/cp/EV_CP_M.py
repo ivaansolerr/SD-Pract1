@@ -1,10 +1,13 @@
-import socket, sys, time, threading
+import socket, sys, time, threading, requests
 from datetime import datetime
 from typing import Dict, Any
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
-def handshake(sock, cp, name=""):
+import urllib3 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+def handshake(sock, cp, key, name=""):
     try:
         sock.settimeout(5)
         sock.send(b"<ENC>")
@@ -12,7 +15,7 @@ def handshake(sock, cp, name=""):
             print(f"[MONITOR] {name} no envió ACK tras <ENC>")
             return False
 
-        sock.send(socketCommunication.encodeMess(cp))
+        sock.send(socketCommunication.encodeMess(key)) # aquí pasaba el cp, ahora paso la key
         if sock.recv(1024) != socketCommunication.ACK:
             print(f"[MONITOR] {name} no envió ACK tras CP_ID")
             return False
@@ -48,12 +51,12 @@ def connectWithRetry(ip, port, name, retries=5, wait=3):
             time.sleep(wait)
     return None
 
-def monitorCentral(ipC, pC, cp, ipE, pE, shared_state):
+def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
     sc = None
     while True:
         try:
             sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=3)
-            if sc and handshake(sc, cp, "CENTRAL"):
+            if sc and handshake(sc, cp, "CENTRAL", key):
                 shared_state["sc"] = sc
                 print("[MONITOR] ✅ CP validado por CENTRAL")
                 break
@@ -196,52 +199,9 @@ def monitorEngine(ipE, pE, cp, shared_state):
                     time.sleep(3)
         time.sleep(heartbeat_interval)
 
-def registrationCorrect(ip, port, retries=5, wait=3):
-    for attempt in range(1, retries + 1):
-        try:
-            sock = socket.socket()
-            sock.settimeout(5)
-            sock.connect((ip, port))
-            print(f"[MONITOR] Registrando CP ({ip}:{port})")
-            return sock
-        except Exception as e:
-            print(f"[MONITOR] Intento de registro {attempt}/{retries} falló")
-            time.sleep(wait)
-
-    return True
-
-def hanshakeRegistry(sock, cp):
-    try:
-        sock.settimeout(5)
-        sock.send(b"<ENC>")
-        if sock.recv(1024) != b"ACK":
-            print(f"[MONITOR] Registry no envió ACK")
-            return False
-        
-        sock.send(socketCommunication.encodeMess(cp))
-
-        if sock.recv(1024) != socketCommunication.ACK:
-            print(f"[MONITOR] Registry no envió ACK tras CP_ID")
-            return False
-
-        ans = socketCommunication.parseFrame(sock.recv(1024))
-        sock.send(b"ACK")
-
-        if sock.recv(1024) == b"END": 
-            return
-        
-        print("Regsitro de {cp} finalizado")
-
-    except socket.timeout:
-        print(f"[MONITOR] Timeout durante handshake con Registry")
-        return False
-    except Exception as e:
-        print(f"[MONITOR] Error en handshake con Registry")
-        return False
-
 def main():
-    if len(sys.argv) != 8:
-        print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID> <IpRegistry> <PortRegistry>")
+    if len(sys.argv) != 10:
+        print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID> <CP_Location> <CP_Price> <IpRegistry> <PortRegistry>")
         return
 
     ipC = sys.argv[1]
@@ -249,21 +209,53 @@ def main():
     ipE = sys.argv[3]
     pE = int(sys.argv[4])
 
-    cp = sys.argv[5] # CP id
-    
+    cpId = sys.argv[5] # CP id
+    cpLocation = sys.argv[6] # CP location
+    cpPrice = float(sys.argv[7]) # CP Price
 
-    ipR = sys.argv[6] # IP registry
-    pR = int(sys.argv[7]) # Port registry
-    
+    ipR = sys.argv[8] # IP registry
+    portR = sys.argv[9]
+
+    # si ya existe el archivo key no hacemos el request otra vez
+    fileExists = False
+
+    try:
+        with open(f"evcharging/cp/{cpId}.txt", "r", encoding="utf-8") as f:
+            fileExists = True
+            key = (f.read())
+    except:
+        pass
+
+    if not fileExists:
+        dataForRegistry = {
+            "id": cpId,
+            "location": cpLocation,
+            "price": cpPrice
+        }
+
+        # url de la api request
+        url = f"https://{ipR}:{portR}/addCP"
+        response = requests.post(url, json=dataForRegistry, verify=False)
+        print(response.status_code)
+        # comprobamos que no exista
+        if response.status_code == 409:
+            print("ID del CP repetida, introduce una ID que no exista")
+            return
+
+        # guardamos la clave
+        key = response.json().get("message")
+
+        with open(f"evcharging/cp/{cpId}.txt", "w", encoding="utf-8") as f:
+            f.write(key)
+
     shared_state = {"sc": None}
-
-    # no funciona de momento
-    #registrationCorrect(ipR, pR)
     
+    # Tenemos ya el key para autenticar en central simpre guardado
+
     #Lanzamos hilo para mantener CENTRAL
-    threading.Thread(target=monitorCentral, args=(ipC, pC, cp, ipE, pE, shared_state), daemon=True).start()
+    threading.Thread(target=monitorCentral, args=(ipC, pC, cpId, ipE, pE, shared_state, key), daemon=True).start()
     # Lanzamos hilo para mantener ENGINE (requiere socket CENTRAL activo)
-    threading.Thread(target=monitorEngine, args=(ipE, pE, cp, shared_state), daemon=True).start()
+    # threading.Thread(target=monitorEngine, args=(ipE, pE, cpId, shared_state), daemon=True).start()
 
     # Bucle principal (solo mantiene el proceso vivo)
     while True:

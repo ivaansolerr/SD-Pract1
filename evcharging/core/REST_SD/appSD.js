@@ -89,7 +89,7 @@ appSD.post("/addCP", async (request, response) => {
         const cp = await db.collection("charging_points").insertOne(usuarioObj);
         response.status(200).json({ message:  key}); // devolvemos la clave a monitor sin encriptar
     } catch (error) {
-        response.status(404).json(error.errmsg);
+        response.status(409).json(error.errmsg);
     }
 });
 
@@ -103,9 +103,9 @@ appSD.delete("/deleteCP", async (request, response) => {
             const cp = db.collection("charging_points").deleteOne(usuarioObj);
             response.status(200).json({ message: "Borrado correctamente" });
         } catch (error) {
-            response.status(404).json(error.errmsg);
+            response.status(409).json(error.errmsg);
         }
     } else {
-        response.status(404).json({ message: "Error" });
+        response.status(409).json({ message: "Error" });
     }
 });
