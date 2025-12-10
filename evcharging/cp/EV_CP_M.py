@@ -236,7 +236,7 @@ def main():
         # url de la api request
         url = f"https://{ipR}:{portR}/addCP"
         response = requests.post(url, json=dataForRegistry, verify=False)
-        print(response.status_code)
+
         # comprobamos que no exista
         if response.status_code == 409:
             print("ID del CP repetida, introduce una ID que no exista")
