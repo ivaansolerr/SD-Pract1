@@ -82,6 +82,7 @@ appSD.post("/addCP", async (request, response) => {
         id: request.body.id,
         location: request.body.location,
         price: request.body.price,
+        state: "DISCONNECTED", // estado desconectado al principio
         keyAuth: md5(key) // guardamos el hash de la credencial
     }
 

@@ -3,6 +3,9 @@ const https = require('https');
 const bodyParser = require("body-parser"); 
 const fs = require("fs");
 const axios = require("axios"); 
+const httpsAgent = new https.Agent({
+    rejectUnauthorized: false // Esto permite conectar con tu API local aunque el certificado sea autofirmado
+});
 
 const appSD = express();
 appSD.use(bodyParser.json()); 
@@ -67,13 +70,38 @@ async function obtenerTemperatura(ciudad, cp, apiKey) {
         // si la temperatura pasa de 0 a 1        
         if (historialTemperaturas.hasOwnProperty(cp)) {
             const tempAnterior = historialTemperaturas[cp];
-            // aquí habrá que consumir la api de central para que esta cambie el estado de los cps
-            // a no disponible
+            const apiCentralUrl = `https://127.0.0.1:5000/changeState/${cp}`;
+            
             if (tempAnterior >= 0 && tempActual < 0) {
                 console.log(`El CP ${cp} deja de estar disponbile, su temperatura es menor a 0 grados`);
+                try {
+                    await axios.put(
+                        apiCentralUrl, 
+                        { state: "FUERA DE SERVICIO" }, 
+                        { httpsAgent: httpsAgent }
+                    );
+                    console.log(`-> Estado de ${cp} actualizado correctamente.`);
+                } catch (err) {
+                    console.error(`Error actualizando ${cp} en Central:`, err.message);
+                }
             }
             else if (tempAnterior < 0 && tempActual >= 0) {
+                // aquí habrá que consumir la api de central para que esta cambie el estado de los cps
+                // a no disponible
+                // hay que tener en cuenta el estado anterior, si es desconectado y se pone como fuera de servicio se tiene que vovler a poenr desconectado
+                // si es supplying se tiene que poner disponible
+
                 console.log(`El CP ${cp} vuelve a estar disponible, la temperatura es superior a 0 grados`);
+                try {
+                    await axios.put(
+                        apiCentralUrl, 
+                        { state: "DISPONIBLE" }, 
+                        { httpsAgent: httpsAgent }
+                    );
+                    console.log(`-> Estado de ${cp} actualizado correctamente.`);
+                } catch (err) {
+                    console.error(`Error actualizando ${cp} en Central:`, err.message);
+                }
             }
         }
 
