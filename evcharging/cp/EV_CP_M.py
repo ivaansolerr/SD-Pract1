@@ -253,7 +253,7 @@ def main():
     # Tenemos ya el key para autenticar en central simpre guardado
 
     #Lanzamos hilo para mantener CENTRAL
-    threading.Thread(target=monitorCentral, args=(ipC, pC, cpId, ipE, pE, shared_state, key), daemon=True).start()
+    # threading.Thread(target=monitorCentral, args=(ipC, pC, cpId, ipE, pE, shared_state, key), daemon=True).start()
     # Lanzamos hilo para mantener ENGINE (requiere socket CENTRAL activo)
     # threading.Thread(target=monitorEngine, args=(ipE, pE, cpId, shared_state), daemon=True).start()
 

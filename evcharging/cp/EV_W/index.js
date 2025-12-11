@@ -14,7 +14,8 @@ const port = 4000;
 const FILE_CIUDADES = "ciudades.txt";
 const FILE_API = "api.txt";
 
-let historialTemperaturas = {}; 
+let historialTemperaturas = {};
+let estadosPrevios = {};
 
 setInterval(() => {
     fs.readFile(FILE_API, 'utf8', (err, apiKeyData) => {
@@ -67,46 +68,67 @@ async function obtenerTemperatura(ciudad, cp, apiKey) {
         const response = await axios.get(url);
         const tempActual = response.data.main.temp;
 
-        // si la temperatura pasa de 0 a 1        
         if (historialTemperaturas.hasOwnProperty(cp)) {
             const tempAnterior = historialTemperaturas[cp];
             const apiCentralUrl = `https://127.0.0.1:5000/changeState/${cp}`;
+            const apiCentralGetCP = `https://127.0.0.1:5000/cps/${cp}`;
             
             if (tempAnterior >= 0 && tempActual < 0) {
-                console.log(`El CP ${cp} deja de estar disponbile, su temperatura es menor a 0 grados`);
+                console.log(`El CP ${cp} deja de estar disponible, temperatura < 0°C`);
                 try {
+
+                    const currentStateResponse = await axios.get(apiCentralGetCP, { httpsAgent: httpsAgent });
+                    const estadoOriginal = currentStateResponse.data.state; 
+
+                    estadosPrevios[cp] = estadoOriginal;
+                    console.log(`-> Estado previo guardado: ${estadoOriginal}`);
+                    
                     await axios.put(
                         apiCentralUrl, 
                         { state: "FUERA DE SERVICIO" }, 
                         { httpsAgent: httpsAgent }
                     );
-                    console.log(`-> Estado de ${cp} actualizado correctamente.`);
+                    console.log(`-> Estado de ${cp} forzado a FUERA DE SERVICIO.`);
+
                 } catch (err) {
-                    console.error(`Error actualizando ${cp} en Central:`, err.message);
+                    console.error(`Error gestionando congelación de ${cp}:`, err.message);
                 }
             }
             else if (tempAnterior < 0 && tempActual >= 0) {
-                // aquí habrá que consumir la api de central para que esta cambie el estado de los cps
-                // a no disponible
-                // hay que tener en cuenta el estado anterior, si es desconectado y se pone como fuera de servicio se tiene que vovler a poenr desconectado
-                // si es supplying se tiene que poner disponible
-
-                console.log(`El CP ${cp} vuelve a estar disponible, la temperatura es superior a 0 grados`);
+                console.log(`El CP ${cp} vuelve a estar operativo, temperatura >= 0°C`);
                 try {
+                    let nuevoEstado = "AVAILABLE"; 
+
+                    if (estadosPrevios.hasOwnProperty(cp)) {
+                        const oldState = estadosPrevios[cp];
+                        
+                        if (oldState === "SUPPLYING" || oldState === "AVAILABLE") {
+                            nuevoEstado = "AVAILABLE";
+                        } else if (oldState === "FUERA DE SERVICIO") {
+                            nuevoEstado = "FUERA DE SERVICIO";
+                        } else if (oldState === "DISCONNECTED") {
+                            nuevoEstado = "DISCONNECTED";
+                        }
+                        
+                        delete estadosPrevios[cp];
+                    } else {
+                        console.warn(`No se encontró estado previo para ${cp}, se pondrá en AVAILABLE por defecto.`);
+                    }
+
                     await axios.put(
                         apiCentralUrl, 
-                        { state: "DISPONIBLE" }, 
+                        { state: nuevoEstado }, 
                         { httpsAgent: httpsAgent }
                     );
-                    console.log(`-> Estado de ${cp} actualizado correctamente.`);
+                    console.log(`-> Estado de ${cp} restaurado a: ${nuevoEstado}`);
+
                 } catch (err) {
-                    console.error(`Error actualizando ${cp} en Central:`, err.message);
+                    console.error(`Error restaurando estado de ${cp}:`, err.message);
                 }
             }
         }
 
         historialTemperaturas[cp] = tempActual;
-
         console.log(`[OK] CP: ${cp} | Ciudad: ${ciudad} | Temp: ${tempActual}°C`);
 
     } catch (error) {

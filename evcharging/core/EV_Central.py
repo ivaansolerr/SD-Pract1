@@ -18,7 +18,7 @@ def printCpPanel():
         print(
             f"ID: {cp.get('id')} | "
             f"State: {cp.get('state', 'UNKNOWN')} | "
-            f"Price: {cp.get('price_eur_kwh', 'N/A')} eur | "
+            f"Price: {cp.get('price', 'N/A')} eur | "
             f"Location: {cp.get('location', 'N/A')}"
         )
 
@@ -51,7 +51,7 @@ def stopCP(cp_id, kafkaInfo):
         if session:
             driver_id = session["driver_id"]
             energy_total = session.get("energy_kwh", 0.0)
-            price = cp.get("price_eur_kwh", 0.3)
+            price = cp.get("price", 0.3)
             total_price = round(energy_total * price, 2)
 
             # Enviar ticket
@@ -165,7 +165,7 @@ def handleClient(conn, addr, kafkaInfo):
                     if session_found:
                         driver_id = session_found.get("driver_id")
                         energy_total = session_found.get("energy_kwh", 0.0)
-                        price = db.getCp(cp).get("price_eur_kwh", 0.3)
+                        price = db.getCp(cp).get("price", 0.3)
                         total_price = energy_total * price
                         print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
                         prod = kafka_utils.buildProducer(kafkaInfo)
@@ -223,7 +223,7 @@ def handleClient(conn, addr, kafkaInfo):
                 if session_found:
                     driver_id = session_found.get("driver_id")
                     energy_total = session_found.get("energy_kwh", 0.0)
-                    price = db.getCp(cp).get("price_eur_kwh", 0.3)
+                    price = db.getCp(cp).get("price", 0.3)
                     total_price = energy_total * price
                     print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
                     prod = kafka_utils.buildProducer(kafkaInfo)
@@ -281,7 +281,7 @@ def handleDriver(topic, data, prod):
             "cp_id": cp_id,
             "authorized": authorized,
             "reason": reason,
-            "price_eur_kwh": cp.get("price_eur_kwh", 0.3) if cp else None
+            "price": cp.get("price", 0.3) if cp else None
         })
     elif topic == topics.EV_SUPPLY_CONNECTED:
         driver_id = data.get("driver_id")
@@ -368,7 +368,7 @@ def handleDriver(topic, data, prod):
             hours = 0.0
             energy_total = 0.0
 
-        cp_price = db.getCp(cp_id).get("price_eur_kwh", 0.3)
+        cp_price = db.getCp(cp_id).get("price", 0.3)
         total_price = energy_total * cp_price
         kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
             "driver_id": driver_id,

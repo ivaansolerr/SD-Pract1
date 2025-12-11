@@ -64,7 +64,6 @@ appSD.get("/cps", async (request, response) => {
 
 appSD.get("/cps/:cpId", async (request, response) => { 
     const {cpId} = request.params;
-    //response.send(cpId)
     const cp = await db.collection("charging_points").findOne({ id: cpId });
     if (cp) {
         response.status(200).json(cp);

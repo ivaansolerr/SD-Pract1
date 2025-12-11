@@ -15,7 +15,7 @@ def printCpPanel():
     for cp in cps:
         cp_id = cp.get('id')
         state = (cp.get('state') or 'UNKNOWN').upper()
-        price = cp.get('price_eur_kwh', 'N/A')
+        price = cp.get('price', 'N/A')
         location = cp.get('location', 'N/A')
 
         # Buscar si este CP tiene una sesión activa
