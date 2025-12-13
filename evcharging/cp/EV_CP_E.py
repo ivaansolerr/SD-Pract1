@@ -10,6 +10,10 @@ from typing import Dict, Any, Optional
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
+import base64
+import hashlib
+from cryptography.fernet import Fernet, InvalidToken
+
 # ==========================
 # ESTADO GLOBAL
 # ==========================
@@ -24,6 +28,61 @@ cp_price = 0.0
 current_driver_id: Optional[str] = None
 session_lock = threading.Lock()
 session_thread: Optional[threading.Thread] = None
+kafka_key: Optional[str] = None
+
+# ======================================================
+# CIFRADO / DESCIFRADO KAFKA
+# ======================================================
+def _derive_fernet_key(key_str: str) -> bytes:
+    digest = hashlib.sha256(key_str.encode("utf-8")).digest()
+    return base64.urlsafe_b64encode(digest)
+
+
+def _encrypt_kafka(payload: Dict[str, Any]) -> Dict[str, Any]:
+    if not kafka_key:
+        return payload
+
+    f = Fernet(_derive_fernet_key(kafka_key))
+    raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    token = f.encrypt(raw).decode("utf-8")
+
+    return {
+        "encrypted": True,
+        "cp_id": registered_cp,
+        "payload": token
+    }
+
+
+def _decrypt_kafka(data: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(data, dict) or not data.get("encrypted"):
+        return data
+
+    # Validaciones mínimas del sobre
+    if "payload" not in data or "cp_id" not in data:
+        utils.info("[ENGINE] ⚠️ Sobre cifrado inválido (faltan campos).")
+        return {}
+
+    if not kafka_key:
+        utils.info("[ENGINE] ⚠️ Mensaje cifrado recibido sin kafka_key disponible")
+        return {}
+
+    # Aseguramos que el mensaje es para este CP
+    if data.get("cp_id") != registered_cp:
+        return {}
+
+    f = Fernet(_derive_fernet_key(kafka_key))
+    try:
+        raw = f.decrypt(str(data["payload"]).encode("utf-8"))  # MOD
+        decoded = raw.decode("utf-8")  # MOD
+        return json.loads(decoded)  # MOD
+    except (InvalidToken, ValueError, TypeError):  # MOD
+        utils.info("[ENGINE] ❌ Error descifrando mensaje Kafka")
+        return {}
+
+
+
+def kafka_send(prod: Producer, topic: str, payload: Dict[str, Any]):
+    kafka_utils.send(prod, topic, _encrypt_kafka(payload))
 
 
 # ======================================================
@@ -107,7 +166,7 @@ def send_supply_heartbeat(driver_id: str):
 
         print(f"[ENGINE] consumiendo {consumption} kW, energía total: {round(energy, 3)} kWh, precio: {precio} eur")
 
-        kafka_utils.send(prod, topics.EV_SUPPLY_HEARTBEAT, {
+        kafka_send(prod, topics.EV_SUPPLY_HEARTBEAT, {
             "timestamp": int(time.time() * 1000),
             "cp_id": registered_cp,
             "driver_id": driver_id,
@@ -162,7 +221,7 @@ def run_supply_session(driver_id: str):
 
     # Si no es un fin forzado por CENTRAL, enviamos nosotros el EV_SUPPLY_END
     if not forced_end.is_set():
-        kafka_utils.send(prod, topics.EV_SUPPLY_END, {
+        kafka_send(prod, topics.EV_SUPPLY_END, {
             "driver_id": driver_id,
             "cp_id": registered_cp
         })
@@ -183,13 +242,16 @@ def handleRequest(topic, data):
 
     # ---------- AUTORIZACIÓN DE SUMINISTRO ----------
     if topic == topics.EV_SUPPLY_AUTH:
+        data = _decrypt_kafka(data)
+        if not data:
+            return
         if (data.get("authorized") is True) and (data.get("cp_id") == registered_cp):
             driver_id = data.get("driver_id")
             utils.ok(f"[ENGINE] Autorización aprobada para driver {driver_id}")
 
             cp_price = data.get("price_eur_kwh", 0.3)
 
-            kafka_utils.send(prod, topics.EV_SUPPLY_CONNECTED, {
+            kafka_send(prod, topics.EV_SUPPLY_CONNECTED, {
                 "driver_id": driver_id,
                 "cp_id": registered_cp,
                 "status": "CONNECTED"
@@ -205,6 +267,9 @@ def handleRequest(topic, data):
 
     # ---------- FINALIZACIÓN REMOTA DESDE CENTRAL ----------
     elif topic == topics.EV_SUPPLY_END_ENGINE:
+        data = _decrypt_kafka(data)
+        if not data:
+            return
         if data.get("cp_id") == registered_cp:
             driver_id = data.get("driver_id")
             utils.info(f"[ENGINE] Suministro finalizado por CENTRAL para driver {driver_id}")
@@ -212,10 +277,17 @@ def handleRequest(topic, data):
             stop_event.set()
 
             # CENTRAL nos dice que acabemos: replicamos con EV_SUPPLY_END si queremos
-            kafka_utils.send(prod, topics.EV_SUPPLY_END, {
+            kafka_send(prod, topics.EV_SUPPLY_END, {
                 "driver_id": driver_id,
                 "cp_id": registered_cp
             })
+    
+    elif topic == topics.EV_ENGINE_KEY_EXCHANGE:
+        if data.get("cp_id") == registered_cp:
+            key = data.get("key")
+            utils.info(f"[ENGINE] Clave recibida de CENTRAL para CP {registered_cp}: {key}")
+            global kafka_key
+            kafka_key = key
 
 
 # ======================================================
@@ -251,7 +323,8 @@ def kafkaListener(kafkaIp, kafkaPort):
             topics.EV_SUPPLY_CONNECTED,
             topics.EV_SUPPLY_END,
             topics.EV_SUPPLY_REQUEST,
-            topics.EV_SUPPLY_END_ENGINE
+            topics.EV_SUPPLY_END_ENGINE,
+            topics.EV_ENGINE_KEY_EXCHANGE
         ]
     )
 

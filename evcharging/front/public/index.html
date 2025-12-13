@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EV Central Monitoring</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>EV Central Monitoring</h1>
+      <div class="sub">Panel de monitorización (CPs, Drivers, EV_W, clima, alertas)</div>
+    </div>
+    <div class="right">
+      <span id="connBadge" class="badge">Conectando…</span>
+      <button id="refreshBtn" class="btn">Refrescar</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <!-- CPs -->
+    <section class="card col-2">
+      <div class="card-head">
+        <h2>Charging Points (CPs)</h2>
+        <div class="muted">Fuente: /api/cps</div>
+      </div>
+
+      <div class="toolbar">
+        <input id="cpFilter" class="input" placeholder="Filtrar por id/estado…" />
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" id="cpTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>State</th>
+              <th>Registered</th>
+              <th>Activated</th>
+              <th>Token</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cpTbody">
+            <tr><td colspan="6" class="muted">Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Drivers -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Drivers</h2>
+        <div class="muted">Placeholder (si luego tienes endpoint, lo conectamos)</div>
+      </div>
+      <ul id="driversList" class="list">
+        <li class="muted">No hay endpoint de drivers en el API mostrado.</li>
+      </ul>
+    </section>
+
+    <!-- EV_W status -->
+    <section class="card">
+      <div class="card-head">
+        <h2>EV_W Status</h2>
+        <div class="muted">Eventos en tiempo real (SSE)</div>
+      </div>
+      <div class="kv">
+        <div><span class="k">Último estado:</span> <span id="evwLast">—</span></div>
+        <div><span class="k">Origen:</span> <span id="evwSource">—</span></div>
+        <div><span class="k">Timestamp:</span> <span id="evwTs">—</span></div>
+      </div>
+    </section>
+
+    <!-- Clima -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Clima</h2>
+        <div class="muted">Placeholder (puedes inyectarlo por /ingest)</div>
+      </div>
+      <div class="kv">
+        <div><span class="k">Temperatura:</span> <span id="wxTemp">—</span></div>
+        <div><span class="k">Estado:</span> <span id="wxDesc">—</span></div>
+        <div><span class="k">Última actualización:</span> <span id="wxTs">—</span></div>
+      </div>
+    </section>
+
+    <!-- Alertas y errores -->
+    <section class="card col-2">
+      <div class="card-head">
+        <h2>Alertas / Errores / Logs</h2>
+        <div class="muted">SSE: /events | Ingest: POST /ingest</div>
+      </div>
+
+      <div class="toolbar">
+        <select id="logFilter" class="input">
+          <option value="all">Todos</option>
+          <option value="error">Errores</option>
+          <option value="alert">Alertas</option>
+          <option value="status">Estado</option>
+          <option value="info">Info</option>
+        </select>
+
+        <button id="clearLogs" class="btn btn-ghost">Limpiar</button>
+      </div>
+
+      <div id="logBox" class="logbox" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <!-- Modal cambio estado -->
+  <dialog id="stateDialog" class="dialog">
+    <form method="dialog" class="dialog-form">
+      <h3>Cambiar estado CP</h3>
+      <div class="muted" id="dialogCpId">CP: —</div>
+
+      <label class="label">Nuevo state</label>
+      <input id="newStateInput" class="input" placeholder="Ej: AVAILABLE, BUSY, OFFLINE…" required />
+
+      <div class="dialog-actions">
+        <button class="btn btn-ghost" value="cancel">Cancelar</button>
+        <button id="saveStateBtn" class="btn" value="ok">Guardar</button>
+      </div>
+
+      <div id="dialogMsg" class="muted"></div>
+    </form>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>

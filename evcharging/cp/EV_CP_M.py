@@ -15,7 +15,8 @@ def handshake(sock, cp, key, name=""):
             print(f"[MONITOR] {name} no envió ACK tras <ENC>")
             return False
 
-        sock.send(socketCommunication.encodeMess(key)) # aquí pasaba el cp, ahora paso la key
+        sock.send(socketCommunication.encodeMess(cp))  # enviamos el cp
+        sock.send(socketCommunication.encodeMess(key)) # ahora paso la key
         if sock.recv(1024) != socketCommunication.ACK:
             print(f"[MONITOR] {name} no envió ACK tras CP_ID")
             return False

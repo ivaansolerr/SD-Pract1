@@ -12,3 +12,4 @@ EV_CENTRAL_HEARTBEAT = "evCentralHeartbeat" # Driver -> Central (latido para mon
 EV_DRIVER_SUPPLY_HEARTBEAT = "evDriverSupplyHeartbeat" # Driver -> Central (monitorizar estado)
 EV_DRIVER_SUPPLY_ERROR = "evDriverSupplyError" # Driver -> Central (error durante el suministro)
 EV_SUPPLY_END_ENGINE = "evSupplyEndEngine" # Central -> Engine (fin del supply, trigger para que engine pare el suministro)
+EV_ENGINE_KEY_EXCHANGE = "evEngineKeyExchange" # Central -> Engine (envío de clave para autenticación)
