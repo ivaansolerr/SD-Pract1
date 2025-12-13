@@ -34,6 +34,17 @@ def updateSession(sessionId, updates):
     from bson import ObjectId
     sessions.update_one({"_id": ObjectId(sessionId)}, {"$set": updates})
 
+def insertCP(id, energy, location, price):
+    db.charging_points.insert_one(
+        {
+        "id": id,
+        "location": location,
+        "price_eur_kwh": price,
+        "state": "DISCONNECTED",
+        "updated_at": None 
+        }
+    )
+
 def upsertSession(session):
     sessions.update_one(
         {
@@ -46,7 +57,7 @@ def upsertSession(session):
         upsert=True
     )
 
-def updateSessionEnergy(driver_id: str, cp_id: str, energy_kwh: float):
+def updateSessionEnergy(driver_id, cp_id, energy_kwh):
     sessions.update_one(
         {
             "driver_id": driver_id,
@@ -59,7 +70,7 @@ def updateSessionEnergy(driver_id: str, cp_id: str, energy_kwh: float):
         }
     )
 
-def deleteSession(driver_id: str, cp_id: str):
+def deleteSession(driver_id, cp_id):
     sessions.delete_one(
         {
             "driver_id": driver_id,

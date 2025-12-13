@@ -1,0 +1,21 @@
+{
+  "name": "api_central",
+  "version": "1.0.0",
+  "description": "api central of the central ",
+  "license": "ISC",
+  "author": "Iván Soelr",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "express": "^5.2.1",
+    "https": "^1.0.0",
+    "md5": "^2.3.0",
+    "mongodb": "^7.0.0",
+    "prompt": "^1.3.0",
+    "uniqid": "^5.4.0"
+  }
+}
