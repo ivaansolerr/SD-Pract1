@@ -1,158 +1,475 @@
-import argparse, threading, socket, time, json, sys
-from datetime import datetime
+import socket, sys, threading, time
 from typing import Dict, Any
-from evcharging import topics, kafka_utils, utils
-from evcharging.core import db
+from datetime import datetime, timezone
+from . import db
+from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 
-# Tabla en memoria de sesiones activas: key = (driver_id, cp_id)
 active_sessions: Dict[str, Dict[str, Any]] = {}
 
-def server_loop(soc):
+def printCpPanel():
+    cps = db.listChargingPoints()
+    print("\n=== Charging Points en Sistema ===")
+    if not cps:
+        print("No hay puntos de carga registrados.")
+        return
+
+    for cp in cps:
+        print(
+            f"ID: {cp.get('id')} | "
+            f"State: {cp.get('state', 'UNKNOWN')} | "
+            f"Price: {cp.get('price_eur_kwh', 'N/A')} eur | "
+            f"Location: {cp.get('location', 'N/A')}"
+        )
+
+def cpExists(cp_id):
+    cp = db.getCp(cp_id) 
+    return cp is not None
+
+def heartbeat_loop(kafkaInfo):
+    prod = kafka_utils.buildProducer(kafkaInfo)
     while True:
-        conn, addr = soc.accept()
-        data = conn.recv(1024)
-        conn.sendall(b"ACK")
+        kafka_utils.send(prod, topics.EV_CENTRAL_HEARTBEAT, {
+            "timestamp": int(time.time() * 1000)
+        })
+        time.sleep(5)
 
-def monitor_sessions(prod):
-    """Hilo que vigila las sesiones activas y las cierra si superan 15s."""
-    while True:
-        now = time.time()
-        expired = []
+def stopCP(cp_id, kafkaInfo):
+    cp = db.getCp(cp_id)
+    if not cp:
+        print(f"[CENTRAL] ❌ No existe CP {cp_id}")
+        return
 
-        for sid, session in list(active_sessions.items()):
-            duration = now - session["start"]
-            if duration > 15:  # 15 segundos de suministro
-                cp_id = session["cp_id"]
-                driver_id = session["driver_id"]
-                utils.warn(f"[CENTRAL] Tiempo máximo superado en {sid} ({duration:.1f}s). Terminando sesión.")
+    state = cp.get("state", "").upper()
 
-                # Enviar fin de suministro
-                kafka_utils.send(prod, topics.EV_COMMANDS, {
-                    "cp_id": cp_id,
-                    "cmd": "STOP_SUPPLY"
-                })
-                kafka_utils.send(prod, topics.EV_SUPPLY_DONE, {
-                    "session_id": sid,
-                    "cp_id": cp_id,
-                    "driver_id": driver_id,
-                    "total_kwh": session["kwh"],
-                    "total_eur": session["eur"]
-                })
+    # Si está SUPPLYING, generamos ticket y terminamos la sesión
+    if state == "SUPPLYING":
+        print(f"[CENTRAL] 🛑 Parando CP {cp_id} (SUPPLYING) → Finalizando sesión")
 
-                # Cambiar estado en BD
-                db.set_cp_state(cp_id, "ACTIVATED")
+        # Buscar sesión activa
+        session = db.sessions.find_one({"cp_id": cp_id})
+        if session:
+            driver_id = session["driver_id"]
+            energy_total = session.get("energy_kwh", 0.0)
+            price = cp.get("price_eur_kwh", 0.3)
+            total_price = round(energy_total * price, 2)
 
-                # Marcar para eliminar
-                expired.append(sid)
+            # Enviar ticket
+            prod = kafka_utils.buildProducer(kafkaInfo)
+            kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "price": total_price,
+                "energy_kwh": round(energy_total, 3)
+            })
 
-        # Eliminar sesiones terminadas
-        for sid in expired:
-            del active_sessions[sid]
+            # También error explícito si lo deseas
+            kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+            })
 
-        time.sleep(1)  # comprobar cada segundo
+            # Borrar sesión
+            db.deleteSession(driver_id, cp_id)
 
-def start_socket_server(host, port):
-    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # creo que no hace falta, yo lo voy a quitar de momento
-    soc.bind((host, port))
-    soc.listen()
-    utils.info(f"[CENTRAL] TCP listening on {host}:{port}")
-    t = threading.Thread(target=server_loop, args=(soc,), daemon=True) 
-    t.start() 
+            # Borrar de active_sessions
+            session_key = f"{driver_id}_{cp_id}"
+            active_sessions.pop(session_key, None)
 
-def handler(topic, data, prod):
-        if topic == topics.EV_REGISTER: # si se registra un nuevo charging point se muestra y se actualiza
-            cp_id = data["id"]
-            doc = {
-                "id": cp_id,
-                "location": data.get("location","N/A"),
-                "price_eur_kwh": data.get("price_eur_kwh", "0.30"),
-                "state": "ACTIVATED",
-                "updated_at": datetime.utcnow()
-            }
-            db.upsert_cp(doc)
-            utils.ok(f"[CENTRAL] CP activado: {cp_id}")
-        elif topic == topics.EV_HEALTH: # esto es para mandar el estado al monitor
-            cp_id = data["id"]
-            status = data["status"]  # "OK" | "KO" | "RECOVERED" | "SUPPLYING"
-            if status == "OK":
-                db.set_cp_state(cp_id, "ACTIVATED")
-            elif status == "KO":
-                db.set_cp_state(cp_id, "BROKEN")
-                # Si estaba suministrando, abortar
-            elif status == "RECOVERED":
-                db.set_cp_state(cp_id, "ACTIVATED")
-            elif status == "SUPPLYING":
-                db.set_cp_state(cp_id, "SUPPLYING")
-            utils.warn(f"[CENTRAL] Health {cp_id}: {status}")
-        elif topic == topics.EV_SUPPLY_REQUEST:
-            driver_id = data["driver_id"]; cp_id = data["cp_id"]
-            db.upsert_driver({"id": driver_id, "name": driver_id})
-            cp = db.get_cp(cp_id)
-            if not cp:
-                utils.err(f"[CENTRAL] Supply request a CP inexistente: {cp_id}")
-                kafka_utils.send(prod, topics.EV_SUPPLY_AUTH, {"driver_id": driver_id, "cp_id": cp_id, "authorized": False, "reason": "CP not found"})
-                return
-            if cp.get("state") != "ACTIVATED":
-                kafka_utils.send(prod, topics.EV_SUPPLY_AUTH, {"driver_id": driver_id, "cp_id": cp_id, "authorized": False, "reason": f"CP state={cp.get('state')}"})
-                return
-            # Autorizar
-            kafka_utils.send(prod, topics.EV_SUPPLY_AUTH, {"driver_id": driver_id, "cp_id": cp_id, "authorized": True})
-            # Orden a Engine para empezar
-            session_id = f"{driver_id}-{cp_id}-{int(time.time())}"
-            active_sessions[session_id] = {"driver_id": driver_id, "cp_id": cp_id, "start": time.time(), "kwh": 0.0, "eur": 0.0}
-            kafka_utils.send(prod, topics.EV_SUPPLY_START, {"session_id": session_id, "cp_id": cp_id, "driver_id": driver_id, "price": cp.get("price_eur_kwh", 0.3)})
-            utils.ok(f"[CENTRAL] AUTH OK -> START to CP {cp_id} for driver {driver_id} (session={session_id})")
-            db.set_cp_state(cp_id, "SUPPLYING")
-        elif topic == topics.EV_SUPPLY_TELEMETRY:
-            sid = data["session_id"]
-            # Mostrar en "panel"
-            print(f"[CENTRAL] CP {data['cp_id']} SUPPLYING kw={data['kw']:.2f} €={data['euros']:.2f} driver={data['driver_id']} session={sid}")
-        elif topic == topics.EV_SUPPLY_DONE:
-            sid = data["session_id"]
-            utils.ok(f"[CENTRAL] FIN suministro: session={sid} kWh={data['total_kwh']:.3f} €={data['total_eur']:.3f}")
-            db.set_cp_state(data["cp_id"], "ACTIVATED")
-        elif topic == topics.EV_AUTH_REQUEST:
-            cp_id = data["cp_id"]
-            if db.get_cp(cp_id).get("state") == "ACTIVATED":
-                kafka_utils.send(prod, topics.EV_AUTH_RESULT, {"cp_id": cp_id, "status": "APPROVED"})
-            else:
-                kafka_utils.send(prod, topics.EV_AUTH_RESULT, {"cp_id": cp_id, "status": "DENIED"})
+        # Estado final
+        db.upsertCp({
+            "id": cp_id,
+            "state": "FUERA DE SERVICIO",
+        })
+        print(f"[CENTRAL] 🔴 CP {cp_id} → FUERA DE SERVICIO")
+
+    else:
+        print(f"[CENTRAL] 🛑 Parando CP {cp_id} (NO supplying) → FUERA DE SERVICIO")
+        db.upsertCp({
+            "id": cp_id,
+            "state": "FUERA DE SERVICIO",
+        })
+
+def enableCP(cp_id):
+    cp = db.getCp(cp_id)
+    if not cp:
+        print(f"[CENTRAL] ❌ No existe CP {cp_id}")
+        return
+
+    if cp.get("state") != "FUERA DE SERVICIO":
+        print(f"[CENTRAL] ⚠️ CP {cp_id} no está fuera de servicio.")
+        return
+
+    db.setCpState(cp_id, "AVAILABLE")
+    print(f"[CENTRAL] 🟢 CP {cp_id} habilitado → AVAILABLE")
+
+
+def handleClient(conn, addr, kafkaInfo):
+    print(f"[CENTRAL] Nueva conexión desde {addr}")
+
+    try:
+        if conn.recv(1024) != b"<ENC>": # primer mensaje según el protocolo
+            conn.close()
+            return
+        conn.send(socketCommunication.ACK) # mandamos el ACK
+
+        cp = socketCommunication.parseFrame(conn.recv(1024)) # sacamos el id del CP
+        if cp is None:
+            conn.send(socketCommunication.NACK)
+            conn.close()
+            return
+
+        print(f"[CENTRAL] Solicitud por CP: {cp}")
+        conn.send(socketCommunication.ACK)
+
+        if cpExists(cp): # comprobamos que exista en la base de datos y autenticamos
+            print(f"[CENTRAL] CP :) {cp} autenticado. Estado → AVAILABLE")
+            db.upsertCp({
+                "id": cp,
+                "state": "AVAILABLE",
+                #"last_seen": datetime.now(timezone.utc)
+            })
+            result = "OK"
         else:
-            print(f"[CENTRAL] Mensaje no manejado en topic {topic}: {data}")
+            print(f"[CENTRAL] CP {cp} NO existe en la base de datos")
+            result = "NO"
+
+        conn.send(socketCommunication.encodeMess(result)) # mandamos la respuesta
+
+        if conn.recv(1024) != socketCommunication.ACK:
+            conn.close()
+            return
+
+        conn.send(b"<EOT>") # fin de comunicación
+        print(f"[CENTRAL] Handshake completado con CP {cp}, esperando mensajes...")
+
+        conn.settimeout(10)
+        while True:
+            try:
+                msg = conn.recv(1024)
+                if not msg:
+                    break
+                
+                if msg == b"PING":
+                    # Nuevo: respuesta al heartbeat del monitor
+                    conn.send(b"PONG")
+
+                elif msg == b"KO":
+                    print(f"[CENTRAL] :( CP {cp} averiado → UNAVAILABLE")
+                    db.upsertCp({
+                        "id": cp,
+                        "state": "UNAVAILABLE",
+                    })
+                    conn.send(socketCommunication.ACK)
+                    session_found = None
+                    session_key = None
+                    for sid, session_data in active_sessions.items():
+                        if session_data.get("cp_id") == cp:
+                            session_found = session_data
+                            session_key = sid
+                            break
+                    if session_found:
+                        driver_id = session_found.get("driver_id")
+                        energy_total = session_found.get("energy_kwh", 0.0)
+                        price = db.getCp(cp).get("price_eur_kwh", 0.3)
+                        total_price = energy_total * price
+                        print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
+                        prod = kafka_utils.buildProducer(kafkaInfo)
+                        kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                            "driver_id": driver_id,
+                            "cp_id": cp,
+                        })
+                        kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
+                            "driver_id": driver_id,
+                            "cp_id": cp,
+                            "price": round(total_price, 2),
+                            "energy_kwh": round(energy_total, 3)
+                        })
+                        active_sessions.pop(session_key, None)
+                        db.deleteSession(driver_id, cp_id)
+
+                elif msg == b"OK":
+                    print(f"[CENTRAL] :) CP {cp} recuperado → AVAILABLE")
+                    db.upsertCp({
+                        "id": cp,
+                        "state": "AVAILABLE",
+                    })
+                    conn.send(socketCommunication.ACK)
+
+                else:
+                    print(f"[CENTRAL] Mensaje desconocido de {cp}: {msg}")
+    
+            except socket.timeout:
+                continue
+            except Exception as e:
+                print(f"[CENTRAL] Error recibiendo de {cp}: {e}")
+                break
+
+    except Exception as e:
+        print(f"[CENTRAL] Error con {addr}: {e}")
+
+    finally:
+        conn.close()
+        print(f"[CENTRAL] Conexión cerrada con {addr}")
+
+        try:
+            if 'cp' in locals() and cp is not None:
+                print(f"[CENTRAL] ⚠️ CP {cp} desconectado → DISCONNECTED")
+                db.upsertCp({
+                    "id": cp,
+                    "state": "DISCONNECTED"
+                })
+                session_found = None
+                session_key = None
+                for sid, session_data in active_sessions.items():
+                    if session_data.get("cp_id") == cp:
+                        session_found = session_data
+                        session_key = sid
+                        break
+                if session_found:
+                    driver_id = session_found.get("driver_id")
+                    energy_total = session_found.get("energy_kwh", 0.0)
+                    price = db.getCp(cp).get("price_eur_kwh", 0.3)
+                    total_price = energy_total * price
+                    print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
+                    prod = kafka_utils.buildProducer(kafkaInfo)
+                    kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                        "driver_id": driver_id,
+                        "cp_id": cp,
+                    })
+                    kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
+                        "driver_id": driver_id,
+                        "cp_id": cp,
+                        "price": round(total_price, 2),
+                        "energy_kwh": round(energy_total, 3)
+                    })
+                    active_sessions.pop(session_key, None)
+                    db.deleteSession(driver_id, cp_id)
+        except Exception as e:
+            print(f"[CENTRAL] ❌ Error marcando CP desconectado: {e}")
+
+def handleDriver(topic, data, prod):
+
+    if topic == topics.EV_SUPPLY_REQUEST:
+        driver_id = data.get("driver_id")
+        cp_id = data.get("cp_id")
+
+        print(f"[CENTRAL] Driver {driver_id} solicita recarga en CP {cp_id}")
+
+        cp = db.getCp(cp_id)
+        if not cp:
+            authorized = False
+            reason = "CP no existe"
+            print(f"[CENTRAL] Recarga denegada para Driver {driver_id} en CP {cp_id}: {reason}")
+        elif not driver_id: # Si no existe el driver lo añadimos a la base de datos
+            db.upsertDriver({
+                "id": driver_id,
+                "name": f"{driver_id} name"})
+
+        if cp and cp.get("state") == "AVAILABLE":
+            authorized = True
+            reason = "CP disponible"
+            print(f"[CENTRAL] Recarga autorizada para Driver {driver_id} en CP {cp_id}")
+        else:
+            authorized = False
+            reason = "CP no disponible"
+            print(f"[CENTRAL] Recarga denegada para Driver {driver_id} en CP {cp_id}: {reason}")
+        # autorizamos driver y envíamos al driver
+        kafka_utils.send(prod, topics.EV_SUPPLY_AUTH_DRI, {
+            "driver_id": driver_id,
+            "cp_id": cp_id,
+            "authorized": authorized,
+            "reason": reason
+        })
+        # autorizamos driver y envíamos al engine
+        kafka_utils.send(prod, topics.EV_SUPPLY_AUTH, {
+            "driver_id": driver_id,
+            "cp_id": cp_id,
+            "authorized": authorized,
+            "reason": reason,
+            "price_eur_kwh": cp.get("price_eur_kwh", 0.3) if cp else None
+        })
+    elif topic == topics.EV_SUPPLY_CONNECTED:
+        driver_id = data.get("driver_id")
+        cp_id = data.get("cp_id")
+        print(f"[CENTRAL] Notificación enviada a Driver {driver_id} de confirmación")
+        if data.get("status") != "CONNECTED": # si el cp ya está en uso
+            print(f"[CENTRAL] Recarga rechazada por ENGINE para Driver {driver_id} en CP {cp_id}")
+            kafka_utils.send(prod, topics.EV_SUPPLY_STARTED, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "status": "REJECTED"
+            })
+            return
+        kafka_utils.send(prod, topics.EV_SUPPLY_STARTED, {
+            "driver_id": driver_id,
+            "cp_id": cp_id,
+            "status": "APPROVED"
+        })
+        db.setCpState(cp_id, "SUPPLYING")
+        session_id = f"{driver_id}_{cp_id}"
+        active_sessions[session_id] = {
+            "driver_id": driver_id,
+            "cp_id": cp_id,
+            "start_time": datetime.now(timezone.utc),
+            "energy_kwh": 0.0
+        }
+        db.upsertSession({
+            "driver_id": driver_id,
+            "cp_id": cp_id,
+            "start_time": datetime.now(timezone.utc),
+            "energy_kwh": 0.0
+        })
+    elif topic == topics.EV_SUPPLY_HEARTBEAT:
+        driver_id = data.get("driver_id")
+        cp_id = data.get("cp_id")
+        power_kw = data.get("power_kw", 0.0)
+        energy_kwh = data.get("energy_kwh", 0.0)
+        timestamp = data.get("timestamp", 0)
+
+        session_id = f"{driver_id}_{cp_id}"
+        if session_id in active_sessions:
+            last_energy = active_sessions[session_id].get("energy_kwh", 0.0)
+            delta = max(0, energy_kwh - last_energy)
+            active_sessions[session_id]["energy_kwh"] = last_energy + delta
+            db.updateSessionEnergy(driver_id, cp_id, active_sessions[session_id]["energy_kwh"])
+
+            kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_HEARTBEAT, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "power_kw": power_kw,
+                "energy_kwh": energy_kwh,
+                "timestamp": timestamp
+            })
+        else:
+            print(f"[CENTRAL] Heartbeat recibido de Driver {driver_id} en CP {cp_id} sin sesión activa.")
+            kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "reason": "NO_ACTIVE_SESSION"
+            })
+
+            kafka_utils.send(prod, topics.EV_SUPPLY_END_ENGINE, {
+                "driver_id": driver_id,
+                "cp_id": cp_id,
+                "status": "FORCED_END"
+            })
+            db.setCpState(cp_id, "FUERA DE SERVICIO")
+
+    elif topic == topics.EV_SUPPLY_END:
+        driver_id = data.get("driver_id")
+        cp_id = data.get("cp_id")
+        print(f"[CENTRAL] Driver {driver_id} ha terminado la recarga en CP {cp_id}")
+        cp_state = db.getCp(cp_id).get("state", "UNKNOWN").upper()
+        if cp_state != "FUERA DE SERVICIO":
+            db.setCpState(cp_id, "AVAILABLE")
+        session_id = f"{driver_id}_{cp_id}"
+        start_time = active_sessions.get(f"{driver_id}_{cp_id}", {}).get("start_time")
+
+        session = active_sessions.get(session_id)
+        if session:
+            start_time = session.get("start_time")
+            energy_total = session.get("energy_kwh", 0.0)
+            duration = datetime.now(timezone.utc) - start_time
+            hours = duration.total_seconds() / 3600
+        else:
+            hours = 0.0
+            energy_total = 0.0
+
+        cp_price = db.getCp(cp_id).get("price_eur_kwh", 0.3)
+        total_price = energy_total * cp_price
+        kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
+            "driver_id": driver_id,
+            "cp_id": cp_id,
+            "price": round(total_price, 2),
+            "energy_kwh": round(energy_total, 3)
+        })
+        active_sessions.pop(f"{driver_id}_{cp_id}", None)
+        db.deleteSession(driver_id, cp_id)
+
+def tcpServer(s, kafkaInfo):
+    while True:
+        conn, addr = s.accept()
+        t = threading.Thread(target=handleClient, args=(conn, addr, kafkaInfo), daemon=True)
+        t.start()
+
+def kafkaListener(kafkaInfo):
+    kafkaProducer = kafka_utils.buildProducer(kafkaInfo)
+    kafkaConsumer = kafka_utils.buildConsumer(
+        kafkaInfo, 
+        "central-driver",
+        [
+        topics.EV_SUPPLY_CONNECTED,
+        topics.EV_SUPPLY_END,
+        topics.EV_SUPPLY_REQUEST,
+        topics.EV_SUPPLY_HEARTBEAT
+    ]
+    )
+    print("[CENTRAL] Esperando mensajes...")
+
+    kafka_utils.pollLoop(
+        kafkaConsumer,
+        lambda topic, data: handleDriver(topic, data, kafkaProducer)
+    )
+
+def load_active_sessions():
+    # Consultamos todas las sesiones en la base de datos
+    sessions_in_db = db.sessions.find() 
+    for session in sessions_in_db:
+        session_id = f"{session['driver_id']}_{session['cp_id']}"
+        if isinstance(session["start_time"], datetime) and session["start_time"].tzinfo is None:
+            session["start_time"] = session["start_time"].replace(tzinfo=timezone.utc)
+        active_sessions[session_id] = {
+            "driver_id": session["driver_id"],
+            "cp_id": session["cp_id"],
+            "start_time": session["start_time"],
+            "energy_kwh": session["energy_kwh"]
+        }
+        print(f"[CENTRAL] Cargada sesión desde base de datos: {session_id}")
 
 def main():
-    
     if len(sys.argv) != 3:
-        print("Uso: python EV_Central.py <port> <kafka_bootstrap_servers>")
-        sys.exit(1)
+        print("Uso: central.py <puerto> <kafka_ip:port>")
+        return
 
-    central_port = int(sys.argv[1])
-    kafka = sys.argv[2]
+    port = int(sys.argv[1])
+    kafkaInfo = sys.argv[2]
 
-    # Socket de escucha para la auth con el cp
-    start_socket_server("0.0.0.0", central_port)
+    s = socket.socket()
+    s.bind(("0.0.0.0", port))
+    s.listen(5)
+    print(f"[CENTRAL] En escucha permanente en {port}")
 
-    # Kafka
-    prod = kafka_utils.build_producer(kafka)
-    threading.Thread(target=monitor_sessions, args=(prod,), daemon=True).start() # hilo para monitorizar sesiones
-    cons = kafka_utils.build_consumer(kafka, "central-group", [
-        topics.EV_REGISTER,
-        topics.EV_HEALTH,
-        topics.EV_SUPPLY_REQUEST,
-        topics.EV_SUPPLY_TELEMETRY,
-        topics.EV_SUPPLY_DONE,
-        topics.EV_AUTH_REQUEST,
-        topics.EV_AUTH_RESULT
-    ])
+    load_active_sessions()  # Cargamos sesiones activas desde la base de datos
+    printCpPanel()
 
-    utils.ok("[CENTRAL] Iniciado")
-    utils.info("[CENTRAL] Mostrando CPs conocidos (estado inicial = DISCONNECTED hasta que conecten)")
-    for cp in db.charging_points.find({}):
-        print(f" - CP {cp['id']} @ {cp.get('location','N/A')} price={cp.get('price_eur_kwh',0.3)}€ state={cp.get('state','DISCONNECTED')}")
+    # Lanzamos los threads en segundo plano
+    threading.Thread(target=tcpServer, args=(s, kafkaInfo), daemon=True).start()
+    threading.Thread(target=kafkaListener, args=(kafkaInfo,), daemon=True).start()
+    threading.Thread(target=heartbeat_loop, args=(kafkaInfo,), daemon=True).start()
 
-    kafka_utils.poll_loop(cons, lambda topic, data: handler(topic, data, prod))
+    print("\n[COMANDOS CENTRAL ACTIVADOS]")
+    print("  stop <cp_id>   → Detiene carga, genera ticket y pasa a FUERA DE SERVICIO")
+    print("  enable <cp_id> → Vuelve a poner el CP en AVAILABLE\n")
 
-if __name__ == "__main__":
-    main()
+    # 🔥 BUCLE DE COMANDOS (SIN BLOQUEAR EL RESTO)
+    while True:
+        try:
+            cmd = input().strip().split()
+            if len(cmd) == 2:
+                if cmd[0].lower() == "stop":
+                    stopCP(cmd[1], kafkaInfo)
+                elif cmd[0].lower() == "enable":
+                    enableCP(cmd[1])
+                else:
+                    print("[CENTRAL] Comando no reconocido.")
+            else:
+                print("[CENTRAL] Formato inválido. Usa: stop <id> o enable <id>")
+        except KeyboardInterrupt:
+            print("\n[CENTRAL] Saliendo...")
+            break
+        except Exception as e:
+            print(f"[CENTRAL] Error procesando comando: {e}")
+
+
+main()

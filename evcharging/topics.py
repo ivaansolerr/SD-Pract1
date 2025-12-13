@@ -1,18 +1,14 @@
-# Definición centralizada de topics Kafka
+EV_SUPPLY_REQUEST = "evSupplyRequest"       # Driver -> Central (solicitud de recarga)
 
-# --- Registro y autenticación ---
-EV_REGISTER = "evRegister"           # CP_M -> Central (alta/registro inicial)
-EV_AUTH_REQUEST = "evAuthRequest"    # CP_M -> Central (solicitud de autenticación)
-EV_AUTH_RESULT = "evAuthResult"      # Central -> CP_M (resultado autenticación)
-EV_AUTH_RESULT_ENG = "evAuthResultEng"    # CP_M -> CP_E(resultado autenticación)
+EV_SUPPLY_AUTH_DRI = "evSupplyAuthDri"      # Central -> Driver (autorización) 
+EV_SUPPLY_STARTED = "evSupplyStarted"       # Central -> Driver (Comienza el supply driver) 
+EV_SUPPLY_TICKET = "evSupplyTicket"         # Central -> Driver (ticket final con precio)
 
-# --- Health & comandos ---
-EV_HEALTH = "evHealth"               # CP_M -> Central (heartbeat OK/KO)
-EV_COMMANDS = "evCommands"           # Central -> CP_E (STOP_SUPPLY, OUT_OF_ORDER, RESUME)
-
-# --- Ciclo de suministro ---
-EV_SUPPLY_REQUEST = "evSupplyRequest"   # Driver -> Central
-EV_SUPPLY_AUTH = "evSupplyAuth"         # Central -> Driver
-EV_SUPPLY_START = "evSupplyStart"       # Central -> CP_E (inicio de suministro)
-EV_SUPPLY_TELEMETRY = "evSupplyTelemetry" # CP_E -> Central (telemetría)
-EV_SUPPLY_DONE = "evSupplyDone"         # CP_E -> Central (fin de sesión)
+EV_SUPPLY_CONNECTED = "evSupplyConnected" # Engine -> Central (Comienza el supply engine) 
+EV_SUPPLY_AUTH = "evSupplyAuth" # Central -> Engine  (iniciar o rechazar)
+EV_SUPPLY_END = "evSupplyEnd"   # Engine -> Central (fin del supply, trigger para que central mande el ticket)
+EV_SUPPLY_HEARTBEAT = "evSupplyHeartbeat" # Engine -> Central (monitorizar estado)
+EV_CENTRAL_HEARTBEAT = "evCentralHeartbeat" # Driver -> Central (latido para monitorizar estado)
+EV_DRIVER_SUPPLY_HEARTBEAT = "evDriverSupplyHeartbeat" # Driver -> Central (monitorizar estado)
+EV_DRIVER_SUPPLY_ERROR = "evDriverSupplyError" # Driver -> Central (error durante el suministro)
+EV_SUPPLY_END_ENGINE = "evSupplyEndEngine" # Central -> Engine (fin del supply, trigger para que engine pare el suministro)
