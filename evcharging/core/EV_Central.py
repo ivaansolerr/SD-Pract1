@@ -77,7 +77,7 @@ def stopCP(cp_id, kafkaInfo):
             active_sessions.pop(session_key, None)
 
         # Estado final
-        upsertCp({
+        db.upsertCp({
             "id": cp_id,
             "state": "FUERA DE SERVICIO",
         })
@@ -85,7 +85,7 @@ def stopCP(cp_id, kafkaInfo):
 
     else:
         print(f"[CENTRAL] 🛑 Parando CP {cp_id} (NO supplying) → FUERA DE SERVICIO")
-        upsertCp({
+        db.upsertCp({
             "id": cp_id,
             "state": "FUERA DE SERVICIO",
         })
@@ -360,7 +360,9 @@ def handleDriver(topic, data, prod):
         driver_id = data.get("driver_id")
         cp_id = data.get("cp_id")
         print(f"[CENTRAL] Driver {driver_id} ha terminado la recarga en CP {cp_id}")
-        db.setCpState(cp_id, "AVAILABLE")
+        cp_state = db.getCp(cp_id).get("state", "UNKNOWN").upper()
+        if cp_state != "FUERA DE SERVICIO":
+            db.setCpState(cp_id, "AVAILABLE")
         session_id = f"{driver_id}_{cp_id}"
         start_time = active_sessions.get(f"{driver_id}_{cp_id}", {}).get("start_time")
 
