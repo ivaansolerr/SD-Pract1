@@ -77,6 +77,7 @@ async function obtenerTemperatura(ciudad, cp, apiKey) {
                 console.log(`El CP ${cp} deja de estar disponible, temperatura < 0°C`);
                 try {
 
+                    
                     const currentStateResponse = await axios.get(apiCentralGetCP, { httpsAgent: httpsAgent });
                     const estadoOriginal = currentStateResponse.data.state; 
 
@@ -136,6 +137,8 @@ async function obtenerTemperatura(ciudad, cp, apiKey) {
         console.error(`[ERROR] Ciudad: ${ciudad} | Causa: ${msg}`);
     }
 }
+
+// exponer el método para obtener estado de los cps y que cada vez que se la temperatura 
 
 try {
     const httpsOptions = { 
