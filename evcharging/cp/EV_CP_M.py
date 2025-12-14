@@ -39,6 +39,36 @@ def handshake(sock, cp, key, name=""):
         print(f"[MONITOR] Error en handshake con {name}: {e}")
         return False
 
+def handshake_engine(sock, cp, name="ENGINE"):
+    try:
+        sock.settimeout(5)
+
+        sock.sendall(b"<ENC>")
+        if sock.recv(1024) != socketCommunication.ACK:
+            print(f"[MONITOR] {name} no envió ACK tras <ENC>")
+            return False
+
+        sock.sendall(socketCommunication.encodeMess(cp))  # SOLO CP
+        if sock.recv(1024) != socketCommunication.ACK:
+            print(f"[MONITOR] {name} no envió ACK tras CP_ID")
+            return False
+
+        ans = socketCommunication.parseFrame(sock.recv(1024))
+        if ans != "OK":
+            print(f"[MONITOR] {name} rechazó autenticación ({ans})")
+            return False
+
+        sock.sendall(socketCommunication.ACK)
+        if sock.recv(1024) != b"<EOT>":
+            print(f"[MONITOR] {name} no envió <EOT>")
+            return False
+
+        return True
+    except Exception as e:
+        print(f"[MONITOR] Error en handshake con {name}: {e}")
+        return False
+
+
 def connectWithRetry(ip, port, name, retries=5, wait=3):
     for attempt in range(1, retries + 1):
         try:
@@ -57,7 +87,7 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
     while True:
         try:
             sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=3)
-            if sc and handshake(sc, cp, "CENTRAL", key):
+            if sc and handshake(sc, cp, key, "CENTRAL"):
                 shared_state["sc"] = sc
                 print("[MONITOR] ✅ CP validado por CENTRAL")
                 break
@@ -104,7 +134,7 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
     
             while True:
                 sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=5)
-                if sc and handshake(sc, cp, "CENTRAL"):
+                if sc and handshake(sc, cp, key, "CENTRAL"):
                     print("[MONITOR] ✅ Reconexión exitosa con CENTRAL")
                     try:
                         se = socket.socket()
@@ -121,7 +151,7 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
     
         time.sleep(heartbeat_interval)
 
-def monitorEngine(ipE, pE, cp, shared_state):
+def monitorEngine(ipE, pE, cp, shared_state, key):
     while shared_state["sc"] is None:
         time.sleep(0.2)  # esperar a que CENTRAL conecte primero
 
@@ -132,7 +162,7 @@ def monitorEngine(ipE, pE, cp, shared_state):
 
     while True:
         se = connectWithRetry(ipE, pE, "ENGINE", retries=1, wait=2)
-        if se and handshake(se, cp, "ENGINE"):
+        if se and handshake_engine(se, cp, "ENGINE"):
             print("[MONITOR] ✅ CP registrado en ENGINE")
 
             if ko_sent:
@@ -186,7 +216,7 @@ def monitorEngine(ipE, pE, cp, shared_state):
             # Intentar reconectar ENGINE
             while True:
                 se = connectWithRetry(ipE, pE, "ENGINE", retries=1, wait=2)
-                if se and handshake(se, cp, "ENGINE"):
+                if se and handshake(se, cp, key, "ENGINE"):
                     print("[MONITOR] ✅ Reconexión exitosa con ENGINE")
                     try:
                         sc.send(b"OK")
@@ -254,9 +284,9 @@ def main():
     # Tenemos ya el key para autenticar en central simpre guardado
 
     #Lanzamos hilo para mantener CENTRAL
-    # threading.Thread(target=monitorCentral, args=(ipC, pC, cpId, ipE, pE, shared_state, key), daemon=True).start()
+    threading.Thread(target=monitorCentral, args=(ipC, pC, cpId, ipE, pE, shared_state, key), daemon=True).start()
     # Lanzamos hilo para mantener ENGINE (requiere socket CENTRAL activo)
-    # threading.Thread(target=monitorEngine, args=(ipE, pE, cpId, shared_state), daemon=True).start()
+    threading.Thread(target=monitorEngine, args=(ipE, pE, cpId, shared_state, key), daemon=True).start()
 
     # Bucle principal (solo mantiene el proceso vivo)
     while True:

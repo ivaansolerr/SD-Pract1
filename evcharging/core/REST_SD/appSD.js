@@ -10,15 +10,23 @@ const uniqid = require("uniqid");
 
 appSD.use(bodyParser.json()); 
 
-// Se define el puerto 
-const port=3000; 
+appSD.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // en producción limita esto
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
+
+// Se define el puerto
+const port=3000;
 
 // Server http
-https 
-    .createServer( 
-    { 
-        key: fs.readFileSync("certServ.pem"), 
-        cert: fs.readFileSync("certServ.pem"), 
+https
+    .createServer(
+    {
+        key: fs.readFileSync("certServ.pem"),
+        cert: fs.readFileSync("certServ.pem"),
     }, 
     appSD 
 ) 
@@ -41,6 +49,10 @@ let db;
 async function connectDB() {
     await client.connect();
     db = client.db("evcharging_db");
+    await db.collection("charging_points").createIndex(
+        { id: 1 },
+        { unique: true }
+    );
     console.log("Conectado a Mongo con Node.js");
 }
 

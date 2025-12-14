@@ -23,7 +23,7 @@ db.sessions.create_index(
 #     "location": "UA-Lab",
 #     "price_eur_kwh": 1.53,
 #     "state": "DISCONNECTED",
-#     "updated_at": None 
+#     "updated_at": None
 #     }
 # )
 

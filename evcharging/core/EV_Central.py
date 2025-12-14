@@ -236,8 +236,9 @@ def handleClient(conn, addr, kafkaInfo):
         conn.send(socketCommunication.ACK)
 
         if cpExists(cp):
-            stored_hash = db.getCp(cp).get("key", "")
-            new_hash = md5(key.encode()).hexdigest()
+            stored_hash = db.getCp(cp).get("keyAuth", "")
+            new_key = key.strip()
+            new_hash = md5(new_key.encode()).hexdigest()
             if stored_hash != new_hash:
                 print(f"[CENTRAL] CP {cp} falló autenticación (key incorrecta)")
                 audit_log(cp_ip, "AUTH_FAIL", f"cp_id={cp} key_incorrecta")
@@ -257,7 +258,7 @@ def handleClient(conn, addr, kafkaInfo):
                 audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> AVAILABLE")
 
                 prod = kafka_utils.buildProducer(kafkaInfo)
-                kafka_utils.send(prod, "EV_ENGINE_KEY_EXCHANGE", {
+                kafka_utils.send(prod, topics.EV_ENGINE_KEY_EXCHANGE, {
                     "cp_id": cp,
                     "key": sym_key
                 })
