@@ -308,6 +308,10 @@ def handleClient(conn, addr, kafkaInfo):
                 with open(key_filename, "w") as key_file:
                     key_file.write(key)
 
+                db.upsertCp({
+                    "id": cp,
+                    "state": "AVAILABLE",
+                })
                 audit_log(cp_ip, "AUTH_OK", f"cp_id={cp} state->AVAILABLE engine_key_generada=True")
                 audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> AVAILABLE")
 

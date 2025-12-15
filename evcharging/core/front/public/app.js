@@ -13,7 +13,7 @@ let cpsCache = [];
 let logs = [];
 
 // Backend real de SD (HTTPS)
-const SD_BASE = "https://localhost:3000";
+const SD_BASE = "https://localhost:5000";
 
 function badge(text, ok = true) {
   connBadge.textContent = text;
@@ -123,7 +123,7 @@ async function loadCPs() {
   try {
     badge("Cargando…", true);
 
-    const r = await fetch(`${SD_BASE}/cps`);
+    const r = await fetch("/api/cps");
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
 
     const cps = await r.json();
@@ -136,6 +136,7 @@ async function loadCPs() {
     cpTbody.innerHTML = `<tr><td colspan="5" class="muted">Error cargando CPs: ${safeStr(e.message)}</td></tr>`;
   }
 }
+
 
 // ---------- UI ----------
 cpFilter.addEventListener("input", () => renderCPs(cpsCache));

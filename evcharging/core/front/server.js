@@ -12,7 +12,7 @@ const AUDIT_PATH = path.resolve(process.cwd(), "../../../central_audit.log");
 
 // Backend SD (HTTPS)
 const SD_HOST = "localhost";
-const SD_PORT = 3000;
+const SD_PORT = 5000;
 
 // ====== LOG PARSER ======
 function inferType(action = "", params = "") {
