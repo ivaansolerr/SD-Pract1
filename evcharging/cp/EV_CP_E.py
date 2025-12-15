@@ -4,6 +4,7 @@ import time
 import json
 import sys
 import random
+import ssl
 from datetime import datetime
 from typing import Dict, Any, Optional
 
@@ -13,6 +14,7 @@ from confluent_kafka import Producer, Consumer
 import base64
 import hashlib
 from cryptography.fernet import Fernet, InvalidToken
+import os
 
 # ==========================
 # ESTADO GLOBAL
@@ -28,7 +30,9 @@ cp_price = 0.0
 current_driver_id: Optional[str] = None
 session_lock = threading.Lock()
 session_thread: Optional[threading.Thread] = None
-kafka_key: Optional[str] = None
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # .../evcharging/cp
+TLS_CERT = os.path.join(BASE_DIR, "certServ.pem")      # .../evcharging/cp/certServ.pem
+KEYS_DIR = os.path.join(BASE_DIR, "keys")        # .../evcharging/cp/keys
 
 # ======================================================
 # CIFRADO / DESCIFRADO KAFKA
@@ -38,7 +42,14 @@ def _derive_fernet_key(key_str: str) -> bytes:
     return base64.urlsafe_b64encode(digest)
 
 
-def _encrypt_kafka(payload: Dict[str, Any]) -> Dict[str, Any]:
+def _encrypt_kafka(payload: Dict[str, Any], cp_id: str) -> Dict[str, Any]:
+    key_path = os.path.join(KEYS_DIR, f"{cp_id}_key.txt")
+    kafka_key = None
+    try:
+        with open(key_path, "r") as key_file:
+            kafka_key = key_file.read().strip()
+    except FileNotFoundError:
+        audit_log("LOCAL", "ENCRYPTION_KEY_MISSING", f"cp_id={cp_id} key_file_not_found")
     if not kafka_key:
         return payload
 
@@ -61,7 +72,14 @@ def _decrypt_kafka(data: Dict[str, Any]) -> Dict[str, Any]:
     if "payload" not in data or "cp_id" not in data:
         utils.info("[ENGINE] ⚠️ Sobre cifrado inválido (faltan campos).")
         return {}
-
+    
+    key_path = os.path.join(KEYS_DIR, f"{registered_cp}_key.txt")
+    kafka_key = None
+    try:
+        with open(key_path, "r") as key_file:
+            kafka_key = key_file.read().strip()
+    except FileNotFoundError:
+        audit_log("LOCAL", "ENCRYPTION_KEY_MISSING", f"cp_id={registered_cp} key_file_not_found")
     if not kafka_key:
         utils.info("[ENGINE] ⚠️ Mensaje cifrado recibido sin kafka_key disponible")
         return {}
@@ -82,7 +100,7 @@ def _decrypt_kafka(data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def kafka_send(prod: Producer, topic: str, payload: Dict[str, Any]):
-    kafka_utils.send(prod, topic, _encrypt_kafka(payload))
+    kafka_utils.send(prod, topic, _encrypt_kafka(payload, registered_cp))
 
 
 # ======================================================
@@ -107,6 +125,7 @@ def handle(conn):
     conn.send(socketCommunication.ACK)
 
     cp = socketCommunication.parseFrame(conn.recv(1024))
+    key = socketCommunication.parseFrame(conn.recv(1024))
     if cp is None:
         print("[ENGINE] Error: No obtuvo el CP_ID")
         conn.send(socketCommunication.NACK)
@@ -115,6 +134,7 @@ def handle(conn):
 
     registered_cp = cp
     registered_cp_event.set()
+    utils.info(f"[ENGINE] Clave recibida de MONITOR para CP {registered_cp}: {key}")
     print(f"[ENGINE] CP registrado: {registered_cp}")
 
     conn.send(socketCommunication.ACK)  # siguiendo el protocolo
@@ -127,6 +147,10 @@ def handle(conn):
 
     conn.send(b"<EOT>")
     print(f"[ENGINE {registered_cp}] Registrado, esperando mensajes del monitor...")
+    os.makedirs(KEYS_DIR, exist_ok=True)
+    key_filename = os.path.join(KEYS_DIR, f"{registered_cp}_key.txt")
+    with open(key_filename, "w") as key_file:
+        key_file.write(key)
 
     while True:
         try:
@@ -281,27 +305,33 @@ def handleRequest(topic, data):
                 "driver_id": driver_id,
                 "cp_id": registered_cp
             })
-    
-    elif topic == topics.EV_ENGINE_KEY_EXCHANGE:
-        if data.get("cp_id") == registered_cp:
-            key = data.get("key")
-            utils.info(f"[ENGINE] Clave recibida de CENTRAL para CP {registered_cp}: {key}")
-            global kafka_key
-            kafka_key = key
 
 
 # ======================================================
 # SERVIDOR SOCKET (HILO)
 # ======================================================
 def socketServer(socketPort):
+    # Contexto TLS servidor
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ctx.load_cert_chain(certfile=TLS_CERT, keyfile=TLS_CERT)
+
     s = socket.socket()
     s.bind(("0.0.0.0", int(socketPort)))
-    s.listen(1)
-    print(f"[ENGINE] Esperando monitor en puerto {socketPort}...")
+    s.listen(5)
+    print(f"[ENGINE] 🔒 Esperando MONITOR TLS en puerto {socketPort}...")
 
     while True:
-        conn, _ = s.accept()
-        threading.Thread(target=handle, args=(conn,), daemon=True).start()
+        raw_conn, addr = s.accept()
+        try:
+            conn = ctx.wrap_socket(raw_conn, server_side=True)
+            threading.Thread(target=handle, args=(conn,), daemon=True).start()
+        except Exception as e:
+            print(f"[ENGINE] ❌ Error TLS handshake desde {addr}: {e}")
+            try:
+                raw_conn.close()
+            except:
+                pass
+
 
 
 # ======================================================

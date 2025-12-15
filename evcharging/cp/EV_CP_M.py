@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Dict, Any
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
+import ssl
 
 # IMPORTACIONES PARA GUI (Tkinter)
 import tkinter as tk
@@ -13,6 +14,14 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Variable global para controlar el cierre de hilos de forma limpia
 stop_threads = False
+TLS_INSECURE = True
+
+def make_tls_client_context():
+    ctx = ssl.create_default_context()
+    if TLS_INSECURE:
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+    return ctx
 
 def handshake(sock, cp, key, name=""):
     try:
@@ -46,48 +55,27 @@ def handshake(sock, cp, key, name=""):
         print(f"[MONITOR] Error en handshake con {name}: {e}")
         return False
 
-def handshake_engine(sock, cp, name="ENGINE"):
-    try:
-        sock.settimeout(5)
-
-        sock.sendall(b"<ENC>")
-        if sock.recv(1024) != socketCommunication.ACK:
-            print(f"[MONITOR] {name} no envió ACK tras <ENC>")
-            return False
-
-        sock.sendall(socketCommunication.encodeMess(cp))  # SOLO CP
-        if sock.recv(1024) != socketCommunication.ACK:
-            print(f"[MONITOR] {name} no envió ACK tras CP_ID")
-            return False
-
-        ans = socketCommunication.parseFrame(sock.recv(1024))
-        if ans != "OK":
-            print(f"[MONITOR] {name} rechazó autenticación ({ans})")
-            return False
-
-        sock.sendall(socketCommunication.ACK)
-        if sock.recv(1024) != b"<EOT>":
-            print(f"[MONITOR] {name} no envió <EOT>")
-            return False
-
-        return True
-    except Exception as e:
-        print(f"[MONITOR] Error en handshake con {name}: {e}")
-        return False
-
 def connectWithRetry(ip, port, name, retries=5, wait=3):
+    ctx = make_tls_client_context()
+
     for attempt in range(1, retries + 1):
-        if stop_threads: return None
+        if stop_threads:
+            return None
         try:
-            sock = socket.socket()
-            sock.settimeout(5)
-            sock.connect((ip, port))
-            print(f"[MONITOR] Conectado a {name} ({ip}:{port})")
+            raw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            raw.settimeout(5)
+            raw.connect((ip, port))
+
+            # Envolvemos con TLS
+            sock = ctx.wrap_socket(raw, server_hostname=ip)  # server_hostname da igual si TLS_INSECURE=True
+
+            print(f"[MONITOR] 🔒 Conectado TLS a {name} ({ip}:{port})")
             return sock
         except Exception as e:
             print(f"[MONITOR] Intento {attempt}/{retries} falló con {name}: {e}")
             time.sleep(wait)
     return None
+
 
 def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
     global stop_threads
@@ -135,15 +123,17 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
             if central_alive:
                 print("[MONITOR] ⚠️ CENTRAL no responde, intentando reconectar...")
                 try:
-                    se = socket.socket()
-                    se.settimeout(1)
-                    se.connect((ipE, pE))
+                    ctx = make_tls_client_context()
+                    raw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    raw.settimeout(2)
+                    raw.connect((ipE, pE))
+                    se = ctx.wrap_socket(raw, server_hostname=ipE)
                     se.send(b"CENTRAL_DOWN")
-                    se.close() # Cerrar tras enviar
-                    print("[MONITOR] 🚨 Aviso enviado a ENGINE: CENTRAL caída")
+                    se.close()
+                    print("[MONITOR] 🚨 Aviso TLS enviado a ENGINE: CENTRAL caída")
                 except Exception as e:
                     print("[MONITOR] ENGINE caído (no se pudo avisar):", e)
-                central_alive = False
+
     
             while not stop_threads:
                 sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=5)
@@ -151,7 +141,8 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
                     print("[MONITOR] ✅ Reconexión exitosa con CENTRAL")
                     shared_state["sc"] = sc # Actualizar socket compartido
                     try:
-                        se = socket.socket()
+                        ctx = make_tls_client_context()
+                        se = ctx.wrap_socket(socket.socket(), server_hostname=ipE)
                         se.settimeout(1)
                         se.connect((ipE, pE))
                         se.send(b"CENTRAL_UP_AGAIN")
@@ -181,7 +172,7 @@ def monitorEngine(ipE, pE, cp, shared_state, key):
 
     while not stop_threads:
         se = connectWithRetry(ipE, pE, "ENGINE", retries=1, wait=2)
-        if se and handshake_engine(se, cp, "ENGINE"):
+        if se and handshake(se, cp, key, "ENGINE"):
             shared_state["se"] = se # Guardamos socket engine por si necesitamos enviar mensaje de baja
             print("[MONITOR] ✅ CP registrado en ENGINE")
 

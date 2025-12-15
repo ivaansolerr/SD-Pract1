@@ -14,6 +14,8 @@ from cryptography.fernet import Fernet, InvalidToken
 import logging
 from logging.handlers import RotatingFileHandler
 import json
+import ssl
+import os
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -25,6 +27,10 @@ AUDIT_LOG_PATH = "./central_audit.log"
 _audit_logger = logging.getLogger("central_audit")
 _audit_logger.setLevel(logging.INFO)
 _audit_logger.propagate = False
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # .../evcharging/core
+TLS_CERT = os.path.abspath(os.path.join(BASE_DIR, "REST_SD", "certServ.pem"))
+KEYS_DIR = os.path.join(BASE_DIR, "keys")
+
 
 if not _audit_logger.handlers:
     handler = RotatingFileHandler(
@@ -110,7 +116,15 @@ def _derive_fernet_key(key_str: str) -> bytes:
 
 def _encrypt_for_cp(cp_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
     cp = db.getCp(cp_id)
-    key = (cp or {}).get("engine_key")
+
+
+    os.makedirs(KEYS_DIR, exist_ok=True)
+    key = None
+    try:
+        with open(os.path.join(KEYS_DIR, f"{cp_id}_key.txt"), "r") as key_file:
+            key = key_file.read().strip()
+    except FileNotFoundError:
+        audit_log("LOCAL", "ENCRYPTION_KEY_MISSING", f"cp_id={cp_id} key_file_not_found")
     if not key:
         return payload
 
@@ -134,7 +148,13 @@ def _decrypt_from_cp(data: Dict[str, Any]) -> Dict[str, Any]:
         return {}
 
     cp = db.getCp(cp_id)
-    key = (cp or {}).get("engine_key")
+    os.makedirs(KEYS_DIR, exist_ok=True)
+    key = None
+    try:
+        with open(os.path.join(KEYS_DIR, f"{cp_id}_key.txt"), "r") as key_file:
+            key = key_file.read().strip()
+    except FileNotFoundError:
+        audit_log("LOCAL", "ENCRYPTION_KEY_MISSING", f"cp_id={cp_id} key_file_not_found")
     if not key:
         audit_log("KAFKA", "DECRYPT_FAIL", f"cp_id={cp_id} sin engine_key en BD")
         return {}
@@ -162,7 +182,7 @@ def heartbeat_loop(kafkaInfo):
     prod = kafka_utils.buildProducer(kafkaInfo)
     while True:
         try:
-            kafka_send_cp(prod, topics.EV_CENTRAL_HEARTBEAT, {
+            kafka_utils.send(prod, topics.EV_CENTRAL_HEARTBEAT, {
                 "timestamp": int(time.time() * 1000)
             })
             audit_log("LOCAL", "CENTRAL_HEARTBEAT_SENT", "topic=EV_CENTRAL_HEARTBEAT")
@@ -282,22 +302,14 @@ def handleClient(conn, addr, kafkaInfo):
                 return
             else:
                 print(f"[CENTRAL] CP :) {cp} autenticado. Estado → AVAILABLE")
-                sym_key = secrets.token_hex(32)
 
-                db.upsertCp({
-                    "id": cp,
-                    "state": "AVAILABLE",
-                    "engine_key": sym_key,
-                })
+                os.makedirs(KEYS_DIR, exist_ok=True)
+                key_filename = os.path.join(KEYS_DIR, f"{cp}_key.txt")
+                with open(key_filename, "w") as key_file:
+                    key_file.write(key)
+
                 audit_log(cp_ip, "AUTH_OK", f"cp_id={cp} state->AVAILABLE engine_key_generada=True")
                 audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> AVAILABLE")
-
-                prod = kafka_utils.buildProducer(kafkaInfo)
-                kafka_utils.send(prod, topics.EV_ENGINE_KEY_EXCHANGE, {
-                    "cp_id": cp,
-                    "key": sym_key
-                })
-                audit_log(cp_ip, "KEY_EXCHANGE_SENT", f"cp_id={cp} topic=EV_ENGINE_KEY_EXCHANGE")
 
                 result = "OK"
         else:
@@ -660,11 +672,22 @@ def handleDriver(topic, data, prod):
         db.deleteSession(driver_id, cp_id)
         audit_log("KAFKA", "SESSION_DELETED_DB", f"driver_id={driver_id} cp_id={cp_id}")
 
-def tcpServer(s, kafkaInfo):
+def tcpServer(s, kafkaInfo, tls_ctx):
     while True:
-        conn, addr = s.accept()
+        raw_conn, addr = s.accept()
+        try:
+            conn = tls_ctx.wrap_socket(raw_conn, server_side=True)
+        except Exception as e:
+            print(f"[CENTRAL] ❌ Error TLS handshake desde {addr}: {e}")
+            try:
+                raw_conn.close()
+            except:
+                pass
+            continue
+
         t = threading.Thread(target=handleClient, args=(conn, addr, kafkaInfo), daemon=True)
         t.start()
+
 
 def kafkaListener(kafkaInfo):
     kafkaProducer = kafka_utils.buildProducer(kafkaInfo)
@@ -714,13 +737,16 @@ def main():
     s = socket.socket()
     s.bind(("0.0.0.0", port))
     s.listen(5)
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ctx.load_cert_chain(certfile=TLS_CERT, keyfile=TLS_CERT)
+
     print(f"[CENTRAL] En escucha permanente en {port}")
     audit_log("LOCAL", "CENTRAL_START", f"port={port} kafka={kafkaInfo}")
 
     load_active_sessions()
     #printCpPanel()
 
-    threading.Thread(target=tcpServer, args=(s, kafkaInfo), daemon=True).start()
+    threading.Thread(target=tcpServer, args=(s, kafkaInfo, ctx), daemon=True).start()
     audit_log("LOCAL", "THREAD_START", "tcpServer")
     threading.Thread(target=kafkaListener, args=(kafkaInfo,), daemon=True).start()
     audit_log("LOCAL", "THREAD_START", "kafkaListener")

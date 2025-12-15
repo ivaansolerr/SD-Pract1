@@ -10290,3 +10290,1558 @@
 2025-12-15T11:14:16.600224+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
 2025-12-15T11:14:21.600594+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
 2025-12-15T11:14:23.900930+00:00 | LOCAL | CENTRAL_STOP | KeyboardInterrupt
+2025-12-15T16:11:35.565057+00:00 | LOCAL | STARTUP_FAIL | args_invalidos
+2025-12-15T16:15:05.936948+00:00 | LOCAL | CENTRAL_START | port=7000 kafka=127.0.0.1:9092
+2025-12-15T16:15:05.941196+00:00 | LOCAL | THREAD_START | tcpServer
+2025-12-15T16:15:05.949140+00:00 | LOCAL | THREAD_START | kafkaListener
+2025-12-15T16:15:05.950226+00:00 | LOCAL | KAFKA_LISTENER_START | group=central-driver
+2025-12-15T16:15:05.951010+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:15:05.951161+00:00 | LOCAL | THREAD_START | heartbeat_loop
+2025-12-15T16:15:05.951697+00:00 | LOCAL | THREAD_START | weather_monitor_loop
+2025-12-15T16:15:05.954166+00:00 | LOCAL | WEATHER_MONITOR_ERROR | err=HTTPSConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /weather-status (Caused by NewConnectionError("HTTPSConnection(host='127.0.0.1', port=4000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2025-12-15T16:15:09.766762+00:00 | LOCAL | CENTRAL_STOP | KeyboardInterrupt
+2025-12-15T16:16:04.660351+00:00 | LOCAL | CENTRAL_START | port=7000 kafka=127.0.0.1:9092
+2025-12-15T16:16:04.664512+00:00 | LOCAL | THREAD_START | tcpServer
+2025-12-15T16:16:04.666727+00:00 | LOCAL | KAFKA_LISTENER_START | group=central-driver
+2025-12-15T16:16:04.666890+00:00 | LOCAL | THREAD_START | kafkaListener
+2025-12-15T16:16:04.668450+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:16:04.668640+00:00 | LOCAL | THREAD_START | heartbeat_loop
+2025-12-15T16:16:04.669398+00:00 | LOCAL | THREAD_START | weather_monitor_loop
+2025-12-15T16:16:04.672654+00:00 | LOCAL | WEATHER_MONITOR_ERROR | err=HTTPSConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /weather-status (Caused by NewConnectionError("HTTPSConnection(host='127.0.0.1', port=4000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2025-12-15T16:16:09.669088+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:16:09.674698+00:00 | LOCAL | WEATHER_MONITOR_ERROR | err=HTTPSConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /weather-status (Caused by NewConnectionError("HTTPSConnection(host='127.0.0.1', port=4000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2025-12-15T16:16:13.857818+00:00 | LOCAL | CENTRAL_STOP | KeyboardInterrupt
+2025-12-15T16:16:42.252995+00:00 | LOCAL | CENTRAL_START | port=7000 kafka=127.0.0.1:9092
+2025-12-15T16:16:42.257554+00:00 | LOCAL | THREAD_START | tcpServer
+2025-12-15T16:16:42.261829+00:00 | LOCAL | THREAD_START | kafkaListener
+2025-12-15T16:16:42.262015+00:00 | LOCAL | KAFKA_LISTENER_START | group=central-driver
+2025-12-15T16:16:42.263633+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:16:42.263874+00:00 | LOCAL | THREAD_START | heartbeat_loop
+2025-12-15T16:16:42.264631+00:00 | LOCAL | THREAD_START | weather_monitor_loop
+2025-12-15T16:16:47.264278+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:16:52.264756+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:16:57.265287+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:02.265685+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:07.266147+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:12.266607+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:17.267151+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:22.267554+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:27.267885+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:32.268294+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:37.268741+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:42.269102+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:47.269477+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:52.269858+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:17:57.270231+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:02.270660+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:07.271089+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:12.271489+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:17.271930+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:22.272347+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:27.272771+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:32.273291+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:37.273695+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:42.274142+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:47.274546+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:52.275027+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:18:57.275503+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:02.276003+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:07.276514+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:12.276948+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:17.277308+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:22.277598+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:26.197581+00:00 | 127.0.0.1 | TCP_CONNECT | addr=('127.0.0.1', 42048)
+2025-12-15T16:19:26.278968+00:00 | 127.0.0.1 | AUTH_ATTEMPT | cp_id=cp-001
+2025-12-15T16:19:26.283029+00:00 | 127.0.0.1 | AUTH_OK | cp_id=cp-001 state->AVAILABLE engine_key_generada=True
+2025-12-15T16:19:26.283139+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> AVAILABLE
+2025-12-15T16:19:26.317911+00:00 | 127.0.0.1 | KEY_EXCHANGE_SENT | cp_id=cp-001 topic=EV_ENGINE_KEY_EXCHANGE
+2025-12-15T16:19:26.320052+00:00 | 127.0.0.1 | HANDSHAKE_OK | cp_id=cp-001
+2025-12-15T16:19:26.320254+00:00 | 127.0.0.1 | CP_SOCKET_REGISTERED | cp_id=cp-001
+2025-12-15T16:19:26.320522+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:19:27.277862+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:31.321002+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:19:32.278212+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:36.321459+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:19:37.278597+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:41.321964+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:19:42.279043+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:46.322421+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:19:47.279489+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:51.322918+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:19:52.279886+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:19:56.323365+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:19:57.280308+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:01.323866+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:02.280775+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:06.324288+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:07.281262+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:11.324698+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:12.281668+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:16.325094+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:17.282096+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:21.325553+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:22.282550+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:26.325981+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:27.282946+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:31.326456+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:32.283380+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:35.209885+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:20:35.210035+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-002
+2025-12-15T16:20:35.211854+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-002 reason=CP no existe
+2025-12-15T16:20:35.212033+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-002 reason=CP no disponible
+2025-12-15T16:20:35.294020+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-002 authorized=False reason=CP no disponible
+2025-12-15T16:20:35.295613+00:00 | LOCAL | ENCRYPTION_KEY_MISSING | cp_id=cp-002 key_file_not_found
+2025-12-15T16:20:36.294031+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-002 authorized=False price=None
+2025-12-15T16:20:36.326950+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:37.283849+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:41.327379+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:42.284311+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:46.327869+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:47.284750+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:51.328338+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:52.285240+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:20:56.328901+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:20:57.285663+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:01.329386+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:02.286109+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:06.329835+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:07.286510+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:11.330245+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:12.287019+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:16.330694+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:17.287416+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:21.331025+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:22.287807+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:26.331434+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:27.288130+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:31.331927+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:32.288504+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:36.332422+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:37.288944+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:39.058455+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:21:39.058625+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:21:39.060295+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-001 reason=CP no disponible
+2025-12-15T16:21:39.064108+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=False reason=CP no disponible
+2025-12-15T16:21:39.075897+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=False price=2
+2025-12-15T16:21:41.332897+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:42.289220+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:46.333406+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:47.289704+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:51.333933+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:52.290150+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:21:54.061749+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:21:54.061989+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:21:54.064604+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-001 reason=CP no disponible
+2025-12-15T16:21:54.067882+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=False reason=CP no disponible
+2025-12-15T16:21:54.073814+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=False price=2
+2025-12-15T16:21:56.334380+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:21:57.290699+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:01.334843+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:02.291166+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:06.335224+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:07.291562+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:11.335643+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:12.292048+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:16.336097+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:17.292446+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:21.336524+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:22.292874+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:26.336984+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:27.293240+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:28.531416+00:00 | 127.0.0.1 | INCIDENT_CP_KO | cp_id=cp-001 state->UNAVAILABLE
+2025-12-15T16:22:28.531701+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> UNAVAILABLE
+2025-12-15T16:22:31.337356+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:32.293638+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:33.769040+00:00 | 127.0.0.1 | CP_RECOVERED | cp_id=cp-001 state->AVAILABLE
+2025-12-15T16:22:33.769228+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> AVAILABLE
+2025-12-15T16:22:36.337844+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:37.294064+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:41.338249+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:42.294482+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:46.338702+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:47.294910+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:49.352137+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:22:49.352410+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:22:49.354955+00:00 | KAFKA | SUPPLY_AUTHORIZED | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:22:49.358178+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=True reason=CP disponible
+2025-12-15T16:22:49.365382+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=True price=2
+2025-12-15T16:22:49.738466+00:00 | KAFKA | KAFKA_RX | topic=evSupplyConnected
+2025-12-15T16:22:49.738610+00:00 | KAFKA | SUPPLY_CONNECTED | driver_id=cli1 cp_id=cp-001 status=CONNECTED
+2025-12-15T16:22:50.310034+00:00 | KAFKA | SUPPLY_STARTED_SENT | driver_id=cli1 cp_id=cp-001 status=APPROVED
+2025-12-15T16:22:50.312113+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 AVAILABLE->SUPPLYING
+2025-12-15T16:22:50.312313+00:00 | KAFKA | SESSION_START | session_id=cli1_cp-001
+2025-12-15T16:22:50.314307+00:00 | KAFKA | SESSION_UPSERT_DB | session_id=cli1_cp-001
+2025-12-15T16:22:50.734902+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:22:50.736650+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=2.42 energy_kwh=0.002 delta=0.002 ts=1765815769736
+2025-12-15T16:22:51.310813+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:22:51.339133+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:52.295372+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:53.739848+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:22:53.742709+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.95 energy_kwh=0.004 delta=0.002 ts=1765815773733
+2025-12-15T16:22:53.745830+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:22:56.339557+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:22:56.742699+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:22:56.744664+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=0.62 energy_kwh=0.004 delta=0 ts=1765815776737
+2025-12-15T16:22:56.748376+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:22:57.295825+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:22:59.747222+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:22:59.749578+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.36 energy_kwh=0.005 delta=0.001 ts=1765815779740
+2025-12-15T16:22:59.751914+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:01.340066+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:02.296271+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:03.737410+00:00 | KAFKA | KAFKA_RX | topic=evSupplyEnd
+2025-12-15T16:23:03.737524+00:00 | KAFKA | SUPPLY_END | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:03.741024+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 SUPPLYING->AVAILABLE
+2025-12-15T16:23:03.741168+00:00 | KAFKA | SESSION_END | session_id=cli1_cp-001 energy_kwh=0.005 hours=0.0037
+2025-12-15T16:23:04.313010+00:00 | KAFKA | TICKET_ISSUED | driver_id=cli1 cp_id=cp-001 price=0.01 energy_kwh=0.005
+2025-12-15T16:23:04.313302+00:00 | KAFKA | SESSION_REMOVED_MEMORY | session_id=cli1_cp-001
+2025-12-15T16:23:04.316137+00:00 | KAFKA | SESSION_DELETED_DB | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:06.340522+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:07.296682+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:11.341033+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:12.297134+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:16.341452+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:17.297550+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:20.507154+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:23:20.507454+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:20.510385+00:00 | KAFKA | SUPPLY_AUTHORIZED | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:20.523505+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=True reason=CP disponible
+2025-12-15T16:23:20.529577+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=True price=2
+2025-12-15T16:23:20.536445+00:00 | KAFKA | KAFKA_RX | topic=evSupplyConnected
+2025-12-15T16:23:20.536805+00:00 | KAFKA | SUPPLY_CONNECTED | driver_id=cli1 cp_id=cp-001 status=CONNECTED
+2025-12-15T16:23:20.542615+00:00 | KAFKA | SUPPLY_STARTED_SENT | driver_id=cli1 cp_id=cp-001 status=APPROVED
+2025-12-15T16:23:20.545763+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 AVAILABLE->SUPPLYING
+2025-12-15T16:23:20.545906+00:00 | KAFKA | SESSION_START | session_id=cli1_cp-001
+2025-12-15T16:23:20.547440+00:00 | KAFKA | SESSION_UPSERT_DB | session_id=cli1_cp-001
+2025-12-15T16:23:20.549005+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:23:20.550514+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=0.7 energy_kwh=0.001 delta=0.001 ts=1765815800534
+2025-12-15T16:23:20.552700+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:21.341934+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:22.297993+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:23.545711+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:23:23.548081+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=2.13 energy_kwh=0.002 delta=0.001 ts=1765815803537
+2025-12-15T16:23:23.550533+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:26.342480+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:26.552623+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:23:26.554593+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=2.05 energy_kwh=0.004 delta=0.002 ts=1765815806541
+2025-12-15T16:23:26.558347+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:27.298465+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:29.550521+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:23:29.555112+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.43 energy_kwh=0.005 delta=0.001 ts=1765815809545
+2025-12-15T16:23:29.557385+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:31.342833+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:32.298917+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:32.556126+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:23:32.558831+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.54 energy_kwh=0.007 delta=0.002 ts=1765815812548
+2025-12-15T16:23:32.561388+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:33.881126+00:00 | LOCAL | ADMIN_CMD | cmd=stop cp-001
+2025-12-15T16:23:33.883672+00:00 | LOCAL | ADMIN_STOP_CP | cp_id=cp-001 state=SUPPLYING
+2025-12-15T16:23:33.901685+00:00 | LOCAL | TICKET_ISSUED_BY_STOP | driver_id=cli1 cp_id=cp-001 energy_kwh=0.007 price=0.01
+2025-12-15T16:23:34.893841+00:00 | LOCAL | DRIVER_SUPPLY_ERROR_SENT | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:34.896168+00:00 | LOCAL | SESSION_DELETED_DB | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:34.896424+00:00 | LOCAL | SESSION_REMOVED_MEMORY | session_id=cli1_cp-001
+2025-12-15T16:23:34.898405+00:00 | LOCAL | CP_STATE_CHANGE | cp_id=cp-001 SUPPLYING->FUERA_DE_SERVICIO
+2025-12-15T16:23:35.559501+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:23:35.559937+00:00 | KAFKA | INCIDENT_NO_ACTIVE_SESSION | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:36.317057+00:00 | KAFKA | DRIVER_SUPPLY_ERROR_SENT | driver_id=cli1 cp_id=cp-001 reason=NO_ACTIVE_SESSION
+2025-12-15T16:23:36.343435+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:37.299524+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:37.317534+00:00 | KAFKA | FORCED_END_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:37.320234+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 -> FUERA_DE_SERVICIO (FORCED_END)
+2025-12-15T16:23:37.325387+00:00 | KAFKA | KAFKA_RX | topic=evSupplyEnd
+2025-12-15T16:23:37.325614+00:00 | KAFKA | SUPPLY_END | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:37.327975+00:00 | KAFKA | CP_STATE_KEEP | cp_id=cp-001 state=FUERA_DE_SERVICIO
+2025-12-15T16:23:37.328225+00:00 | KAFKA | SESSION_END | session_id=cli1_cp-001 session_no_en_memoria
+2025-12-15T16:23:37.332659+00:00 | KAFKA | TICKET_ISSUED | driver_id=cli1 cp_id=cp-001 price=0.0 energy_kwh=0.0
+2025-12-15T16:23:37.332967+00:00 | KAFKA | SESSION_REMOVED_MEMORY | session_id=cli1_cp-001
+2025-12-15T16:23:37.334988+00:00 | KAFKA | SESSION_DELETED_DB | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:41.343932+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:42.300012+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:46.344388+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:47.300436+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:51.344887+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:52.300859+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:52.505476+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:23:52.505840+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:23:52.508607+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-001 reason=CP no disponible
+2025-12-15T16:23:52.513022+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=False reason=CP no disponible
+2025-12-15T16:23:52.521482+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=False price=2
+2025-12-15T16:23:56.345291+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:23:57.301282+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:23:57.851862+00:00 | LOCAL | ADMIN_CMD | cmd=enable cp-001
+2025-12-15T16:23:57.857945+00:00 | LOCAL | CP_STATE_CHANGE | cp_id=cp-001 FUERA_DE_SERVICIO->AVAILABLE
+2025-12-15T16:24:01.345712+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:02.301695+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:06.346112+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:07.302143+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:09.568971+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:24:09.569272+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:24:09.572162+00:00 | KAFKA | SUPPLY_AUTHORIZED | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:24:09.575815+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=True reason=CP disponible
+2025-12-15T16:24:09.582175+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=True price=2
+2025-12-15T16:24:09.588609+00:00 | KAFKA | KAFKA_RX | topic=evSupplyConnected
+2025-12-15T16:24:09.588908+00:00 | KAFKA | SUPPLY_CONNECTED | driver_id=cli1 cp_id=cp-001 status=CONNECTED
+2025-12-15T16:24:09.593347+00:00 | KAFKA | SUPPLY_STARTED_SENT | driver_id=cli1 cp_id=cp-001 status=APPROVED
+2025-12-15T16:24:09.598410+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 AVAILABLE->SUPPLYING
+2025-12-15T16:24:09.598661+00:00 | KAFKA | SESSION_START | session_id=cli1_cp-001
+2025-12-15T16:24:09.600807+00:00 | KAFKA | SESSION_UPSERT_DB | session_id=cli1_cp-001
+2025-12-15T16:24:09.603416+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:24:09.606071+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=0.52 energy_kwh=0.0 delta=0 ts=1765815849586
+2025-12-15T16:24:09.608917+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:24:11.346621+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:12.302530+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:12.597283+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:24:12.600430+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.62 energy_kwh=0.002 delta=0.002 ts=1765815852589
+2025-12-15T16:24:12.604348+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:24:15.600992+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:24:15.603595+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.19 energy_kwh=0.003 delta=0.001 ts=1765815855593
+2025-12-15T16:24:15.605944+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:24:16.347121+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:17.194777+00:00 | KAFKA | KAFKA_RX | topic=evSupplyEnd
+2025-12-15T16:24:17.195063+00:00 | KAFKA | SUPPLY_END | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:24:17.200319+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 SUPPLYING->AVAILABLE
+2025-12-15T16:24:17.200582+00:00 | KAFKA | SESSION_END | session_id=cli1_cp-001 energy_kwh=0.003 hours=0.0021
+2025-12-15T16:24:17.207775+00:00 | KAFKA | TICKET_ISSUED | driver_id=cli1 cp_id=cp-001 price=0.01 energy_kwh=0.003
+2025-12-15T16:24:17.208171+00:00 | KAFKA | SESSION_REMOVED_MEMORY | session_id=cli1_cp-001
+2025-12-15T16:24:17.211918+00:00 | KAFKA | SESSION_DELETED_DB | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:24:17.302962+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:21.347588+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:22.303325+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:26.348085+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:27.303672+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:31.348446+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:32.304155+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:36.348888+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:37.304567+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:41.349419+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:42.305057+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:46.349897+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:47.305438+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:51.350381+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:52.305881+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:24:56.350946+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:24:57.306488+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:01.351451+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:02.306873+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:06.351945+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:07.307312+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:11.352396+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:12.307747+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:16.352860+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:17.308213+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:21.353271+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:22.308639+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:26.353699+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:27.309183+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:31.354141+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:32.309621+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:36.354601+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:37.310141+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:41.355066+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:42.310597+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:46.355467+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:47.311088+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:51.355951+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:52.311553+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:25:56.356436+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:25:57.312028+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:01.356891+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:02.312595+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:06.357352+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:07.313088+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:11.357818+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:12.313513+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:16.358282+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:17.313904+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:21.358699+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:22.314287+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:26.359134+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:27.314769+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:31.359628+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:32.315320+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:36.360128+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:37.315761+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:41.360698+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:42.316204+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:46.361192+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:47.316599+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:51.361701+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:52.317028+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:26:56.362211+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:26:57.317454+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:01.362630+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:02.317899+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:06.363077+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:07.318369+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:11.363525+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:12.318815+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:16.364012+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:17.319204+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:21.364353+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:22.319637+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:26.364754+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:27.320080+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:31.365220+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:32.320491+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:36.365638+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:37.320918+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:41.366188+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:42.321364+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:46.366600+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:47.321853+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:51.367024+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:52.322366+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:27:56.367449+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:27:57.322797+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:01.367903+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:02.323202+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:06.368401+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:07.323648+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:11.368855+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:12.324117+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:16.369316+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:17.324597+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:21.369707+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:22.325052+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:26.370264+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:27.325449+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:31.370699+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:32.325858+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:36.371204+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:37.326297+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:41.371694+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:42.326707+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:46.372160+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:47.327128+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:51.372612+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:52.327558+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:28:56.373105+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:28:57.328096+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:01.373568+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:02.328618+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:06.374077+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:07.329066+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:11.374560+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:12.329454+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:16.374906+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:17.329885+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:21.375396+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:22.330333+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:26.375883+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:27.330810+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:31.376336+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:32.331126+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:36.376850+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:37.331557+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:41.377329+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:42.331990+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:46.377740+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:47.332397+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:51.378043+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:52.332871+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:29:56.378534+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:29:57.333186+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:01.378939+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:02.333546+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:06.379347+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:07.334013+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:11.379860+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:12.334337+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:16.380268+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:17.334767+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:21.380523+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:22.335143+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:26.380934+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:27.335528+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:31.381264+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:32.335887+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:36.381606+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:37.336257+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:41.381974+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:42.336601+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:46.382375+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:47.337226+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:51.382753+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:52.337669+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:30:56.383239+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:30:57.338112+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:01.383712+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:02.338611+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:06.384206+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:07.339088+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:11.384734+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:12.339509+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:16.385109+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:17.339996+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:21.385508+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:22.340426+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:26.385971+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:27.340891+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:31.386411+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:32.341305+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:36.386805+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:37.341839+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:41.387332+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:42.342231+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:46.387856+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:47.342595+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:51.388308+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:52.343087+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:31:56.388836+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:31:57.343547+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:01.389308+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:02.344068+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:06.389666+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:07.344969+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:11.390138+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:12.345675+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:16.390560+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:17.346070+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:21.390860+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:22.346378+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:26.391285+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:27.346808+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:31.391615+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:32.347149+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:36.391924+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:37.347560+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:41.392341+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:42.348033+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:46.392929+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:47.348411+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:51.393408+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:52.348700+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:32:56.393902+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:32:57.349118+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:01.394463+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:02.349515+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:06.394952+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:07.349973+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:11.395466+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:12.350415+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:16.395900+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:17.350881+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:21.396599+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:22.351315+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:26.397061+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:27.351666+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:31.397498+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:32.352146+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:36.397972+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:37.352540+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:41.398308+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:42.352982+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:46.398717+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:47.353399+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:51.399071+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:52.353888+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:33:56.399537+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:33:57.354305+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:01.399884+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:02.354693+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:06.400290+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:07.355162+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:11.400673+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:12.355579+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:16.401110+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:17.356045+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:21.401515+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:22.356474+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:26.401968+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:27.356895+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:31.402442+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:32.357328+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:36.402964+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:37.357705+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:41.403446+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:42.358074+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:46.403979+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:47.358479+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:51.404455+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:52.358763+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:34:56.404882+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:34:57.359246+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:01.405333+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:02.359705+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:06.405721+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:07.360151+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:11.406174+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:12.360429+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:16.406656+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:17.360883+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:21.407126+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:22.361317+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:26.407603+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:27.361736+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:31.408141+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:32.362225+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:36.408540+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:37.362652+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:41.409004+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:42.363135+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:46.409389+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:47.363570+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:51.409819+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:52.364068+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:35:56.410255+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:35:57.364494+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:01.410859+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:02.364853+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:06.411346+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:07.365301+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:11.411653+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:12.365846+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:16.411940+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:17.366147+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:21.412365+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:22.366504+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:26.412730+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:27.366860+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:31.413098+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:32.367170+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:36.413508+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:37.367578+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:41.413956+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:42.367931+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:46.414407+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:47.368311+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:51.414815+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:52.368725+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:36:56.415259+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:36:57.369282+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:01.415627+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:02.369612+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:06.415937+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:07.369979+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:11.416356+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:12.370376+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:16.416814+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:17.370852+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:21.417220+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:22.371234+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:26.417671+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:27.371521+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:31.418127+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:32.371836+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:36.418546+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:37:37.372119+00:00 | LOCAL | CENTRAL_HEARTBEAT_ERROR | err=TypeError("kafka_send_cp() missing 1 required positional argument: 'payload'")
+2025-12-15T16:37:39.124156+00:00 | LOCAL | CENTRAL_STOP | KeyboardInterrupt
+2025-12-15T16:37:43.819435+00:00 | LOCAL | CENTRAL_START | port=7200 kafka=127.0.0.1:9092
+2025-12-15T16:37:43.823925+00:00 | LOCAL | THREAD_START | tcpServer
+2025-12-15T16:37:43.825961+00:00 | LOCAL | KAFKA_LISTENER_START | group=central-driver
+2025-12-15T16:37:43.826080+00:00 | LOCAL | THREAD_START | kafkaListener
+2025-12-15T16:37:43.827070+00:00 | LOCAL | THREAD_START | heartbeat_loop
+2025-12-15T16:37:43.827522+00:00 | LOCAL | THREAD_START | weather_monitor_loop
+2025-12-15T16:37:43.841932+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:37:48.845545+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:37:53.848028+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:37:58.851681+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:03.854973+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:08.858535+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:13.862524+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:18.866240+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:23.869980+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:28.873816+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:33.877315+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:38.880558+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:41.802076+00:00 | 127.0.0.1 | TCP_CONNECT | addr=('127.0.0.1', 49128)
+2025-12-15T16:38:41.884010+00:00 | 127.0.0.1 | AUTH_ATTEMPT | cp_id=cp-001
+2025-12-15T16:38:41.888385+00:00 | 127.0.0.1 | AUTH_OK | cp_id=cp-001 state->AVAILABLE engine_key_generada=True
+2025-12-15T16:38:41.888535+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> AVAILABLE
+2025-12-15T16:38:41.902034+00:00 | 127.0.0.1 | KEY_EXCHANGE_SENT | cp_id=cp-001 topic=EV_ENGINE_KEY_EXCHANGE
+2025-12-15T16:38:41.925132+00:00 | 127.0.0.1 | HANDSHAKE_OK | cp_id=cp-001
+2025-12-15T16:38:41.925362+00:00 | 127.0.0.1 | CP_SOCKET_REGISTERED | cp_id=cp-001
+2025-12-15T16:38:41.925608+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:38:43.883649+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:46.926090+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:38:48.887439+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:51.926773+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:38:53.890480+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:38:56.927240+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:38:58.894945+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:01.927678+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:03.898430+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:06.928164+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:08.901829+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:11.928514+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:13.904862+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:16.928937+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:18.908333+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:21.929356+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:23.912295+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:26.929858+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:28.915431+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:31.930362+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:32.214903+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:39:32.215073+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:39:32.216681+00:00 | KAFKA | SUPPLY_AUTHORIZED | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:39:32.848324+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=True reason=CP disponible
+2025-12-15T16:39:33.845059+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=True price=2
+2025-12-15T16:39:33.918317+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:34.166542+00:00 | KAFKA | KAFKA_RX | topic=evSupplyConnected
+2025-12-15T16:39:34.166769+00:00 | KAFKA | SUPPLY_CONNECTED | driver_id=cli1 cp_id=cp-001 status=CONNECTED
+2025-12-15T16:39:34.846392+00:00 | KAFKA | SUPPLY_STARTED_SENT | driver_id=cli1 cp_id=cp-001 status=APPROVED
+2025-12-15T16:39:34.849376+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 AVAILABLE->SUPPLYING
+2025-12-15T16:39:34.849610+00:00 | KAFKA | SESSION_START | session_id=cli1_cp-001
+2025-12-15T16:39:34.852046+00:00 | KAFKA | SESSION_UPSERT_DB | session_id=cli1_cp-001
+2025-12-15T16:39:35.164956+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:39:35.167168+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=2.14 energy_kwh=0.002 delta=0.002 ts=1765816774164
+2025-12-15T16:39:35.846600+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:39:36.930856+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:38.167615+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:39:38.169614+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=0.7 energy_kwh=0.002 delta=0 ts=1765816778162
+2025-12-15T16:39:38.171939+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:39:38.920916+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:41.173103+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T16:39:41.175208+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.71 energy_kwh=0.004 delta=0.002 ts=1765816781165
+2025-12-15T16:39:41.177024+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:39:41.931258+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:43.924027+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:45.167591+00:00 | KAFKA | KAFKA_RX | topic=evSupplyEnd
+2025-12-15T16:39:45.167801+00:00 | KAFKA | SUPPLY_END | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:39:45.172325+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 SUPPLYING->AVAILABLE
+2025-12-15T16:39:45.172709+00:00 | KAFKA | SESSION_END | session_id=cli1_cp-001 energy_kwh=0.004 hours=0.0029
+2025-12-15T16:39:45.849656+00:00 | KAFKA | TICKET_ISSUED | driver_id=cli1 cp_id=cp-001 price=0.01 energy_kwh=0.004
+2025-12-15T16:39:45.849994+00:00 | KAFKA | SESSION_REMOVED_MEMORY | session_id=cli1_cp-001
+2025-12-15T16:39:45.852914+00:00 | KAFKA | SESSION_DELETED_DB | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:39:46.931645+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:48.927915+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:51.932016+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:53.931343+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:39:56.932394+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:39:58.935123+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:01.932849+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:03.938287+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:06.933219+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:08.941265+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:11.933644+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:13.943930+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:16.934078+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:18.946772+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:21.934370+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:23.950258+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:26.934634+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:28.953613+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:31.935089+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:33.956647+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:36.935562+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:38.959432+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:41.936030+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:43.963287+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:46.936514+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:48.966684+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:51.936922+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:53.969488+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:40:56.937180+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:40:58.972823+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:01.937642+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:03.975671+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:06.938045+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:08.979650+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:11.938379+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:13.982538+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:16.938751+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:18.985621+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:21.939165+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:23.989084+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:26.939602+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:28.992460+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:31.940109+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:34.003452+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:36.940598+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:39.006092+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:41.941109+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:44.008633+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:46.941674+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:49.012002+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:51.942128+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:54.014955+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:41:56.942577+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:41:59.017806+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:01.943105+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:04.022027+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:06.943635+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:09.025659+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:11.944270+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:14.028991+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:16.944740+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:19.031965+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:21.945148+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:24.035189+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:26.945487+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:29.038222+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:31.945959+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:34.041099+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:36.946347+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:39.044003+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:41.946682+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:44.046847+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:46.947065+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:49.049967+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:51.947513+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:54.053090+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:42:56.947887+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:42:59.056654+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:01.948297+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:04.058980+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:06.948678+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:09.062444+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:11.949019+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:14.066207+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:16.949448+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:19.069536+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:21.949911+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:24.073321+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:26.950389+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:29.075909+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:31.950875+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:34.079512+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:36.951322+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:39.082859+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:41.951834+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:44.085022+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:46.952391+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:49.088852+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:51.952776+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:54.091660+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:43:56.953194+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:43:59.095240+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:01.953701+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:04.099039+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:06.954044+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:09.102386+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:11.954452+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:14.106248+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:16.954964+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:19.109906+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:21.955487+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:24.113601+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:26.955980+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:29.116373+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:31.956449+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:34.119919+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:36.957094+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:39.123509+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:41.957575+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:44.126461+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:46.958034+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:49.129985+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:51.958531+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:54.133463+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:44:56.958965+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:44:59.136455+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:01.959411+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:04.139554+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:06.959894+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:09.142494+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:11.960351+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:14.145882+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:16.960768+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:19.148181+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:21.961196+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:24.150670+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:26.961666+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:29.153698+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:31.962088+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:34.156910+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:36.962554+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:39.160366+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:41.963041+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:44.163746+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:46.963531+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:49.167302+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:51.964187+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:54.170593+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:45:56.964619+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:45:59.174117+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:01.965108+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:04.177124+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:06.965550+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:09.180289+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:11.966016+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:14.183461+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:16.966484+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:19.185949+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:21.966877+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:24.188499+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:26.967303+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:29.191349+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:31.967663+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:34.194875+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:36.968046+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:39.198202+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:41.968495+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:44.201687+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:46.968872+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:49.203959+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:51.969159+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:54.207182+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:46:56.969497+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:46:59.210636+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:01.969836+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:04.213350+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:06.970132+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:09.216637+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:11.970451+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:14.220069+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:16.970931+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:19.223607+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:21.971416+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:24.226375+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:26.971713+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:29.229299+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:31.972234+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:34.233322+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:36.972465+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:39.237341+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:41.972902+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:44.241109+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:46.973182+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:49.244833+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:51.973545+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:54.247827+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:47:56.973898+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:47:59.251096+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:01.974174+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:04.254515+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:06.974554+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:09.257916+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:11.974938+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:14.261494+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:16.975651+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:19.265204+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:21.976054+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:24.269025+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:26.976392+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:29.272828+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:31.976674+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:34.275933+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:36.976925+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:39.278414+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:41.977208+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:44.281361+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:46.977819+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:49.284554+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:51.978681+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:54.287178+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:48:56.978966+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:48:59.289864+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:01.979369+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:04.292992+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:06.979877+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:09.296304+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:11.980285+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:14.299705+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:16.980551+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:19.303314+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:21.981015+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:24.306817+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:26.981501+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:29.309725+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:31.981769+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:34.312965+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:36.982027+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:39.318072+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:41.982290+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:44.320656+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:46.982695+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:49.323902+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:51.983075+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:54.327375+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:49:56.983463+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:49:59.330586+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:01.983771+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:04.333147+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:06.984023+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:09.335350+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:11.984382+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:14.337908+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:16.984682+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:19.340867+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:21.984988+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:24.344433+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:26.985379+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:29.347461+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:31.985625+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:34.350832+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:36.986061+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:39.353553+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:41.986361+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:42.730949+00:00 | LOCAL | CENTRAL_STOP | KeyboardInterrupt
+2025-12-15T16:50:54.150487+00:00 | LOCAL | CENTRAL_START | port=7200 kafka=127.0.0.1:9092
+2025-12-15T16:50:54.154507+00:00 | LOCAL | THREAD_START | tcpServer
+2025-12-15T16:50:54.156594+00:00 | LOCAL | KAFKA_LISTENER_START | group=central-driver
+2025-12-15T16:50:54.156761+00:00 | LOCAL | THREAD_START | kafkaListener
+2025-12-15T16:50:54.158734+00:00 | LOCAL | THREAD_START | heartbeat_loop
+2025-12-15T16:50:54.159247+00:00 | LOCAL | THREAD_START | weather_monitor_loop
+2025-12-15T16:50:54.168167+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:50:56.753119+00:00 | 127.0.0.1 | TCP_CONNECT | addr=('127.0.0.1', 56326)
+2025-12-15T16:50:56.833945+00:00 | 127.0.0.1 | AUTH_ATTEMPT | cp_id=cp-001
+2025-12-15T16:50:56.838930+00:00 | 127.0.0.1 | AUTH_OK | cp_id=cp-001 state->AVAILABLE engine_key_generada=True
+2025-12-15T16:50:56.839084+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> AVAILABLE
+2025-12-15T16:50:56.847648+00:00 | 127.0.0.1 | KEY_EXCHANGE_SENT | cp_id=cp-001 topic=EV_ENGINE_KEY_EXCHANGE
+2025-12-15T16:50:56.875084+00:00 | 127.0.0.1 | HANDSHAKE_OK | cp_id=cp-001
+2025-12-15T16:50:56.875295+00:00 | 127.0.0.1 | CP_SOCKET_REGISTERED | cp_id=cp-001
+2025-12-15T16:50:56.875506+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:50:58.952262+00:00 | 127.0.0.1 | INCIDENT_CP_KO | cp_id=cp-001 state->UNAVAILABLE
+2025-12-15T16:50:58.952506+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> UNAVAILABLE
+2025-12-15T16:50:59.171046+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:01.099227+00:00 | 127.0.0.1 | CP_RECOVERED | cp_id=cp-001 state->AVAILABLE
+2025-12-15T16:51:01.099354+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> AVAILABLE
+2025-12-15T16:51:01.875939+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:04.173596+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:06.876137+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:09.176283+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:11.876439+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:14.179229+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:15.742143+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:51:15.742392+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:51:15.744599+00:00 | KAFKA | SUPPLY_AUTHORIZED | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:51:16.168220+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=True reason=CP disponible
+2025-12-15T16:51:16.876581+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:17.165708+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=True price=2
+2025-12-15T16:51:19.182381+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:21.876744+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:24.186107+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:26.876896+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:29.190212+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:30.745422+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:51:30.745667+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:51:30.748132+00:00 | KAFKA | SUPPLY_AUTHORIZED | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:51:30.750668+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=True reason=CP disponible
+2025-12-15T16:51:30.754469+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=True price=2
+2025-12-15T16:51:31.877440+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:34.194237+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:36.877568+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:39.198081+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:41.877886+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:44.201666+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:46.877984+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:49.205516+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:51.878272+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:54.209496+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:51:56.878600+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:51:59.212497+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:01.878691+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:04.215893+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:06.878938+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:09.219655+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:11.879086+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:14.222838+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:16.879318+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:19.226108+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:21.879527+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:23.117442+00:00 | 127.0.0.1 | INCIDENT_CP_KO | cp_id=cp-001 state->UNAVAILABLE
+2025-12-15T16:52:23.117671+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> UNAVAILABLE
+2025-12-15T16:52:24.229523+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:26.879796+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:29.233145+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:31.880072+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:34.236646+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:34.822661+00:00 | 127.0.0.1 | TCP_DISCONNECT | cp_id=cp-001 socket_cerrado_remoto
+2025-12-15T16:52:34.822883+00:00 | 127.0.0.1 | TCP_CLOSE | addr=('127.0.0.1', 56326)
+2025-12-15T16:52:34.822960+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> DISCONNECTED
+2025-12-15T16:52:39.240671+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:44.245235+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:46.208810+00:00 | 127.0.0.1 | TCP_CONNECT | addr=('127.0.0.1', 41644)
+2025-12-15T16:52:46.289960+00:00 | 127.0.0.1 | AUTH_ATTEMPT | cp_id=cp-001
+2025-12-15T16:52:46.293583+00:00 | 127.0.0.1 | AUTH_OK | cp_id=cp-001 state->AVAILABLE engine_key_generada=True
+2025-12-15T16:52:46.293681+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> AVAILABLE
+2025-12-15T16:52:46.302209+00:00 | 127.0.0.1 | KEY_EXCHANGE_SENT | cp_id=cp-001 topic=EV_ENGINE_KEY_EXCHANGE
+2025-12-15T16:52:46.331172+00:00 | 127.0.0.1 | HANDSHAKE_OK | cp_id=cp-001
+2025-12-15T16:52:46.331425+00:00 | 127.0.0.1 | CP_SOCKET_REGISTERED | cp_id=cp-001
+2025-12-15T16:52:46.331667+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:49.249015+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:51.332184+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:54.252463+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:52:56.332668+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:52:57.217772+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:52:57.218009+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:52:57.219552+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-001 reason=CP no disponible
+2025-12-15T16:52:57.222100+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=False reason=CP no disponible
+2025-12-15T16:52:57.226818+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=False price=2
+2025-12-15T16:52:59.257554+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:01.332959+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:04.260623+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:06.333245+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:09.263634+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:11.333744+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:12.221369+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:53:12.221575+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:53:12.223653+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-001 reason=CP no disponible
+2025-12-15T16:53:12.226013+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=False reason=CP no disponible
+2025-12-15T16:53:12.231273+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=False price=2
+2025-12-15T16:53:14.267447+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:16.334195+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:19.271195+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:21.334661+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:24.274103+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:26.334980+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:29.277356+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:31.335314+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:34.280480+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:36.335745+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:39.283184+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:41.336234+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:44.286285+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:46.336848+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:49.289949+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:51.337105+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:54.292198+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:53:56.337563+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:53:59.295426+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:01.337928+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:04.298923+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:06.338302+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:09.301613+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:11.338768+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:14.305224+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:16.339150+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:19.308159+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:21.339873+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:24.310022+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:26.340832+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:29.312265+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:31.341167+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:34.315933+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:36.341608+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:39.319482+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:41.342010+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:44.322840+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:46.342704+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:49.325657+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:51.343060+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:54.327723+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:54:56.343469+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:54:59.330846+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:01.343950+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:04.333762+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:06.344241+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:09.336582+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:11.344502+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:14.339865+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:16.344874+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:19.342259+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:21.345252+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:24.345397+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:26.345595+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:29.348665+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:31.345869+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:34.351757+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:36.346264+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:39.354157+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:41.346817+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:44.357760+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:46.347288+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:49.360566+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:51.347558+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:54.363743+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:55:56.347984+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:55:59.367137+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:01.348435+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:04.370460+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:06.348698+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:09.373405+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:11.349030+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:14.376394+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:16.349473+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:19.379296+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:21.349852+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:24.381642+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:26.350181+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:29.384385+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:31.350503+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:34.386896+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:36.350860+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:39.389485+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:41.351165+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:44.392729+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:46.351626+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:49.395797+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:51.352205+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:54.398517+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:56:56.353117+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:56:59.401625+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:01.353439+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:04.404150+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:06.353822+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:09.407201+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:11.354085+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:14.409828+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:16.354541+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:19.412755+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:21.355233+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:24.415608+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:26.355554+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:29.418613+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:31.355886+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:34.421930+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:36.356309+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:39.424953+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:41.356916+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:44.428446+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:46.357269+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:49.431510+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:51.357566+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:54.434695+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:57:56.357991+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:57:59.438246+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:01.358346+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:04.441549+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:06.358612+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:09.444913+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:11.358860+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:14.447210+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:16.359367+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:19.450131+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:21.359652+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:24.453761+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:26.360124+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:29.456733+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:31.360549+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:34.459962+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:36.360896+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:39.462689+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:41.361352+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:44.465865+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:46.361729+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:49.468730+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:51.362291+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:54.471408+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:58:56.362736+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:58:59.474944+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:01.363037+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:04.478261+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:06.363470+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:09.481712+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:11.363963+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:14.484308+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:16.364338+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:19.486799+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:21.364718+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:24.490111+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:26.365225+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:27.563776+00:00 | LOCAL | CENTRAL_STOP | KeyboardInterrupt
+2025-12-15T16:59:36.935109+00:00 | LOCAL | CENTRAL_START | port=7300 kafka=127.0.0.1:9092
+2025-12-15T16:59:36.939418+00:00 | LOCAL | THREAD_START | tcpServer
+2025-12-15T16:59:36.942386+00:00 | LOCAL | KAFKA_LISTENER_START | group=central-driver
+2025-12-15T16:59:36.942497+00:00 | LOCAL | THREAD_START | kafkaListener
+2025-12-15T16:59:36.943900+00:00 | LOCAL | THREAD_START | heartbeat_loop
+2025-12-15T16:59:36.944228+00:00 | LOCAL | THREAD_START | weather_monitor_loop
+2025-12-15T16:59:36.951734+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:41.955366+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:45.924420+00:00 | 127.0.0.1 | TCP_CONNECT | addr=('127.0.0.1', 34668)
+2025-12-15T16:59:46.005915+00:00 | 127.0.0.1 | AUTH_ATTEMPT | cp_id=cp-001
+2025-12-15T16:59:46.010119+00:00 | 127.0.0.1 | AUTH_OK | cp_id=cp-001 state->AVAILABLE engine_key_generada=True
+2025-12-15T16:59:46.010260+00:00 | 127.0.0.1 | CP_STATE_CHANGE | cp_id=cp-001 -> AVAILABLE
+2025-12-15T16:59:46.046997+00:00 | 127.0.0.1 | HANDSHAKE_OK | cp_id=cp-001
+2025-12-15T16:59:46.047130+00:00 | 127.0.0.1 | CP_SOCKET_REGISTERED | cp_id=cp-001
+2025-12-15T16:59:46.047223+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:46.958406+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:51.047774+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:51.961936+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T16:59:53.569844+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T16:59:53.570132+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T16:59:53.572956+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-001 reason=CP no disponible
+2025-12-15T16:59:53.952053+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=False reason=CP no disponible
+2025-12-15T16:59:54.948595+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=False price=2
+2025-12-15T16:59:56.048128+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T16:59:56.965541+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:01.048459+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:01.969072+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:06.048769+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:06.973039+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:08.571609+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T17:00:08.571949+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:00:08.574316+00:00 | KAFKA | SUPPLY_DENIED | driver_id=cli1 cp_id=cp-001 reason=CP no disponible
+2025-12-15T17:00:08.577127+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=False reason=CP no disponible
+2025-12-15T17:00:08.582258+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=False price=2
+2025-12-15T17:00:11.049210+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:11.977461+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:16.049664+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:16.980727+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:21.050064+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:21.984369+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:26.050522+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:26.987301+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:28.613921+00:00 | LOCAL | ADMIN_CMD | cmd=stop cp-001
+2025-12-15T17:00:28.616142+00:00 | LOCAL | ADMIN_STOP_CP | cp_id=cp-001 state=UNAVAILABLE
+2025-12-15T17:00:28.618120+00:00 | LOCAL | CP_STATE_CHANGE | cp_id=cp-001 UNAVAILABLE->FUERA_DE_SERVICIO
+2025-12-15T17:00:31.050914+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:31.990542+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:36.051345+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:36.994127+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:37.238964+00:00 | LOCAL | ADMIN_CMD | cmd=enable cp-001
+2025-12-15T17:00:37.244811+00:00 | LOCAL | CP_STATE_CHANGE | cp_id=cp-001 FUERA_DE_SERVICIO->AVAILABLE
+2025-12-15T17:00:41.051705+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:41.997881+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:46.052027+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:47.000803+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:51.052370+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:52.003469+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:00:56.052755+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:00:57.006397+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:01.053036+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:02.008862+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:06.053336+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:07.011200+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:11.053677+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:12.013921+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:13.348476+00:00 | KAFKA | KAFKA_RX | topic=evSupplyRequest
+2025-12-15T17:01:13.348855+00:00 | KAFKA | SUPPLY_REQUEST | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:01:13.351438+00:00 | KAFKA | SUPPLY_AUTHORIZED | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:01:13.354465+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_DRIVER | driver_id=cli1 cp_id=cp-001 authorized=True reason=CP disponible
+2025-12-15T17:01:13.359226+00:00 | KAFKA | SUPPLY_AUTH_SENT_TO_ENGINE | driver_id=cli1 cp_id=cp-001 authorized=True price=2
+2025-12-15T17:01:13.594146+00:00 | KAFKA | KAFKA_RX | topic=evSupplyConnected
+2025-12-15T17:01:13.594395+00:00 | KAFKA | SUPPLY_CONNECTED | driver_id=cli1 cp_id=cp-001 status=CONNECTED
+2025-12-15T17:01:13.959987+00:00 | KAFKA | SUPPLY_STARTED_SENT | driver_id=cli1 cp_id=cp-001 status=APPROVED
+2025-12-15T17:01:13.962099+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 AVAILABLE->SUPPLYING
+2025-12-15T17:01:13.962344+00:00 | KAFKA | SESSION_START | session_id=cli1_cp-001
+2025-12-15T17:01:13.964108+00:00 | KAFKA | SESSION_UPSERT_DB | session_id=cli1_cp-001
+2025-12-15T17:01:14.589732+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T17:01:14.591581+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.78 energy_kwh=0.001 delta=0.001 ts=1765818073591
+2025-12-15T17:01:14.959893+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:01:16.054039+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:17.017011+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:17.592288+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T17:01:17.594089+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=2.11 energy_kwh=0.003 delta=0.002 ts=1765818077587
+2025-12-15T17:01:17.596006+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:01:20.595681+00:00 | KAFKA | KAFKA_RX | topic=evSupplyHeartbeat
+2025-12-15T17:01:20.597525+00:00 | KAFKA | SUPPLY_HEARTBEAT | driver_id=cli1 cp_id=cp-001 power_kw=1.67 energy_kwh=0.005 delta=0.002 ts=1765818080590
+2025-12-15T17:01:20.599600+00:00 | KAFKA | DRIVER_HEARTBEAT_FORWARD | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:01:21.054505+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:22.019376+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:23.593871+00:00 | KAFKA | KAFKA_RX | topic=evSupplyEnd
+2025-12-15T17:01:23.594045+00:00 | KAFKA | SUPPLY_END | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:01:23.598905+00:00 | KAFKA | CP_STATE_CHANGE | cp_id=cp-001 SUPPLYING->AVAILABLE
+2025-12-15T17:01:23.599190+00:00 | KAFKA | SESSION_END | session_id=cli1_cp-001 energy_kwh=0.005 hours=0.0027
+2025-12-15T17:01:23.961918+00:00 | KAFKA | TICKET_ISSUED | driver_id=cli1 cp_id=cp-001 price=0.01 energy_kwh=0.005
+2025-12-15T17:01:23.962163+00:00 | KAFKA | SESSION_REMOVED_MEMORY | session_id=cli1_cp-001
+2025-12-15T17:01:23.964680+00:00 | KAFKA | SESSION_DELETED_DB | driver_id=cli1 cp_id=cp-001
+2025-12-15T17:01:26.055011+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:27.021696+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:31.055368+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:32.024833+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:36.055645+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:37.028254+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:41.055989+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:42.031066+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:46.056409+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:47.034171+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:51.056686+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:52.036579+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:01:56.057100+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:01:57.039657+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:01.057461+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:02.042617+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:06.057888+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:07.046114+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:11.058291+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:12.049522+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:16.058729+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:17.051806+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:21.059041+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:22.054660+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:26.059484+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:27.057293+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:31.059825+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:32.059609+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:36.060312+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:37.062909+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:41.060441+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:42.065869+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:46.060909+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:47.068295+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:51.061233+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:52.070739+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:02:56.061526+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:02:57.072872+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:01.061871+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:02.075602+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:06.062246+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:07.077560+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:11.062521+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:12.080398+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:13.575478+00:00 | LOCAL | WEATHER_MONITOR_ERROR | err=HTTPSConnectionPool(host='127.0.0.1', port=4000): Max retries exceeded with url: /weather-status (Caused by NewConnectionError("HTTPSConnection(host='127.0.0.1', port=4000): Failed to establish a new connection: [Errno 111] Connection refused"))
+2025-12-15T17:03:16.063011+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:17.083592+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:21.063569+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:22.086827+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:26.063932+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:27.089825+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:31.064404+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:32.093702+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:36.064768+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:37.097589+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:41.065219+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:42.100818+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:46.065597+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:47.104217+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:51.065925+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:52.106540+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:03:56.066214+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:03:57.109220+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:01.066485+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:02.111805+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:06.066773+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:07.114033+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:11.067100+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:12.117188+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:16.067592+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:17.119952+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:21.067971+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:22.122832+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:26.068384+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:27.125560+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:31.068710+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:32.128614+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:36.069050+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:37.131617+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:41.069344+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:42.135323+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:46.069761+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:47.137678+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:51.070358+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:52.139581+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:04:56.070697+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:04:57.142107+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:01.071137+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:02.144499+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:06.071497+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:07.147936+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:11.071800+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:12.149967+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:16.072261+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:17.152446+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:21.072564+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:22.154686+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:26.073040+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:27.157718+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:31.073415+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:32.159718+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:36.073743+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:37.161934+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:41.073985+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:42.165227+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:46.074350+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:47.168500+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:51.074636+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:52.170877+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:05:56.074925+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:05:57.173937+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:01.075373+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:02.175871+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:06.075723+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:07.178678+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:11.076159+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:12.181506+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:16.076600+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:17.183988+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:21.077039+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:22.187194+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:26.077471+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:27.189958+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:31.077830+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:32.192309+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:36.078309+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:37.194540+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:41.078627+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:42.196739+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:46.078948+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:47.199629+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:51.079326+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:52.203374+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:06:56.079841+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:06:57.206163+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:01.080107+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:02.209117+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:06.080339+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:07.211559+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:11.080573+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:12.213752+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:16.080808+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:17.216105+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:21.081304+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:22.219426+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:26.081553+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:27.222331+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:31.081852+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:32.225680+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:36.082307+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:37.228826+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:41.082619+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:42.232237+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:46.082934+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:47.235401+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:51.083203+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:52.238182+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:07:56.083449+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:07:57.241252+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:01.083700+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:02.244223+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:06.083981+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:07.246270+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:11.084329+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:12.249537+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:16.084676+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:17.252518+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:21.085017+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:22.254888+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:26.085317+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:27.257740+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:31.085591+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:32.260610+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:36.085916+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:37.264079+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:41.086590+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:42.266365+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:46.086944+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:47.270146+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:51.087175+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:52.272994+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:08:56.087507+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:08:57.276260+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:01.087814+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:02.278978+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:06.088117+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:07.282013+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:11.088417+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:12.285279+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:16.088875+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:17.288252+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:21.089160+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:22.290876+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:26.089522+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:27.294216+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:31.089914+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:32.297620+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:36.090398+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:37.301331+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:41.090740+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:42.303901+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:46.090996+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:47.306650+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:51.091380+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:52.309656+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:09:56.091838+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:09:57.313118+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:01.092149+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:02.316052+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:06.092411+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:07.318827+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:11.092658+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:12.322111+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:16.093111+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:17.325532+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:21.093382+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:22.327859+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:26.093645+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:27.330050+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:31.094066+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:32.333437+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:36.094521+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:37.336511+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:41.095139+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:42.340531+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
+2025-12-15T17:10:46.095503+00:00 | 127.0.0.1 | MONITOR_PING | cp_id=cp-001 PING->PONG
+2025-12-15T17:10:47.343973+00:00 | LOCAL | CENTRAL_HEARTBEAT_SENT | topic=EV_CENTRAL_HEARTBEAT
