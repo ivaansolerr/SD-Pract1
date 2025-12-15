@@ -258,9 +258,27 @@ def darDeBaja(cpId, ipR, portR, shared_state, root):
 
     print(f"[BAJA] Iniciando proceso de baja para {cpId}...")
 
+    # 1) Enviar KO a CENTRAL primero (y esperar con Event)
+    done = shared_state.get("central_ko_sent")
+    if done is None:
+        done = threading.Event()
+        shared_state["central_ko_sent"] = done
+    else:
+        done.clear()
+
+    threading.Thread(
+        target=send_ko_to_central,
+        args=(shared_state, done),
+        daemon=True
+    ).start()
+
+    # Esperar a que el hilo intente enviar KO (máx 2s, para no quedarnos colgados)
+    done.wait(timeout=2.0)
+    
+    # 2) Ahora dar de baja por API
     url = f"https://{ipR}:{portR}/deleteCP"
     try:
-        response = requests.delete(url, json={"id": cpId}, verify=False)
+        response = requests.delete(url, json={"id": cpId}, verify=False, timeout=5)
         
         if response.status_code == 200:
             print("[BAJA] ✅ Eliminado correctamente de la Base de Datos.")
@@ -274,24 +292,24 @@ def darDeBaja(cpId, ipR, portR, shared_state, root):
         messagebox.showerror("Error", f"Error conectando con API: {e}")
         return
 
-    stop_threads = True 
-    
+    # 3) Parar hilos y limpiar
+    stop_threads = True
+
     if shared_state.get("sc"):
         try:
-            print("[BAJA] Enviando SHUTDOWN a CENTRAL...")
-            #shared_state["sc"].send(b"SHUTDOWN")
-            #shared_state["sc"].close()
+            print("[BAJA] Cerrando socket CENTRAL...")
+            shared_state["sc"].close()
         except Exception as e:
             print(f"[BAJA] Error cerrando socket Central: {e}")
 
     if shared_state.get("se"):
         try:
-            print("[BAJA] Enviando SHUTDOWN a ENGINE...")
-            #shared_state["se"].send(b"SHUTDOWN")
-            #shared_state["se"].close()
+            print("[BAJA] Cerrando socket ENGINE...")
+            shared_state["se"].close()
         except Exception as e:
             print(f"[BAJA] Error cerrando socket Engine: {e}")
 
+    # 4) Borrar archivo local del CP
     file_path = f"evcharging/cp/{cpId}.txt"
     if os.path.exists(file_path):
         try:
@@ -303,6 +321,7 @@ def darDeBaja(cpId, ipR, portR, shared_state, root):
     messagebox.showinfo("Baja Exitosa", "El CP ha sido dado de baja y el programa se cerrará.")
     root.destroy()
     sys.exit(0)
+
 
 def reAuth(cpId, ipR, portR, ipC, pC, ipE, pE, shared_state):
     global stop_threads
@@ -393,6 +412,20 @@ def reAuth(cpId, ipR, portR, ipC, pC, ipE, pE, shared_state):
     messagebox.showinfo("Re-auth", "Re-autenticación iniciada. Revisa consola para ver el handshake.")
 
 
+def send_ko_to_central(shared_state, done_event: threading.Event, timeout=2.0):
+    try:
+        sc = shared_state.get("sc")
+        if not sc:
+            print("[BAJA] ⚠️ No hay socket a CENTRAL (sc=None). No se pudo enviar KO.")
+            return
+        sc.sendall(b"KO")
+        print("[BAJA] ⚠️ KO enviado a CENTRAL (pre-baja)")
+    except Exception as e:
+        print(f"[BAJA] ⚠️ No se pudo enviar KO a CENTRAL: {e}")
+    finally:
+        done_event.set()
+
+
 def main():
     if len(sys.argv) != 10:
         print("Uso: monitor.py <ipCentral> <portCentral> <ipEngine> <portEngine> <CP_ID> <CP_Location> <CP_Price> <IpRegistry> <PortRegistry>")
@@ -449,7 +482,7 @@ def main():
             print(f"Error registrando CP: {e}")
             return
 
-    shared_state = {"sc": None, "se": None}
+    shared_state = {"sc": None, "se": None, "central_ko_sent": threading.Event()}
     
     # Lanzamos hilo para mantener CENTRAL
     threading.Thread(target=monitorCentral, args=(ipC, pC, cpId, ipE, pE, shared_state, key), daemon=True).start()

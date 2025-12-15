@@ -428,10 +428,7 @@ def handleClient(conn, addr, kafkaInfo):
         try:
             if 'cp' in locals() and cp is not None:
                 print(f"[CENTRAL] ⚠️ CP {cp} desconectado → DISCONNECTED")
-                # db.upsertCp({
-                #     "id": cp,
-                #     "state": "DISCONNECTED"
-                # })
+                db.setCpState(cp_id, "DISCONNECTED")
                 audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> DISCONNECTED")
 
                 session_found = None
