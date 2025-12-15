@@ -46,7 +46,6 @@ async function connectDB() {
 
 connectDB();
 
-
 appSD.get("/cps", async (request, response) => { 
     try {
         const cps = await db.collection("charging_points")

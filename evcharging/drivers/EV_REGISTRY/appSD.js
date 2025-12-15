@@ -58,34 +58,6 @@ async function connectDB() {
 
 connectDB();
 
-
-// estos dos endpoints get no se usan
-appSD.get("/cps", async (request, response) => { 
-    try {
-        const cps = await db.collection("charging_points")
-                            .find({})
-                            .project({ _id: 0 }) 
-                            .toArray();
-
-        response.status(200).json(cps);
-
-    } catch (error) {
-        console.error("Error al obtener CPs:", error);
-        response.status(500).send("Error interno del servidor");
-    }
-});
-
-appSD.get("/cps/:cpId", async (request, response) => { 
-    const {cpId} = request.params;
-    //response.send(cpId)
-    const cp = await db.collection("charging_points").findOne({ id: cpId });
-    if (cp) {
-        response.status(200).json(cp);
-    } else {
-        response.status(404).json({ message: "Punto de carga no encontrado" });
-    }
-});
-
 appSD.post("/addCP", async (request, response) => {
     
     let key = uniqid();
