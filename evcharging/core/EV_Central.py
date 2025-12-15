@@ -1,4 +1,6 @@
 import socket, sys, threading, time
+import requests 
+import urllib3
 from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 from . import db
@@ -12,15 +14,12 @@ from cryptography.fernet import Fernet, InvalidToken
 import logging
 from logging.handlers import RotatingFileHandler
 import json
-from datetime import datetime, timezone
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+cp_sockets: Dict[str, socket.socket] = {}
 
 active_sessions: Dict[str, Dict[str, Any]] = {}
-
-# ======================================================
-# LOGS (AUDIT) A ARCHIVO
-# ======================================================
-
 AUDIT_LOG_PATH = "./central_audit.log"
 
 _audit_logger = logging.getLogger("central_audit")
@@ -38,6 +37,65 @@ if not _audit_logger.handlers:
     handler.setFormatter(formatter)
     _audit_logger.addHandler(handler)
 
+def send_weather_to_cp(cp_id: str, status: str):
+    conn = cp_sockets.get(cp_id)
+    if not conn:
+        audit_log("LOCAL", "WEATHER_SOCKET_FAIL", f"cp_id={cp_id} no_socket")
+        return
+    try:
+        msg = f"WEATHER:{status}".encode("utf-8")
+        conn.send(msg)
+        audit_log("LOCAL", "WEATHER_SOCKET_SENT", f"cp_id={cp_id} status={status}")
+    except Exception as e:
+        audit_log("LOCAL", "WEATHER_SOCKET_ERROR", f"cp_id={cp_id} err={repr(e)}")
+
+def weather_monitor_loop(kafkaInfo):
+
+    EV_W_URL = "https://127.0.0.1:4000/weather-status" 
+    print("[CENTRAL] 🌤️ Iniciando monitor de clima...")
+    
+    last_known_weather_state = {} 
+
+    while True:
+        try:
+            response = requests.get(EV_W_URL, verify=False, timeout=5)
+            
+            if response.status_code == 200:
+                weather_data = response.json()
+                
+                for cp_id, status in weather_data.items():
+                    
+                    cp_db = db.getCp(cp_id)
+                    if not cp_db:
+                        continue
+
+                    current_db_state = cp_db.get("state", "UNKNOWN")
+                    
+                    if status == "FROZEN":
+                        if current_db_state in ["AVAILABLE", "SUPPLYING"]:
+                            print(f"[CENTRAL] ❄️ Detectado congelamiento en {cp_id}. Ejecutando parada de emergencia...")
+                            send_weather_to_cp(cp_id, "FROZEN")
+                            audit_log("AUTO_WEATHER", "WEATHER_STOP", f"cp_id={cp_id} temp_status=FROZEN")
+                            stopCP(cp_id, kafkaInfo)
+
+                    elif status == "OK":
+                        if current_db_state == "FUERA DE SERVICIO":
+                             if last_known_weather_state.get(cp_id) == "FROZEN":
+                                print(f"[CENTRAL] ☀️ Clima recuperado en {cp_id}. Reactivando servicio...")
+                                send_weather_to_cp(cp_id, "OK")
+                                audit_log("AUTO_WEATHER", "WEATHER_ENABLE", f"cp_id={cp_id} temp_status=OK")
+                                enableCP(cp_id)
+                    
+                    last_known_weather_state[cp_id] = status
+
+            else:
+                print(f"[CENTRAL] ⚠️ Error consultando EV_W: Status {response.status_code}")
+
+        except Exception as e:
+            print(f"[CENTRAL] ⚠️ Excepción en monitor de clima: {e}")
+            audit_log("LOCAL", "WEATHER_MONITOR_ERROR", f"err={str(e)}")
+        
+        time.sleep(5) # Consultar cada 5 segundos
 
 def audit_log(actor_ip: str, action: str, details: str = "", when: Optional[datetime] = None):
     ts = (when or datetime.now(timezone.utc)).astimezone(timezone.utc).isoformat()
@@ -46,14 +104,9 @@ def audit_log(actor_ip: str, action: str, details: str = "", when: Optional[date
     details = details or ""
     _audit_logger.info(f"{ts} | {actor_ip} | {action} | {details}")
 
-
-# ======================================================
-# CIFRADO / DESCIFRADO KAFKA (CENTRAL)
-# ======================================================
 def _derive_fernet_key(key_str: str) -> bytes:
     digest = hashlib.sha256(key_str.encode("utf-8")).digest()
     return base64.urlsafe_b64encode(digest)
-
 
 def _encrypt_for_cp(cp_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
     cp = db.getCp(cp_id)
@@ -70,7 +123,6 @@ def _encrypt_for_cp(cp_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         "cp_id": cp_id,
         "payload": token
     }
-
 
 def _decrypt_from_cp(data: Dict[str, Any]) -> Dict[str, Any]:
     if not isinstance(data, dict) or not data.get("encrypted"):
@@ -99,24 +151,8 @@ def _decrypt_from_cp(data: Dict[str, Any]) -> Dict[str, Any]:
         audit_log("KAFKA", "DECRYPT_ERROR", f"cp_id={cp_id} err={repr(e)}")
         return {}
 
-
 def kafka_send_cp(prod: Producer, topic: str, cp_id: str, payload: Dict[str, Any]):
     kafka_utils.send(prod, topic, _encrypt_for_cp(cp_id, payload))
-
-def printCpPanel():
-    cps = db.listChargingPoints()
-    print("\n=== Charging Points en Sistema ===")
-    if not cps:
-        print("No hay puntos de carga registrados.")
-        return
-
-    for cp in cps:
-        print(
-            f"ID: {cp.get('id')} | "
-            f"State: {cp.get('state', 'UNKNOWN')} | "
-            f"Price: {cp.get('price', 'N/A')} eur | "
-            f"Location: {cp.get('location', 'N/A')}"
-        )
 
 def cpExists(cp_id):
     cp = db.getCp(cp_id) 
@@ -209,7 +245,6 @@ def enableCP(cp_id):
     audit_log("LOCAL", "CP_STATE_CHANGE", f"cp_id={cp_id} FUERA_DE_SERVICIO->AVAILABLE")
     print(f"[CENTRAL] 🟢 CP {cp_id} habilitado → AVAILABLE")
 
-
 def handleClient(conn, addr, kafkaInfo):
     print(f"[CENTRAL] Nueva conexión desde {addr}")
     cp_ip = addr[0] if addr else "UNKNOWN"
@@ -279,6 +314,8 @@ def handleClient(conn, addr, kafkaInfo):
 
         conn.send(b"<EOT>")
         audit_log(cp_ip, "HANDSHAKE_OK", f"cp_id={cp}")
+        cp_sockets[cp] = conn
+        audit_log(cp_ip, "CP_SOCKET_REGISTERED", f"cp_id={cp}")
         print(f"[CENTRAL] Handshake completado con CP {cp}, esperando mensajes...")
 
         conn.settimeout(10)
@@ -375,10 +412,10 @@ def handleClient(conn, addr, kafkaInfo):
         try:
             if 'cp' in locals() and cp is not None:
                 print(f"[CENTRAL] ⚠️ CP {cp} desconectado → DISCONNECTED")
-                db.upsertCp({
-                    "id": cp,
-                    "state": "DISCONNECTED"
-                })
+                # db.upsertCp({
+                #     "id": cp,
+                #     "state": "DISCONNECTED"
+                # })
                 audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> DISCONNECTED")
 
                 session_found = None
@@ -419,11 +456,12 @@ def handleClient(conn, addr, kafkaInfo):
                     audit_log(cp_ip, "SESSION_REMOVED_MEMORY", f"session_id={session_key}")
                     db.deleteSession(driver_id, cp)
                     audit_log(cp_ip, "SESSION_DELETED_DB", f"driver_id={driver_id} cp_id={cp}")
+                    cp_sockets.pop(cp, None)
+                    audit_log(cp_ip, "CP_SOCKET_REMOVED", f"cp_id={cp}")
 
         except Exception as e:
             print(f"[CENTRAL] ❌ Error marcando CP desconectado: {e}")
             audit_log(cp_ip, "DISCONNECT_HANDLER_ERROR", f"cp_id={cp if 'cp' in locals() else None} err={repr(e)}")
-
 
 def handleDriver(topic, data, prod):
     data = _decrypt_from_cp(data)
@@ -622,7 +660,6 @@ def handleDriver(topic, data, prod):
         db.deleteSession(driver_id, cp_id)
         audit_log("KAFKA", "SESSION_DELETED_DB", f"driver_id={driver_id} cp_id={cp_id}")
 
-
 def tcpServer(s, kafkaInfo):
     while True:
         conn, addr = s.accept()
@@ -681,7 +718,7 @@ def main():
     audit_log("LOCAL", "CENTRAL_START", f"port={port} kafka={kafkaInfo}")
 
     load_active_sessions()
-    printCpPanel()
+    #printCpPanel()
 
     threading.Thread(target=tcpServer, args=(s, kafkaInfo), daemon=True).start()
     audit_log("LOCAL", "THREAD_START", "tcpServer")
@@ -689,6 +726,8 @@ def main():
     audit_log("LOCAL", "THREAD_START", "kafkaListener")
     threading.Thread(target=heartbeat_loop, args=(kafkaInfo,), daemon=True).start()
     audit_log("LOCAL", "THREAD_START", "heartbeat_loop")
+    threading.Thread(target=weather_monitor_loop, args=(kafkaInfo,), daemon=True).start()
+    audit_log("LOCAL", "THREAD_START", "weather_monitor_loop")
 
     print("\n[COMANDOS CENTRAL ACTIVADOS]")
     print("  stop <cp_id>   → Detiene carga, genera ticket y pasa a FUERA DE SERVICIO")
@@ -720,6 +759,5 @@ def main():
         except Exception as e:
             print(f"[CENTRAL] Error procesando comando: {e}")
             audit_log("LOCAL", "ADMIN_CMD_ERROR", f"err={repr(e)}")
-
 
 main()

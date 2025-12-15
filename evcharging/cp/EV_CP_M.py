@@ -75,7 +75,6 @@ def handshake_engine(sock, cp, name="ENGINE"):
         print(f"[MONITOR] Error en handshake con {name}: {e}")
         return False
 
-
 def connectWithRetry(ip, port, name, retries=5, wait=3):
     for attempt in range(1, retries + 1):
         if stop_threads: return None
@@ -287,16 +286,16 @@ def darDeBaja(cpId, ipR, portR, shared_state, root):
     if shared_state.get("sc"):
         try:
             print("[BAJA] Enviando SHUTDOWN a CENTRAL...")
-            shared_state["sc"].send(b"SHUTDOWN")
-            shared_state["sc"].close()
+            #shared_state["sc"].send(b"SHUTDOWN")
+            #shared_state["sc"].close()
         except Exception as e:
             print(f"[BAJA] Error cerrando socket Central: {e}")
 
     if shared_state.get("se"):
         try:
             print("[BAJA] Enviando SHUTDOWN a ENGINE...")
-            shared_state["se"].send(b"SHUTDOWN")
-            shared_state["se"].close()
+            #shared_state["se"].send(b"SHUTDOWN")
+            #shared_state["se"].close()
         except Exception as e:
             print(f"[BAJA] Error cerrando socket Engine: {e}")
 

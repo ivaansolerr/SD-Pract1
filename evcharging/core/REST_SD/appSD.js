@@ -108,12 +108,12 @@ appSD.post("/addCP", async (request, response) => {
 
 appSD.delete("/deleteCP", async (request, response) => {
     const usuarioObj = {
-        cpId: request.body.id
+        id: request.body.id
     }
-    const cp = await db.collection("charging_points").findOne({ id: usuarioObj.cpId });
+    const cp = await db.collection("charging_points").findOne({ id: usuarioObj.id });
     if (cp) {
         try {
-            const cp = db.collection("charging_points").deleteOne(usuarioObj);
+            const result = await db.collection("charging_points").deleteOne(usuarioObj);
             response.status(200).json({ message: "Borrado correctamente" });
         } catch (error) {
             response.status(409).json(error.errmsg);
