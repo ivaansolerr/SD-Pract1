@@ -4,6 +4,7 @@ from typing import Dict, Any
 from .. import topics, kafka_utils, utils, socketCommunication
 from confluent_kafka import Producer, Consumer
 import ssl
+import os
 
 # IMPORTACIONES PARA GUI (Tkinter)
 import tkinter as tk
@@ -15,6 +16,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Variable global para controlar el cierre de hilos de forma limpia
 stop_threads = False
 TLS_INSECURE = True
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 
 def make_tls_client_context():
     ctx = ssl.create_default_context()
@@ -302,6 +304,94 @@ def darDeBaja(cpId, ipR, portR, shared_state, root):
     root.destroy()
     sys.exit(0)
 
+def reAuth(cpId, ipR, portR, ipC, pC, ipE, pE, shared_state):
+    global stop_threads
+
+    key_path = os.path.join(BASE_DIR, "keys", f"{cpId}_key.txt")
+    
+    if os.path.exists(key_path):
+        messagebox.showwarning("Ya existe clave", f"Ya existe una clave local para {cpId}.")
+        return
+        
+    confirm = messagebox.askyesno(
+        "Re-auth",
+        f"¿Quieres volver a autenticar el CP {cpId} y regenerar las claves?"
+    )
+    if not confirm:
+        return
+
+    print(f"[REAUTH] 🔁 Reautenticando CP {cpId}...")
+
+    fileExists = False
+    key = ""
+
+    try:
+        with open(f"evcharging/cp/{cpId}.txt", "r", encoding="utf-8") as f:
+            fileExists = True
+            key = (f.read())
+    except:
+        pass
+
+    if not fileExists:
+        dataForRegistry = {
+            "id": cpId,
+            "location": cpLocation,
+            "price": cpPrice
+        }
+
+        # url de la api request
+        url = f"https://{ipR}:{portR}/addCP"
+        try:
+            response = requests.post(url, json=dataForRegistry, verify=False)
+
+            # comprobamos que no exista
+            if response.status_code == 409:
+                print("ID del CP repetida, introduce una ID que no exista")
+                return
+
+            # guardamos la clave
+            key = response.json().get("message")
+
+            # Asegurar directorio
+            os.makedirs("evcharging/cp", exist_ok=True)
+            with open(f"evcharging/cp/{cpId}.txt", "w", encoding="utf-8") as f:
+                f.write(key)
+        except Exception as e:
+            print(f"Error registrando CP: {e}")
+            return
+
+    # 2) Parar hilos actuales y cerrar sockets
+    stop_threads = True
+    try:
+        if shared_state.get("sc"):
+            try: shared_state["sc"].close()
+            except: pass
+        if shared_state.get("se"):
+            try: shared_state["se"].close()
+            except: pass
+    finally:
+        shared_state["sc"] = None
+        shared_state["se"] = None
+
+    time.sleep(0.5)  # mini pausa para que los loops salgan
+
+    # 3) Reiniciar monitor con la nueva key (nuevo handshake)
+    stop_threads = False
+    threading.Thread(
+        target=monitorCentral,
+        args=(ipC, pC, cpId, ipE, pE, shared_state, key),
+        daemon=True
+    ).start()
+
+    threading.Thread(
+        target=monitorEngine,
+        args=(ipE, pE, cpId, shared_state, key),
+        daemon=True
+    ).start()
+
+    print("[REAUTH] ✅ Re-auth lanzado. Se repetirá el handshake con CENTRAL y ENGINE.")
+    messagebox.showinfo("Re-auth", "Re-autenticación iniciada. Revisa consola para ver el handshake.")
+
 
 def main():
     if len(sys.argv) != 10:
@@ -369,14 +459,43 @@ def main():
     # Dar de baja con tkinter el cp
     root = tk.Tk()
     root.title(f"Monitor CP: {cpId}")
-    root.geometry("300x150")
+    root.geometry("300x180")
 
     lbl_info = tk.Label(root, text=f"CP ID: {cpId}\nLocation: {cpLocation}\nPrice: {cpPrice} €", pady=10)
     lbl_info.pack()
 
-    btn_baja = tk.Button(root, text="DAR DE BAJA", bg="red", fg="white", font=("Arial", 10, "bold"),
-                         command=lambda: darDeBaja(cpId, ipR, portR, shared_state, root))
-    btn_baja.pack(pady=20)
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=20)
+
+    # Botón DAR DE BAJA
+    btn_baja = tk.Button(
+        btn_frame,
+        text="DAR DE BAJA",
+        bg="red",
+        fg="white",
+        font=("Arial", 10, "bold"),
+        command=lambda: darDeBaja(cpId, ipR, portR, shared_state, root)
+    )
+    btn_baja.pack(side="left", padx=5)
+
+    btn_reauth = tk.Button(
+        btn_frame,
+        text="RE-AUTH",
+        bg="orange",
+        fg="black",
+        font=("Arial", 10, "bold"),
+        command=lambda: reAuth(
+            cpId,
+            ipR,
+            portR,
+            ipC,
+            pC,
+            ipE,
+            pE,
+            shared_state
+        )
+    )
+    btn_reauth.pack(side="left", padx=5)
 
     print(f"[MONITOR] Ventana de control abierta para {cpId}")
     

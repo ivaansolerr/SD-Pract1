@@ -28,7 +28,7 @@ _audit_logger = logging.getLogger("central_audit")
 _audit_logger.setLevel(logging.INFO)
 _audit_logger.propagate = False
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # .../evcharging/core
-TLS_CERT = os.path.abspath(os.path.join(BASE_DIR, "REST_SD", "certServ.pem"))
+TLS_CERT = os.path.abspath(os.path.join(BASE_DIR, "EV_REGISTRY", "certServ.pem"))
 KEYS_DIR = os.path.join(BASE_DIR, "keys")
 
 
@@ -688,6 +688,27 @@ def tcpServer(s, kafkaInfo, tls_ctx):
         t = threading.Thread(target=handleClient, args=(conn, addr, kafkaInfo), daemon=True)
         t.start()
 
+def revokeCpKey(cp_id):
+    cp = db.getCp(cp_id)
+    if not cp:
+        print(f"[CENTRAL] ❌ No existe CP {cp_id}")
+        audit_log("LOCAL", "ADMIN_REVOKE_KEY_FAIL", f"cp_id={cp_id} no_existe")
+        return
+
+    key_path = os.path.join(KEYS_DIR, f"{cp_id}_key.txt")
+    engine_key_path = os.path.abspath(os.path.join(BASE_DIR, "..", "cp", "keys", f"{cp_id}_key.txt"))
+    try:
+        os.remove(key_path)
+        os.remove(engine_key_path)
+        db.setCpState(cp_id, "FUERA DE SERVICIO")
+        print(f"[CENTRAL] 🔑 Clave de cifrado para CP {cp_id} revocada.")
+        audit_log("LOCAL", "ADMIN_REVOKE_KEY_SUCCESS", f"cp_id={cp_id} key_file_deleted")
+    except FileNotFoundError:
+        print(f"[CENTRAL] ⚠️ Clave de cifrado para CP {cp_id} no encontrada.")
+        audit_log("LOCAL", "ADMIN_REVOKE_KEY_FAIL", f"cp_id={cp_id} key_file_not_found")
+    except Exception as e:
+        print(f"[CENTRAL] ❌ Error revocando clave para CP {cp_id}: {e}")
+        audit_log("LOCAL", "ADMIN_REVOKE_KEY_ERROR", f"cp_id={cp_id} err={repr(e)}")
 
 def kafkaListener(kafkaInfo):
     kafkaProducer = kafka_utils.buildProducer(kafkaInfo)
@@ -758,6 +779,7 @@ def main():
     print("\n[COMANDOS CENTRAL ACTIVADOS]")
     print("  stop <cp_id>   → Detiene carga, genera ticket y pasa a FUERA DE SERVICIO")
     print("  enable <cp_id> → Vuelve a poner el CP en AVAILABLE\n")
+    print("  revoke <cp_id> → Revoca la clave de cifrado del CP")
 
     while True:
         try:
@@ -772,11 +794,13 @@ def main():
                     stopCP(cmd[1], kafkaInfo)
                 elif cmd[0].lower() == "enable":
                     enableCP(cmd[1])
+                elif cmd[0].lower() == "revoke":
+                    revokeCpKey(cmd[1])
                 else:
                     print("[CENTRAL] Comando no reconocido.")
                     audit_log("LOCAL", "ADMIN_CMD_UNKNOWN", f"cmd={raw}")
             else:
-                print("[CENTRAL] Formato inválido. Usa: stop <id> o enable <id>")
+                print("[CENTRAL] Formato inválido. Usa: stop <id> | enable <id> | revoke <id>")
                 audit_log("LOCAL", "ADMIN_CMD_INVALID_FORMAT", f"cmd={raw}")
         except KeyboardInterrupt:
             print("\n[CENTRAL] Saliendo...")
