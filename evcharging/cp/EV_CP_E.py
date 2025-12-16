@@ -49,7 +49,7 @@ def _encrypt_kafka(payload: Dict[str, Any], cp_id: str) -> Dict[str, Any]:
         with open(key_path, "r") as key_file:
             kafka_key = key_file.read().strip()
     except FileNotFoundError:
-        audit_log("LOCAL", "ENCRYPTION_KEY_MISSING", f"cp_id={cp_id} key_file_not_found")
+        print(f"cp_id={cp_id} key_file_not_found")
     if not kafka_key:
         return payload
 
@@ -288,6 +288,21 @@ def handleRequest(topic, data):
                 daemon=True
             )
             session_thread.start()
+    
+    if topic == topics.EV_REVOKE_KEY:
+        data = _decrypt_kafka(data)
+        if not data:
+            return
+        if data.get("cp_id") == registered_cp:
+            key_path = os.path.join(KEYS_DIR, f"{registered_cp}_key.txt")
+            try:
+                os.remove(key_path)
+                print(f"[CENTRAL] 🔑 Clave de cifrado para CP {registered_cp} revocada.")
+            except FileNotFoundError:
+                print(f"[CENTRAL] ⚠️ Clave de cifrado para CP {registered_cp} no encontrada.")
+            except Exception as e:
+                print(f"[CENTRAL] ❌ Error revocando clave para CP {registered_cp}: {e}")
+
 
     # ---------- FINALIZACIÓN REMOTA DESDE CENTRAL ----------
     elif topic == topics.EV_SUPPLY_END_ENGINE:
@@ -354,7 +369,7 @@ def kafkaListener(kafkaIp, kafkaPort):
             topics.EV_SUPPLY_END,
             topics.EV_SUPPLY_REQUEST,
             topics.EV_SUPPLY_END_ENGINE,
-            topics.EV_ENGINE_KEY_EXCHANGE
+            topics.EV_REVOKE_KEY
         ]
     )
 

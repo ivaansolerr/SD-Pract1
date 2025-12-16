@@ -1,7 +1,7 @@
 @echo off
 echo Creando topics de Kafka para EVCharging...
 
-set TOPICS=evSupplyRequest evSupplyAuth evAuthResult evSupplyConnected evSupplyEnd evSupplyTicket evSupplyStarted evSupplyAuthDri  evSupplyHeartbeat evCentralHeartbeat evDriverSupplyHeartbeat evDriverSupplyError evSupplyEndEngine evEngineKeyExchange
+set TOPICS=evSupplyRequest evSupplyAuth evAuthResult evSupplyConnected evSupplyEnd evSupplyTicket evSupplyStarted evSupplyAuthDri  evSupplyHeartbeat evCentralHeartbeat evDriverSupplyHeartbeat evDriverSupplyError evSupplyEndEngine evRevokeKey
 
 for %%T in (%TOPICS%) do (
     echo Creando topic: %%T

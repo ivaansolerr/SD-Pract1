@@ -428,7 +428,7 @@ def handleClient(conn, addr, kafkaInfo):
         try:
             if 'cp' in locals() and cp is not None:
                 print(f"[CENTRAL] ⚠️ CP {cp} desconectado → DISCONNECTED")
-                db.setCpState(cp_id, "DISCONNECTED")
+                db.setCpState(cp, "DISCONNECTED")
                 audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> DISCONNECTED")
 
                 session_found = None
@@ -689,7 +689,7 @@ def tcpServer(s, kafkaInfo, tls_ctx):
         t = threading.Thread(target=handleClient, args=(conn, addr, kafkaInfo), daemon=True)
         t.start()
 
-def revokeCpKey(cp_id):
+def revokeCpKey(cp_id, kafkaInfo):
     cp = db.getCp(cp_id)
     if not cp:
         print(f"[CENTRAL] ❌ No existe CP {cp_id}")
@@ -697,11 +697,14 @@ def revokeCpKey(cp_id):
         return
 
     key_path = os.path.join(KEYS_DIR, f"{cp_id}_key.txt")
-    engine_key_path = os.path.abspath(os.path.join(BASE_DIR, "..", "cp", "keys", f"{cp_id}_key.txt"))
     try:
+        stopCP(cp_id, kafkaInfo)
         os.remove(key_path)
-        os.remove(engine_key_path)
         db.setCpState(cp_id, "FUERA DE SERVICIO")
+        prod = kafka_utils.buildProducer(kafkaInfo)
+        kafka_send_cp(prod, topics.EV_REVOKE_KEY, cp_id, {
+                "cp_id": cp_id
+            })
         print(f"[CENTRAL] 🔑 Clave de cifrado para CP {cp_id} revocada.")
         audit_log("LOCAL", "ADMIN_REVOKE_KEY_SUCCESS", f"cp_id={cp_id} key_file_deleted")
     except FileNotFoundError:
@@ -796,7 +799,7 @@ def main():
                 elif cmd[0].lower() == "enable":
                     enableCP(cmd[1])
                 elif cmd[0].lower() == "revoke":
-                    revokeCpKey(cmd[1])
+                    revokeCpKey(cmd[1], kafkaInfo)
                 else:
                     print("[CENTRAL] Comando no reconocido.")
                     audit_log("LOCAL", "ADMIN_CMD_UNKNOWN", f"cmd={raw}")

@@ -78,6 +78,27 @@ def connectWithRetry(ip, port, name, retries=5, wait=3):
             time.sleep(wait)
     return None
 
+def shutdown_monitor(shared_state):
+    try:
+        sc = shared_state.get("sc")
+        if sc:
+            try:
+                sc.sendall(b"KO")
+                print("[MONITOR] ⚠️ KO enviado a CENTRAL por cierre del monitor")
+            except Exception as e:
+                print(f"[MONITOR] No se pudo enviar KO en shutdown: {e}")
+    finally:
+        try:
+            if shared_state.get("sc"):
+                shared_state["sc"].close()
+        except:
+            pass
+        try:
+            if shared_state.get("se"):
+                shared_state["se"].close()
+        except:
+            pass
+
 
 def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
     global stop_threads
@@ -493,6 +514,14 @@ def main():
     root = tk.Tk()
     root.title(f"Monitor CP: {cpId}")
     root.geometry("300x180")
+    root.protocol(
+        "WM_DELETE_WINDOW",
+        lambda: (
+            print("[MONITOR] Ventana cerrada"),
+            shutdown_monitor(shared_state),
+            sys.exit(0)
+        )
+    )
 
     lbl_info = tk.Label(root, text=f"CP ID: {cpId}\nLocation: {cpLocation}\nPrice: {cpPrice} €", pady=10)
     lbl_info.pack()
@@ -535,8 +564,7 @@ def main():
     try:
         root.mainloop()
     except KeyboardInterrupt:
-        global stop_threads
-        stop_threads = True
+        shutdown_monitor(shared_state)
         sys.exit()
 
 main()
