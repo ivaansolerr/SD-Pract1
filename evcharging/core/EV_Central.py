@@ -28,7 +28,7 @@ _audit_logger = logging.getLogger("central_audit")
 _audit_logger.setLevel(logging.INFO)
 _audit_logger.propagate = False
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # .../evcharging/core
-TLS_CERT = os.path.abspath(os.path.join(BASE_DIR, "EV_REGISTRY", "certServ.pem"))
+TLS_CERT = os.path.abspath(os.path.join(BASE_DIR, "certServ.pem"))
 KEYS_DIR = os.path.join(BASE_DIR, "keys")
 
 
