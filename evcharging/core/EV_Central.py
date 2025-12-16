@@ -545,7 +545,7 @@ def handleDriver(topic, data, prod):
         if status != "CONNECTED":
             audit_log("KAFKA", "SUPPLY_REJECTED_BY_ENGINE", f"driver_id={driver_id} cp_id={cp_id} status={status}")
             print(f"[CENTRAL] Recarga rechazada por ENGINE para Driver {driver_id} en CP {cp_id}")
-            kafka_send_cp(prod, topics.EV_SUPPLY_STARTED, cp_id, {
+            kafka_utils.send(prod, topics.EV_SUPPLY_STARTED, {
                 "driver_id": driver_id,
                 "cp_id": cp_id,
                 "status": "REJECTED"
@@ -553,7 +553,7 @@ def handleDriver(topic, data, prod):
             audit_log("KAFKA", "SUPPLY_STARTED_SENT", f"driver_id={driver_id} cp_id={cp_id} status=REJECTED")
             return
 
-        kafka_send_cp(prod, topics.EV_SUPPLY_STARTED, cp_id, {
+        kafka_utils.send(prod, topics.EV_SUPPLY_STARTED, {
             "driver_id": driver_id,
             "cp_id": cp_id,
             "status": "APPROVED"
