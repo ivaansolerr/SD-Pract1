@@ -7,11 +7,14 @@ ticket_event = threading.Event()
 central_alive = True
 last_heartbeat = 0
 supply_active = False
+cpSupplying = None
 
 def handle_kafka_message(topic, data, prod, clientId):
     global supply_active
     if topic == topics.EV_SUPPLY_AUTH_DRI:
         if data.get("driver_id") != clientId:
+            return
+        if data.get("cp_id") != cpSupplying:
             return
         cp_id = data.get("cp_id")
         authorized = data.get("authorized")
@@ -25,6 +28,8 @@ def handle_kafka_message(topic, data, prod, clientId):
     elif topic == topics.EV_SUPPLY_STARTED:
         if data.get("driver_id") != clientId:
             return
+        if data.get("cp_id") != cpSupplying:
+            return
         status = data.get("status")
         cp_id = data.get("cp_id")
 
@@ -37,6 +42,8 @@ def handle_kafka_message(topic, data, prod, clientId):
 
     elif topic == topics.EV_SUPPLY_TICKET:
         if data.get("driver_id") != clientId:
+            return
+        if data.get("cp_id") != cpSupplying:
             return
         cp_id = data.get("cp_id")
         price = data.get("price", 0)
@@ -55,6 +62,8 @@ def handle_kafka_message(topic, data, prod, clientId):
     elif topic == topics.EV_DRIVER_SUPPLY_HEARTBEAT:
         if data.get("driver_id") != clientId:
             return
+        if data.get("cp_id") != cpSupplying:
+            return
         cp_id = data.get("cp_id")
         power_kw = data.get("power_kw", 0.0)
         energy_kwh = data.get("energy_kwh", 0.0)
@@ -66,11 +75,15 @@ def handle_kafka_message(topic, data, prod, clientId):
     elif topic == topics.EV_DRIVER_SUPPLY_ERROR:
         if data.get("driver_id") != clientId:
             return
+        if data.get("cp_id") != cpSupplying:
+            return
         cp_id = data.get("cp_id")
         utils.err(f"[DRIVER {clientId}] se ha caído el charging point: {cp_id}")
 
     elif topic == topics.EV_DRIVER_SUPPLY_ERROR:
         if data.get("driver_id") != clientId:
+            return
+        if data.get("cp_id") != cpSupplying:
             return
         cp_id = data.get("cp_id")
         utils.err(f"[DRIVER {clientId}] se ha producido un error durante el suministro en {cp_id}")
@@ -111,7 +124,7 @@ def kafka_listener(kafka, clientId):
     )
 
 def main():
-    global central_alive, last_heartbeat, supply_active
+    global central_alive, last_heartbeat, supply_active, cpSupplying
     if len(sys.argv) != 4:
         print("Uso: python EV_Driver.py <kafkaIp:KafkaPort> <clientId> <fileName>")
         sys.exit(1)
@@ -145,7 +158,6 @@ def main():
 
     for cp_id in lines:
         utils.info(f"[DRIVER {clientId}] Solicito recarga en {cp_id}")
-
         ticket_received = False
         for attempt in range(2):
             ticket_event.clear()
@@ -153,6 +165,7 @@ def main():
                 "driver_id": clientId,
                 "cp_id": cp_id
             })
+            cpSupplying = cp_id
             time.sleep(5)
             timeout = 10 if not supply_active else None
             if ticket_event.wait(timeout=timeout):  # Esperar el tiempo definido
@@ -169,8 +182,6 @@ def main():
         time.sleep(5)  # Espera antes de proceder al siguiente paso
 
     sys.exit(0)  # Termina cuando no haya más CPs
-
-
 
 if __name__ == "__main__":
     try:

@@ -42,7 +42,9 @@ appSD.get("/",(req, res) => {
 // Endpoints base de datos
 
 const { MongoClient } = require('mongodb');
-const client = new MongoClient("mongodb://127.0.0.1:27017");
+const dbIp = process.argv[2] || "127.0.0.1"; 
+console.log(`Intentando conectar a MongoDB en: ${dbIp}`);
+const client = new MongoClient(`mongodb://${dbIp}:27017`);
 
 let db;
 

@@ -202,8 +202,15 @@ def stopCP(cp_id, kafkaInfo):
     state = cp.get("state", "").upper()
     audit_log("LOCAL", "ADMIN_STOP_CP", f"cp_id={cp_id} state={state}")
 
+    db.upsertCp({
+        "id": cp_id,
+        "state": "FUERA DE SERVICIO",
+    })
+    audit_log("LOCAL", "CP_STATE_CHANGE", f"cp_id={cp_id} {state}->FUERA_DE_SERVICIO (LOCK)")
+    print(f"[CENTRAL] 🔴 CP {cp_id} → FUERA DE SERVICIO (Procesando parada...)")
+
     if state == "SUPPLYING":
-        print(f"[CENTRAL] 🛑 Parando CP {cp_id} (SUPPLYING) → Finalizando sesión")
+        print(f"[CENTRAL] 🛑 Finalizando sesión de CP {cp_id}...")
 
         session = db.sessions.find_one({"cp_id": cp_id})
         if session:
@@ -235,20 +242,8 @@ def stopCP(cp_id, kafkaInfo):
             active_sessions.pop(session_key, None)
             audit_log("LOCAL", "SESSION_REMOVED_MEMORY", f"session_id={session_key}")
 
-        db.upsertCp({
-            "id": cp_id,
-            "state": "FUERA DE SERVICIO",
-        })
-        audit_log("LOCAL", "CP_STATE_CHANGE", f"cp_id={cp_id} SUPPLYING->FUERA_DE_SERVICIO")
-        print(f"[CENTRAL] 🔴 CP {cp_id} → FUERA DE SERVICIO")
-
     else:
-        print(f"[CENTRAL] 🛑 Parando CP {cp_id} (NO supplying) → FUERA DE SERVICIO")
-        db.upsertCp({
-            "id": cp_id,
-            "state": "FUERA DE SERVICIO",
-        })
-        audit_log("LOCAL", "CP_STATE_CHANGE", f"cp_id={cp_id} {state}->FUERA_DE_SERVICIO")
+        print(f"[CENTRAL] 🛑 CP {cp_id} parado (No estaba cargando).")
 
 def enableCP(cp_id):
     cp = db.getCp(cp_id)
@@ -304,7 +299,6 @@ def handleClient(conn, addr, kafkaInfo):
                 return
             else:
                 print(f"[CENTRAL] CP :) {cp} autenticado. Estado → AVAILABLE")
-
                 os.makedirs(KEYS_DIR, exist_ok=True)
                 key_filename = os.path.join(KEYS_DIR, f"{cp}_key.txt")
                 with open(key_filename, "w") as key_file:
@@ -314,9 +308,7 @@ def handleClient(conn, addr, kafkaInfo):
                     "id": cp,
                     "state": "AVAILABLE",
                 })
-                audit_log(cp_ip, "AUTH_OK", f"cp_id={cp} state->AVAILABLE engine_key_generada=True")
-                audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> AVAILABLE")
-
+                audit_log(cp_ip, "AUTH_OK", f"cp_id={cp} state->AVAILABLE")
                 result = "OK"
         else:
             print(f"[CENTRAL] CP {cp} NO existe en la base de datos")
@@ -326,14 +318,11 @@ def handleClient(conn, addr, kafkaInfo):
         conn.send(socketCommunication.encodeMess(result))
 
         if conn.recv(1024) != socketCommunication.ACK:
-            audit_log(cp_ip, "AUTH_PROTOCOL_FAIL", f"cp_id={cp} no_recibe_ACK_final")
             conn.close()
             return
 
         conn.send(b"<EOT>")
-        audit_log(cp_ip, "HANDSHAKE_OK", f"cp_id={cp}")
         cp_sockets[cp] = conn
-        audit_log(cp_ip, "CP_SOCKET_REGISTERED", f"cp_id={cp}")
         print(f"[CENTRAL] Handshake completado con CP {cp}, esperando mensajes...")
 
         conn.settimeout(10)
@@ -341,150 +330,87 @@ def handleClient(conn, addr, kafkaInfo):
             try:
                 msg = conn.recv(1024)
                 if not msg:
-                    audit_log(cp_ip, "TCP_DISCONNECT", f"cp_id={cp} socket_cerrado_remoto")
-                    break
+                    break # Socket cerrado
 
                 if msg == b"PING":
                     conn.send(b"PONG")
-                    audit_log(cp_ip, "MONITOR_PING", f"cp_id={cp} PING->PONG")
 
                 elif msg == b"KO":
                     print(f"[CENTRAL] :( CP {cp} averiado → UNAVAILABLE")
-                    db.upsertCp({
-                        "id": cp,
-                        "state": "UNAVAILABLE",
-                    })
-                    audit_log(cp_ip, "INCIDENT_CP_KO", f"cp_id={cp} state->UNAVAILABLE")
-                    audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> UNAVAILABLE")
+                    db.upsertCp({"id": cp, "state": "UNAVAILABLE"})
+                    conn.send(socketCommunication.ACK)
+                    # Lógica de KO (simplificada para no repetir código, la gestiona el finally o stopCP idealmente, 
+                    # pero si la dejas aquí, asegúrate de hacer pop también)
+                    # Para este ejemplo, dejaremos que el break/finally gestione la limpieza si el socket cierra,
+                    # o si quieres gestionarlo aquí, usa la misma lógica de "pop" seguro.
+                    
+                elif msg == b"OK":
+                    print(f"[CENTRAL] :) CP {cp} recuperado → AVAILABLE")
+                    db.upsertCp({"id": cp, "state": "AVAILABLE"})
                     conn.send(socketCommunication.ACK)
 
-                    session_found = None
-                    session_key = None
-                    for sid, session_data in active_sessions.items():
-                        if session_data.get("cp_id") == cp:
-                            session_found = session_data
-                            session_key = sid
-                            break
+            except socket.timeout:
+                continue
+            except Exception as e:
+                print(f"[CENTRAL] Error recibiendo de {cp}: {e}")
+                break
 
+    except Exception as e:
+        print(f"[CENTRAL] Error con {addr}: {e}")
+
+    finally:
+        conn.close()
+        print(f"[CENTRAL] Conexión cerrada con {addr}")
+
+        try:
+            if 'cp' in locals() and cp is not None:
+                # 1. Comprobación de GUARDIA (¿StopCP ya marcó esto como Fuera de Servicio?)
+                cp_data = db.getCp(cp)
+                if cp_data and cp_data.get("state") == "FUERA DE SERVICIO":
+                    print(f"[CENTRAL] ℹ️ Desconexión en {cp} ignorada (Ya está FUERA DE SERVICIO).")
+                    cp_sockets.pop(cp, None)
+                    return 
+
+                print(f"[CENTRAL] ⚠️ CP {cp} desconectado inesperadamente → DISCONNECTED")
+                db.setCpState(cp, "DISCONNECTED")
+                
+                # 2. Búsqueda de sesión
+                session_key_to_remove = None
+                for sid, session_data in active_sessions.items():
+                    if session_data.get("cp_id") == cp:
+                        session_key_to_remove = sid
+                        break
+                
+                # 3. EXTRACCIÓN ATÓMICA: Intentamos sacarla del diccionario.
+                # Si stopCP llegó antes, pop devolverá None y no entraremos al if.
+                if session_key_to_remove:
+                    session_found = active_sessions.pop(session_key_to_remove, None)
+                    
                     if session_found:
+                        # SI ENTRAMOS AQUÍ, SOMOS LOS RESPONSABLES DE GENERAR EL TICKET
                         driver_id = session_found.get("driver_id")
                         energy_total = session_found.get("energy_kwh", 0.0)
                         price = db.getCp(cp).get("price", 0.3)
                         total_price = energy_total * price
-                        print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
-
-                        audit_log(cp_ip, "INCIDENT_ACTIVE_SESSION_INTERRUPTED",
-                                  f"cp_id={cp} driver_id={driver_id} energy_kwh={round(energy_total,3)}")
-
+                        
+                        print(f"[CENTRAL] 🚨 Generando ticket de emergencia para Driver {driver_id}...")
+                        
                         prod = kafka_utils.buildProducer(kafkaInfo)
                         kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
-                            "driver_id": driver_id,
-                            "cp_id": cp,
+                            "driver_id": driver_id, "cp_id": cp
                         })
-                        audit_log(cp_ip, "DRIVER_SUPPLY_ERROR_SENT", f"driver_id={driver_id} cp_id={cp}")
-
                         kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
                             "driver_id": driver_id,
                             "cp_id": cp,
                             "price": round(total_price, 2),
                             "energy_kwh": round(energy_total, 3)
                         })
-                        audit_log(cp_ip, "TICKET_ISSUED",
-                                  f"driver_id={driver_id} cp_id={cp} price={round(total_price,2)} energy_kwh={round(energy_total,3)}")
-
-                        active_sessions.pop(session_key, None)
-                        audit_log(cp_ip, "SESSION_REMOVED_MEMORY", f"session_id={session_key}")
                         db.deleteSession(driver_id, cp)
-                        audit_log(cp_ip, "SESSION_DELETED_DB", f"driver_id={driver_id} cp_id={cp}")
 
-                elif msg == b"OK":
-                    print(f"[CENTRAL] :) CP {cp} recuperado → AVAILABLE")
-                    db.upsertCp({
-                        "id": cp,
-                        "state": "AVAILABLE",
-                    })
-                    audit_log(cp_ip, "CP_RECOVERED", f"cp_id={cp} state->AVAILABLE")
-                    audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> AVAILABLE")
-                    conn.send(socketCommunication.ACK)
-
-                else:
-                    print(f"[CENTRAL] Mensaje desconocido de {cp}: {msg}")
-                    audit_log(cp_ip, "UNKNOWN_MESSAGE", f"cp_id={cp} msg={msg!r}")
-
-            except socket.timeout:
-                continue
-            except Exception as e:
-                print(f"[CENTRAL] Error recibiendo de {cp}: {e}")
-                audit_log(cp_ip, "TCP_ERROR", f"cp_id={cp} err={repr(e)}")
-                break
-
-    except Exception as e:
-        print(f"[CENTRAL] Error con {addr}: {e}")
-        audit_log(cp_ip, "HANDLECLIENT_ERROR", f"addr={addr} err={repr(e)}")
-
-    finally:
-        conn.close()
-        print(f"[CENTRAL] Conexión cerrada con {addr}")
-        audit_log(cp_ip, "TCP_CLOSE", f"addr={addr}")
-
-        try:
-            if 'cp' in locals() and cp is not None:
-                
-                cp_data = db.getCp(cp)
-                if cp_data and cp_data.get("state") == "FUERA DE SERVICIO":
-                    print(f"[CENTRAL] ℹ️ Desconexión de socket en {cp} ignorada (Causa: Parada Controlada).")
-                    return 
-
-                print(f"[CENTRAL] ⚠️ CP {cp} desconectado → DISCONNECTED")
-                db.setCpState(cp, "DISCONNECTED")
-                audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> DISCONNECTED")
-
-                session_found = None
-                session_key = None
-                for sid, session_data in active_sessions.items():
-                    if session_data.get("cp_id") == cp:
-                        session_found = session_data
-                        session_key = sid
-                        break
-
-                if session_found:
-                    driver_id = session_found.get("driver_id")
-                    energy_total = session_found.get("energy_kwh", 0.0)
-                    price = db.getCp(cp).get("price", 0.3)
-                    total_price = energy_total * price
-                    print(f"[CENTRAL] 🚨 CP {cp} estaba en sesión activa con Driver {driver_id}. Notificando error...")
-
-                    audit_log(cp_ip, "INCIDENT_ACTIVE_SESSION_INTERRUPTED",
-                              f"cp_id={cp} driver_id={driver_id} energy_kwh={round(energy_total,3)} reason=DISCONNECT")
-
-                    prod = kafka_utils.buildProducer(kafkaInfo)
-                    kafka_utils.send(prod, topics.EV_DRIVER_SUPPLY_ERROR, {
-                        "driver_id": driver_id,
-                        "cp_id": cp,
-                    })
-                    audit_log(cp_ip, "DRIVER_SUPPLY_ERROR_SENT", f"driver_id={driver_id} cp_id={cp}")
-
-                    kafka_utils.send(prod, topics.EV_SUPPLY_TICKET, {
-                        "driver_id": driver_id,
-                        "cp_id": cp,
-                        "price": round(total_price, 2),
-                        "energy_kwh": round(energy_total, 3)
-                    })
-                    audit_log(cp_ip, "TICKET_ISSUED",
-                              f"driver_id={driver_id} cp_id={cp} price={round(total_price,2)} energy_kwh={round(energy_total,3)}")
-
-                    active_sessions.pop(session_key, None)
-                    audit_log(cp_ip, "SESSION_REMOVED_MEMORY", f"session_id={session_key}")
-                    db.deleteSession(driver_id, cp)
-                    audit_log(cp_ip, "SESSION_DELETED_DB", f"driver_id={driver_id} cp_id={cp}")
-                    
-                # Limpieza final del socket del diccionario
                 cp_sockets.pop(cp, None)
-                audit_log(cp_ip, "CP_SOCKET_REMOVED", f"cp_id={cp}")
 
         except Exception as e:
-            print(f"[CENTRAL] ❌ Error marcando CP desconectado: {e}")
-            audit_log(cp_ip, "DISCONNECT_HANDLER_ERROR", f"cp_id={cp if 'cp' in locals() else None} err={repr(e)}")
+            print(f"[CENTRAL] ❌ Error en finally: {e}")
 
 def handleDriver(topic, data, prod):
     data = _decrypt_from_cp(data)

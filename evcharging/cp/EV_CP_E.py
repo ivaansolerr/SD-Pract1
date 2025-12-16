@@ -184,6 +184,7 @@ def send_supply_heartbeat(driver_id: str):
 def run_supply_session(driver_id: str):
     global current_driver_id
 
+    # 1. Bloqueamos el CP
     with session_lock:
         current_driver_id = driver_id
 
@@ -191,6 +192,7 @@ def run_supply_session(driver_id: str):
     stop_event.clear()
     forced_end.clear()
 
+    # Lanzamos el heartbeat
     heartbeat_thread = threading.Thread(
         target=send_supply_heartbeat,
         args=(driver_id,),
@@ -200,43 +202,52 @@ def run_supply_session(driver_id: str):
 
     print("Escriba 'FIN' para finalizar el suministro manualmente, o espere orden remota de CENTRAL.")
 
-    # IMPORTANTE:
-    # Esta parte puede quedarse bloqueada en input(),
-    # pero ya NO bloquea el hilo que escucha Kafka.
     try:
+        # Bucle de espera manual
         while not stop_event.is_set():
             cmd = input().strip()
             if cmd.upper() == "FIN":
                 utils.info(f"[ENGINE] FIN manual recibido para driver {driver_id}")
                 stop_event.set()
                 break
+                
     except EOFError:
-        # Por si el stdin no está disponible o se cierra
         pass
+    except Exception as e:
+        print(f"[ENGINE] Error en sesión: {e}")
 
-    # Esperamos a que el hilo de heartbeat termine
-    heartbeat_thread.join(timeout=2)
+    finally:
+        heartbeat_thread.join(timeout=2)
 
-    # Si no es un fin forzado por CENTRAL, enviamos nosotros el EV_SUPPLY_END
-    if not forced_end.is_set():
-        kafka_send(prod, topics.EV_SUPPLY_END, {
-            "driver_id": driver_id,
-            "cp_id": registered_cp
-        })
-        utils.info(f"[ENGINE] Suministro finalizado localmente para driver {driver_id}")
-    else:
-        utils.info(f"[ENGINE] Suministro ya fue finalizado por CENTRAL para driver {driver_id}")
+        if not forced_end.is_set():
+            # Si fue manual, avisamos a Central
+            kafka_send(prod, topics.EV_SUPPLY_END, {
+                "driver_id": driver_id,
+                "cp_id": registered_cp
+            })
+            utils.info(f"[ENGINE] Suministro finalizado localmente para driver {driver_id}")
+        else:
+            utils.info(f"[ENGINE] Suministro ya fue finalizado por CENTRAL para driver {driver_id}")
 
-    with session_lock:
-        current_driver_id = None
+        # Liberamos el cerrojo (si no lo liberó ya handleRequest)
+        with session_lock:
+            if current_driver_id == driver_id:
+                current_driver_id = None
+                print("[ENGINE] 🔓 CP liberado (Fin de hilo de sesión).")
 
 def handleRequest(topic, data):
-    global cp_price, session_thread
+    global cp_price, session_thread, current_driver_id
 
     if topic == topics.EV_SUPPLY_AUTH:
         data = _decrypt_kafka(data)
         if not data:
             return
+  
+        with session_lock:
+            if current_driver_id is not None:
+                print(f"[ENGINE] ⚠️ IGNORADO: Autorización para {data.get('driver_id')} recibida, pero el CP ya está ocupado por {current_driver_id}.")
+                return
+
         if (data.get("authorized") is True) and (data.get("cp_id") == registered_cp):
             driver_id = data.get("driver_id")
             utils.ok(f"[ENGINE] Autorización aprobada para driver {driver_id}")
@@ -257,22 +268,17 @@ def handleRequest(topic, data):
             )
             session_thread.start()
     
-    if topic == topics.EV_REVOKE_KEY:
+    elif topic == topics.EV_REVOKE_KEY:
+        # (mismo código que tenías)
         data = _decrypt_kafka(data)
-        if not data:
-            return
+        if not data: return
         if data.get("cp_id") == registered_cp:
             key_path = os.path.join(KEYS_DIR, f"{registered_cp}_key.txt")
             try:
                 os.remove(key_path)
-                print(f"[CENTRAL] 🔑 Clave de cifrado para CP {registered_cp} revocada.")
-            except FileNotFoundError:
-                print(f"[CENTRAL] ⚠️ Clave de cifrado para CP {registered_cp} no encontrada.")
-            except Exception as e:
-                print(f"[CENTRAL] ❌ Error revocando clave para CP {registered_cp}: {e}")
+                print(f"[CENTRAL] 🔑 Clave de cifrado revocada.")
+            except: pass
 
-
-    # ---------- FINALIZACIÓN REMOTA DESDE CENTRAL ----------
     elif topic == topics.EV_SUPPLY_END_ENGINE:
         data = _decrypt_kafka(data)
         if not data:
@@ -280,10 +286,15 @@ def handleRequest(topic, data):
         if data.get("cp_id") == registered_cp:
             driver_id = data.get("driver_id")
             utils.info(f"[ENGINE] Suministro finalizado por CENTRAL para driver {driver_id}")
+            
             forced_end.set()
             stop_event.set()
 
-            # CENTRAL nos dice que acabemos: replicamos con EV_SUPPLY_END si queremos
+            with session_lock:
+                if current_driver_id == driver_id:
+                    current_driver_id = None
+                    print("[ENGINE] 🔓 CP liberado forzosamente tras orden de CENTRAL.")
+
             kafka_send(prod, topics.EV_SUPPLY_END, {
                 "driver_id": driver_id,
                 "cp_id": registered_cp
