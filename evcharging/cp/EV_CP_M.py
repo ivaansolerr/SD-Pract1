@@ -6,17 +6,18 @@ from confluent_kafka import Producer, Consumer
 import ssl
 import os
 
-# IMPORTACIONES PARA GUI (Tkinter)
 import tkinter as tk
 from tkinter import messagebox
 
 import urllib3 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Variable global para controlar el cierre de hilos de forma limpia
 stop_threads = False
 TLS_INSECURE = True
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+
+cpLocation = "none"
+cpPrice = "none"
 
 def make_tls_client_context():
     ctx = ssl.create_default_context()
@@ -99,10 +100,10 @@ def shutdown_monitor(shared_state):
         except:
             pass
 
-
 def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
     global stop_threads
     sc = None
+    
     while not stop_threads:
         try:
             sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=3)
@@ -118,7 +119,6 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
 
     if stop_threads: return
 
-    # Heartbeat a CENTRAL en bucle
     sc.settimeout(3)
     central_alive = True
     heartbeat_interval = 5
@@ -127,51 +127,42 @@ def monitorCentral(ipC, pC, cp, ipE, pE, shared_state, key):
         try:
             sc.sendall(b"PING")
             resp = sc.recv(1024)
-    
             if resp != b"PONG":
-                try:
+                try: # A veces llega basura o paquetes pegados
                     resp2 = sc.recv(1024)
-                    resp = resp2
-                except:
-                    pass
-                
+                    if resp2 == b"PONG": resp = b"PONG"
+                except: pass
+            
             if not resp:
                 raise ConnectionError("socket closed")
-            if resp != b"PONG":
-                # Si recibimos otra cosa, lo ignoramos momentáneamente o lanzamos error
-                pass 
-    
+            
         except (socket.timeout, ConnectionError, OSError):
             if stop_threads: break
+            
             if central_alive:
-                print("[MONITOR] ⚠️ CENTRAL no responde, intentando reconectar...")
-                try:
-                    ctx = make_tls_client_context()
-                    raw = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    raw.settimeout(2)
-                    raw.connect((ipE, pE))
-                    se = ctx.wrap_socket(raw, server_hostname=ipE)
-                    se.send(b"CENTRAL_DOWN")
-                    se.close()
-                    print("[MONITOR] 🚨 Aviso TLS enviado a ENGINE: CENTRAL caída")
-                except Exception as e:
-                    print("[MONITOR] ENGINE caído (no se pudo avisar):", e)
+                print("[MONITOR] ⚠️ CENTRAL no responde...")
+                central_alive = False
+ 
+                if shared_state.get("se"):
+                    try:
+                        print("[MONITOR] 🚨 Enviando aviso CENTRAL_DOWN a ENGINE por socket existente...")
+                        shared_state["se"].send(b"CENTRAL_DOWN")
+                    except Exception as e:
+                        print(f"[MONITOR] No se pudo avisar a ENGINE (quizás también cayó): {e}")
 
-    
             while not stop_threads:
                 sc = connectWithRetry(ipC, pC, "CENTRAL", retries=1, wait=5)
                 if sc and handshake(sc, cp, key, "CENTRAL"):
                     print("[MONITOR] ✅ Reconexión exitosa con CENTRAL")
-                    shared_state["sc"] = sc # Actualizar socket compartido
-                    try:
-                        ctx = make_tls_client_context()
-                        se = ctx.wrap_socket(socket.socket(), server_hostname=ipE)
-                        se.settimeout(1)
-                        se.connect((ipE, pE))
-                        se.send(b"CENTRAL_UP_AGAIN")
-                        se.close()
-                    except Exception as e:
-                        print("[MONITOR] ENGINE sigue caído (no se pudo avisar):", e)
+                    shared_state["sc"] = sc 
+                    
+                    if shared_state.get("se"):
+                        try:
+                            shared_state["se"].send(b"CENTRAL_UP_AGAIN")
+                            print("[MONITOR] ℹ️ Aviso CENTRAL_UP_AGAIN enviado a ENGINE")
+                        except Exception as e:
+                            print(f"[MONITOR] Error avisando ENGINE recovery: {e}")
+                            
                     central_alive = True
                     break
                 else:
@@ -343,7 +334,6 @@ def darDeBaja(cpId, ipR, portR, shared_state, root):
     root.destroy()
     sys.exit(0)
 
-
 def reAuth(cpId, ipR, portR, ipC, pC, ipE, pE, shared_state):
     global stop_threads
 
@@ -432,7 +422,6 @@ def reAuth(cpId, ipR, portR, ipC, pC, ipE, pE, shared_state):
     print("[REAUTH] ✅ Re-auth lanzado. Se repetirá el handshake con CENTRAL y ENGINE.")
     messagebox.showinfo("Re-auth", "Re-autenticación iniciada. Revisa consola para ver el handshake.")
 
-
 def send_ko_to_central(shared_state, done_event: threading.Event, timeout=2.0):
     try:
         sc = shared_state.get("sc")
@@ -445,7 +434,6 @@ def send_ko_to_central(shared_state, done_event: threading.Event, timeout=2.0):
         print(f"[BAJA] ⚠️ No se pudo enviar KO a CENTRAL: {e}")
     finally:
         done_event.set()
-
 
 def main():
     if len(sys.argv) != 10:

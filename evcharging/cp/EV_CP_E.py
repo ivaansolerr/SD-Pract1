@@ -16,9 +16,6 @@ import hashlib
 from cryptography.fernet import Fernet, InvalidToken
 import os
 
-# ==========================
-# ESTADO GLOBAL
-# ==========================
 registered_cp: Optional[str] = None
 registered_cp_event = threading.Event()
 prod: Optional[Producer] = None
@@ -34,13 +31,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # .../evcharging/cp
 TLS_CERT = os.path.join(BASE_DIR, "certServ.pem")      # .../evcharging/cp/certServ.pem
 KEYS_DIR = os.path.join(BASE_DIR, "keys")        # .../evcharging/cp/keys
 
-# ======================================================
-# CIFRADO / DESCIFRADO KAFKA
-# ======================================================
 def _derive_fernet_key(key_str: str) -> bytes:
     digest = hashlib.sha256(key_str.encode("utf-8")).digest()
     return base64.urlsafe_b64encode(digest)
-
 
 def _encrypt_kafka(payload: Dict[str, Any], cp_id: str) -> Dict[str, Any]:
     key_path = os.path.join(KEYS_DIR, f"{cp_id}_key.txt")
@@ -62,7 +55,6 @@ def _encrypt_kafka(payload: Dict[str, Any], cp_id: str) -> Dict[str, Any]:
         "cp_id": registered_cp,
         "payload": token
     }
-
 
 def _decrypt_kafka(data: Dict[str, Any]) -> Dict[str, Any]:
     if not isinstance(data, dict) or not data.get("encrypted"):
@@ -97,88 +89,75 @@ def _decrypt_kafka(data: Dict[str, Any]) -> Dict[str, Any]:
         utils.info("[ENGINE] ❌ Error descifrando mensaje Kafka")
         return {}
 
-
-
 def kafka_send(prod: Producer, topic: str, payload: Dict[str, Any]):
     kafka_utils.send(prod, topic, _encrypt_kafka(payload, registered_cp))
 
-
-# ======================================================
-# SOCKET HANDLER (REGISTRO + HEARTBEAT DEL MONITOR)
-# ======================================================
 def handle(conn):
     global registered_cp
 
-    msgEnc = conn.recv(1024)
-
-    # Mensajes fuera de handshake
-    if msgEnc in [b"CENTRAL_DOWN", b"CENTRAL_UP_AGAIN"]:
-        print(f"[ENGINE] {msgEnc}")
-        conn.close()
-        return
-    else:
+    try:
+        msgEnc = conn.recv(1024)
         if msgEnc != b"<ENC>":
-            print(f"[ENGINE] Error: Esperaba <ENC>, recibí {msgEnc}")
+            print(f"[ENGINE] Error Handshake: Esperaba <ENC>, recibí {msgEnc}")
+            conn.close()
+            return
+        
+        conn.send(socketCommunication.ACK)
+
+        cp = socketCommunication.parseFrame(conn.recv(1024))
+        key = socketCommunication.parseFrame(conn.recv(1024))
+        if cp is None:
+            conn.send(socketCommunication.NACK)
             conn.close()
             return
 
-    conn.send(socketCommunication.ACK)
+        registered_cp = cp
+        registered_cp_event.set()
+        utils.info(f"[ENGINE] Clave recibida de MONITOR para CP {registered_cp}")
+        print(f"[ENGINE] CP registrado: {registered_cp}")
 
-    cp = socketCommunication.parseFrame(conn.recv(1024))
-    key = socketCommunication.parseFrame(conn.recv(1024))
-    if cp is None:
-        print("[ENGINE] Error: No obtuvo el CP_ID")
-        conn.send(socketCommunication.NACK)
+        conn.send(socketCommunication.ACK)
+        conn.send(socketCommunication.encodeMess("OK")) 
+
+        if conn.recv(1024) != socketCommunication.ACK:
+            conn.close()
+            return
+
+        conn.send(b"<EOT>")
+        
+        os.makedirs(KEYS_DIR, exist_ok=True)
+        with open(os.path.join(KEYS_DIR, f"{registered_cp}_key.txt"), "w") as kf:
+            kf.write(key)
+
+    except Exception as e:
+        print(f"[ENGINE] Error durante handshake: {e}")
         conn.close()
         return
 
-    registered_cp = cp
-    registered_cp_event.set()
-    utils.info(f"[ENGINE] Clave recibida de MONITOR para CP {registered_cp}: {key}")
-    print(f"[ENGINE] CP registrado: {registered_cp}")
-
-    conn.send(socketCommunication.ACK)  # siguiendo el protocolo
-    conn.send(socketCommunication.encodeMess("OK"))  # todo está OK
-
-    if conn.recv(1024) != socketCommunication.ACK:
-        print("[ENGINE] Error: No recibió ACK final")
-        conn.close()
-        return
-
-    conn.send(b"<EOT>")
-    print(f"[ENGINE {registered_cp}] Registrado, esperando mensajes del monitor...")
-    os.makedirs(KEYS_DIR, exist_ok=True)
-    key_filename = os.path.join(KEYS_DIR, f"{registered_cp}_key.txt")
-    with open(key_filename, "w") as key_file:
-        key_file.write(key)
+    print(f"[ENGINE {registered_cp}] Registrado, esperando heartbeats y estado...")
 
     while True:
         try:
             beat = conn.recv(1024)
             if not beat:
-                break
+                break # Socket cerrado por el cliente
 
             if beat == b"PING":
                 conn.send(b"PONG")
 
             elif beat == b"CENTRAL_DOWN":
-                print("[ENGINE] ⚠️ CENTRAL caída detectada")
-                print("[ENGINE] 🚨 Modo aislamiento activado...")
+                print("[ENGINE] ⚠️ ALERTA: CENTRAL CAÍDA DETECTADA")
 
             elif beat == b"CENTRAL_UP_AGAIN":
-                print("[ENGINE] ✅ CENTRAL ha vuelto")
-                print("[ENGINE] 🔄 Reanudando coordinación con CENTRAL")
+                print("[ENGINE] ✅ INFO: CENTRAL RECUPERADA")
 
-        except Exception:
+        except Exception as e:
+            print(f"[ENGINE] Error en conexión monitor: {e}")
             break
 
     print("[ENGINE] Monitor desconectado")
     conn.close()
 
-
-# ======================================================
-# HILO DE HEARTBEATS DE SUMINISTRO
-# ======================================================
 def send_supply_heartbeat(driver_id: str):
     global cp_price
 
@@ -202,11 +181,6 @@ def send_supply_heartbeat(driver_id: str):
 
     print("[ENGINE] 💀 Heartbeat detenido.")
 
-
-# ======================================================
-# HILO DE SESIÓN DE SUMINISTRO
-# (SE LANZA EN UN HILO SEPARADO DEL LISTENER KAFKA)
-# ======================================================
 def run_supply_session(driver_id: str):
     global current_driver_id
 
@@ -256,15 +230,9 @@ def run_supply_session(driver_id: str):
     with session_lock:
         current_driver_id = None
 
-
-# ======================================================
-# MANEJO DE MENSAJES KAFKA DESDE CENTRAL
-# (RÁPIDO, SIN BLOQUEAR)
-# ======================================================
 def handleRequest(topic, data):
     global cp_price, session_thread
 
-    # ---------- AUTORIZACIÓN DE SUMINISTRO ----------
     if topic == topics.EV_SUPPLY_AUTH:
         data = _decrypt_kafka(data)
         if not data:
@@ -321,10 +289,6 @@ def handleRequest(topic, data):
                 "cp_id": registered_cp
             })
 
-
-# ======================================================
-# SERVIDOR SOCKET (HILO)
-# ======================================================
 def socketServer(socketPort):
     # Contexto TLS servidor
     ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -347,11 +311,6 @@ def socketServer(socketPort):
             except:
                 pass
 
-
-
-# ======================================================
-# LISTENER KAFKA (HILO)
-# ======================================================
 def kafkaListener(kafkaIp, kafkaPort):
     kafka_info = f"{kafkaIp}:{kafkaPort}"
     global prod
@@ -383,10 +342,6 @@ def kafkaListener(kafkaIp, kafkaPort):
         data = json.loads(msg.value().decode("utf-8"))
         handleRequest(msg.topic(), data)
 
-
-# ======================================================
-# MAIN
-# ======================================================
 def main():
     if len(sys.argv) != 4:
         print("Uso: engine.py <kafka_ip> <kafka_port> <socket_port>")
@@ -404,6 +359,5 @@ def main():
 
     t1.join()
     t2.join()
-
 
 main()

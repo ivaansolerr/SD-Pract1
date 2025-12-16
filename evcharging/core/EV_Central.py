@@ -80,9 +80,11 @@ def weather_monitor_loop(kafkaInfo):
                     if status == "FROZEN":
                         if current_db_state in ["AVAILABLE", "SUPPLYING"]:
                             print(f"[CENTRAL] ❄️ Detectado congelamiento en {cp_id}. Ejecutando parada de emergencia...")
+
+                            stopCP(cp_id, kafkaInfo)
+
                             send_weather_to_cp(cp_id, "FROZEN")
                             audit_log("AUTO_WEATHER", "WEATHER_STOP", f"cp_id={cp_id} temp_status=FROZEN")
-                            stopCP(cp_id, kafkaInfo)
 
                     elif status == "OK":
                         if current_db_state == "FUERA DE SERVICIO":
@@ -427,6 +429,12 @@ def handleClient(conn, addr, kafkaInfo):
 
         try:
             if 'cp' in locals() and cp is not None:
+                
+                cp_data = db.getCp(cp)
+                if cp_data and cp_data.get("state") == "FUERA DE SERVICIO":
+                    print(f"[CENTRAL] ℹ️ Desconexión de socket en {cp} ignorada (Causa: Parada Controlada).")
+                    return 
+
                 print(f"[CENTRAL] ⚠️ CP {cp} desconectado → DISCONNECTED")
                 db.setCpState(cp, "DISCONNECTED")
                 audit_log(cp_ip, "CP_STATE_CHANGE", f"cp_id={cp} -> DISCONNECTED")
@@ -469,8 +477,10 @@ def handleClient(conn, addr, kafkaInfo):
                     audit_log(cp_ip, "SESSION_REMOVED_MEMORY", f"session_id={session_key}")
                     db.deleteSession(driver_id, cp)
                     audit_log(cp_ip, "SESSION_DELETED_DB", f"driver_id={driver_id} cp_id={cp}")
-                    cp_sockets.pop(cp, None)
-                    audit_log(cp_ip, "CP_SOCKET_REMOVED", f"cp_id={cp}")
+                    
+                # Limpieza final del socket del diccionario
+                cp_sockets.pop(cp, None)
+                audit_log(cp_ip, "CP_SOCKET_REMOVED", f"cp_id={cp}")
 
         except Exception as e:
             print(f"[CENTRAL] ❌ Error marcando CP desconectado: {e}")
@@ -769,7 +779,6 @@ def main():
     audit_log("LOCAL", "CENTRAL_START", f"port={port} kafka={kafkaInfo}")
 
     load_active_sessions()
-    #printCpPanel()
 
     threading.Thread(target=tcpServer, args=(s, kafkaInfo, ctx), daemon=True).start()
     audit_log("LOCAL", "THREAD_START", "tcpServer")
@@ -782,7 +791,7 @@ def main():
 
     print("\n[COMANDOS CENTRAL ACTIVADOS]")
     print("  stop <cp_id>   → Detiene carga, genera ticket y pasa a FUERA DE SERVICIO")
-    print("  enable <cp_id> → Vuelve a poner el CP en AVAILABLE\n")
+    print("  enable <cp_id> → Vuelve a poner el CP en AVAILABLE")
     print("  revoke <cp_id> → Revoca la clave de cifrado del CP")
 
     while True:
